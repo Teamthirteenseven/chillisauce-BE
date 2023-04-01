@@ -24,4 +24,8 @@ public class User {
 
     @Column(nullable = false)
     private String companyName;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 }
