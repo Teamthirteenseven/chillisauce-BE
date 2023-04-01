@@ -18,4 +18,10 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String companyName;
 }
