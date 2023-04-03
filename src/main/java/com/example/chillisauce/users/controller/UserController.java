@@ -23,18 +23,18 @@ public class UserController {
 
     @PostMapping("/users/signup/admin")
     public ResponseEntity signupAdmin (@RequestBody AdminSignupRequestDto adminSignupRequestDto) {
-        return ResponseMessage.SuccessResponse("관리자 회원가입 성공", userService.signupAdmin(adminSignupRequestDto));
+        return ResponseMessage.responseSuccess("관리자 회원가입 성공", userService.signupAdmin(adminSignupRequestDto));
     }
 
     @PostMapping("/users/signup/user")
     public ResponseEntity signupUser (@RequestBody UserSignupRequestDto userSignupRequestDto) {
-        return ResponseMessage.SuccessResponse(userService.signupUser(userSignupRequestDto),"");
+        return ResponseMessage.responseSuccess(userService.signupUser(userSignupRequestDto),"");
     }
 
     @PostMapping("/users/login")
     public ResponseEntity login (@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         LoginResponseDto user = userService.Login(loginRequestDto);
         response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()));
-        return ResponseMessage.SuccessResponse("로그인 성공", "");
+        return ResponseMessage.responseSuccess("로그인 성공", "");
     }
 }
