@@ -24,6 +24,8 @@ public enum SpaceErrorCode implements ErrorStatusMessage {
     //    /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "등록된 사용자가 없습니다"),
     SPACE_NOT_FOUND(NOT_FOUND, "해당 공간을 찾을 수 없습니다."),
+
+    COMPANIES_NOT_FOUND(NOT_FOUND,"해당 회사가 존재하지 않습니다."),
 //    COMMENT_NOT_FOUND(NOT_FOUND, "선택한 댓글을 찾을 수 없습니다.")
 
     ;

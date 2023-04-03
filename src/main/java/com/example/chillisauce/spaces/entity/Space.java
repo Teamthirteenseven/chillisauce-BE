@@ -2,6 +2,7 @@ package com.example.chillisauce.spaces.entity;
 
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.SpaceRequestDto;
+import com.example.chillisauce.users.entity.Companies;
 import lombok.Getter;
 
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,6 @@ public class Space {
     private Long id;
 
     private String spaceName;
-
-    private UserDetailsImpl userDetails;
-
-
     @OneToMany(orphanRemoval = true)
     @JoinColumn(name = "space_id")
     private List<Box> boxs = new ArrayList<>();
@@ -31,9 +28,14 @@ public class Space {
     @JoinColumn(name = "space_id")
     private List<Mr> mrs = new ArrayList<>();
 
-    public Space(SpaceRequestDto spaceRequestDto) {
+    @ManyToOne
+    @JoinColumn(name = "companies_id", nullable = false)
+    private Companies companies;
+
+
+
+    public Space(SpaceRequestDto spaceRequestDto, Companies companies) {
         this.spaceName = spaceRequestDto.getSpaceName();
-
+        this.companies = companies;
     }
-
 }
