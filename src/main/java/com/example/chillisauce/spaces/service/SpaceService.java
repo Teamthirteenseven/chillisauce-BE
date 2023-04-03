@@ -8,8 +8,10 @@ import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
+import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
+import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SpaceService {
     private final SpaceRepository spaceRepository;
+    private final CompanyRepository companyRepository;
 
 
     //공간 생성
@@ -29,7 +32,10 @@ public class SpaceService {
         if (!Details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Space space = spaceRepository.save(new Space(spaceRequestDto));
+        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+        );
+        Space space = spaceRepository.save(new Space(spaceRequestDto,companies));
         return new SpaceResponseDto(space);
     }
     //공간 조회
