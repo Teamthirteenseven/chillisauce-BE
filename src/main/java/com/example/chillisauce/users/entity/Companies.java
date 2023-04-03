@@ -17,7 +17,7 @@ public class Companies {
     @Column(unique = true, nullable = false)
     private String companyName;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String certification;
 
     public Companies(CompanyRequestDto companyRequestDto) {
