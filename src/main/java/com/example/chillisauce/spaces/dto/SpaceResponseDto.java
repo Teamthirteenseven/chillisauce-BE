@@ -1,0 +1,33 @@
+package com.example.chillisauce.spaces.dto;
+
+import com.example.chillisauce.spaces.entity.Box;
+import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.Space;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@NoArgsConstructor
+public class SpaceResponseDto {
+
+    private Long id;
+
+    private String spaceName;
+
+    private final List<BoxResponseDto> boxlist = new ArrayList<>();
+
+    private final List<MrResponseDto> mrlist = new ArrayList<>();
+    public SpaceResponseDto(Space space) {
+        this.id = space.getId();
+        this.spaceName = space.getSpaceName();
+        for (Box box : space.getBoxs()){
+            boxlist.add(new BoxResponseDto(box));
+        }
+        for (Mr mr : space.getMrs()){
+            mrlist.add(new MrResponseDto(mr));
+        }
+    }
+}
