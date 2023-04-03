@@ -1,5 +1,6 @@
 package com.example.chillisauce.message;
 
+import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.users.exception.UserErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
