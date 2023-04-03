@@ -1,5 +1,6 @@
 package com.example.chillisauce.users.exception;
 
+import com.example.chillisauce.message.ErrorStatusMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -8,12 +9,13 @@ import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
-public enum UserErrorCode {
+public enum UserErrorCode implements ErrorStatusMessage {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     INVALID_TOKEN(UNAUTHORIZED, "토큰이 유효하지 않습니다"),
     DUPLICATE_USER(BAD_REQUEST, "중복된 사용자가 존재합니다"),
     DUPLICATE_NICKNAME(BAD_REQUEST, "중복된 닉네임이 존재합니다"),
     DUPLICATE_EMAIL(BAD_REQUEST, "중복된 이메일이 존재합니다"),
+    DUPLICATE_COMPANY(BAD_REQUEST, "중복된 회사명이 존재합니다"),
     NOT_PROPER_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_PROPER_INPUTFORM(BAD_REQUEST, "입력한 형식이 맞지 않습니다."),
     NOT_HAVE_PERMISSION(BAD_REQUEST, "권한이 없습니다."),

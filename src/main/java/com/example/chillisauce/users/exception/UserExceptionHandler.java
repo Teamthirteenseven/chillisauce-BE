@@ -12,7 +12,7 @@ public class UserExceptionHandler {
     @ExceptionHandler(value = { UserException.class })
     protected ResponseEntity<ResponseMessage> handleCustomException(UserException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
-        return ResponseMessage.ErrorResponse(e.getErrorCode());
+        return ResponseMessage.responseError(e.getErrorCode());
 
     }
 }
