@@ -12,6 +12,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum UserErrorCode implements ErrorStatusMessage {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     INVALID_TOKEN(UNAUTHORIZED, "토큰이 유효하지 않습니다"),
+    INVALID_CERTIFICATION(UNAUTHORIZED, "인증번호가 유효하지 않습니다"),
     DUPLICATE_USER(BAD_REQUEST, "중복된 사용자가 존재합니다"),
     DUPLICATE_NICKNAME(BAD_REQUEST, "중복된 닉네임이 존재합니다"),
     DUPLICATE_EMAIL(BAD_REQUEST, "중복된 이메일이 존재합니다"),
