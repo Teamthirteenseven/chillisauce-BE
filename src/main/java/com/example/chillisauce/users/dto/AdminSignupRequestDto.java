@@ -4,9 +4,16 @@ import lombok.Getter;
 
 @Getter
 public class AdminSignupRequestDto {
-    private String email;
-    private String password;
-    private String passwordCheck;
-    private String userName;
-    private String companyName; //회사명
+    private final String email;
+    private final String password;
+    private final String passwordCheck;
+    private final String userName;
+
+    public AdminSignupRequestDto(SignupRequestDto request) {
+        this.email = request.getEmail();
+        this.password = request.getPassword();
+        this.passwordCheck = request.getPasswordCheck();
+        this.userName = request.getUserName();
+    }
+
 }
