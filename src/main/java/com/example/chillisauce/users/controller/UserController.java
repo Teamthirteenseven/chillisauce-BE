@@ -42,7 +42,7 @@ public class UserController {
     @PostMapping("/users/login")
     public ResponseEntity<ResponseMessage> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         LoginResponseDto user = userService.Login(loginRequestDto);
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()));
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getId(), user.getRole()));
         return ResponseMessage.responseSuccess("로그인 성공", "");
     }
 }
