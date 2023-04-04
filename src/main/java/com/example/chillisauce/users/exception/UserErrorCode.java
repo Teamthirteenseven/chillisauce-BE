@@ -17,6 +17,10 @@ public enum UserErrorCode implements ErrorStatusMessage {
     DUPLICATE_NICKNAME(BAD_REQUEST, "중복된 닉네임이 존재합니다"),
     DUPLICATE_EMAIL(BAD_REQUEST, "중복된 이메일이 존재합니다"),
     DUPLICATE_COMPANY(BAD_REQUEST, "중복된 회사명이 존재합니다"),
+
+    //이메일인증 완성되면 삭제할 것.
+    DUPLICATE_CERTIFICATION(BAD_REQUEST, "중복된 인증번호가 존재합니다"),
+
     NOT_PROPER_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_PROPER_INPUTFORM(BAD_REQUEST, "입력한 형식이 맞지 않습니다."),
     NOT_HAVE_PERMISSION(BAD_REQUEST, "권한이 없습니다."),
