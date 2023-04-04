@@ -18,19 +18,22 @@ public class BoxController {
     @PostMapping("/box/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> createBox
             (@PathVariable("companyName")String companyName ,@PathVariable("spaceId") Long spaceId,@RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        return ResponseMessage.responseSuccess("박스 생성 성공",boxService.createBox(companyName,spaceId, boxRequestDto, details));
+        boxService.createBox(companyName,spaceId, boxRequestDto, details);
+        return ResponseMessage.responseSuccess("박스 생성 성공","");
     }
 
     @PatchMapping("/box/{companyName}/{boxId}")
     public ResponseEntity<ResponseMessage> updateBox
             (@PathVariable("companyName") String companyName,@PathVariable("boxId") Long boxId, @RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        return ResponseMessage.responseSuccess("박스 수정 성공",boxService.updateBox(companyName, boxId, boxRequestDto, details));
+        boxService.updateBox(companyName, boxId, boxRequestDto, details);
+        return ResponseMessage.responseSuccess("박스 수정 성공","");
     }
 
     @DeleteMapping("/box/{companyName}/{boxId}")
     public ResponseEntity<ResponseMessage> deleteBox
             (@PathVariable("companyName") String companyName, @PathVariable("boxId") Long boxId, @AuthenticationPrincipal UserDetailsImpl details){
-        return ResponseMessage.responseSuccess("박스 삭제 완료",boxService.deleteBox(companyName, boxId,details));
+        boxService.deleteBox(companyName, boxId,details);
+        return ResponseMessage.responseSuccess("박스 삭제 완료","");
     }
 
 }
