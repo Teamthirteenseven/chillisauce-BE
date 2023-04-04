@@ -33,11 +33,11 @@ public class Mr {
 
     @OneToMany(mappedBy = "meetingRoom")
     List<Reservation> reservations;
-    public Mr(MrRequestDto mrRequestDto, User user) {
+    public Mr(MrRequestDto mrRequestDto) {
         this.mrName = mrRequestDto.getMrName();
         this.x = mrRequestDto.getX();
         this.y = mrRequestDto.getY();
-        this.username = user.getUsername();
+        this.username = getUsername();
     }
 
 

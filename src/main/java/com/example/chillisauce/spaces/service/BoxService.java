@@ -33,7 +33,7 @@ public class BoxService {
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
 
-        Box box = new Box(boxRequestDto, details.getUser());
+        Box box = new Box(boxRequestDto);
         boxRepository.saveAndFlush(box);
         space.addBox(box);//box.setSpace(space); 기존 set addBox 메서드로 교체
         return new BoxResponseDto(box);

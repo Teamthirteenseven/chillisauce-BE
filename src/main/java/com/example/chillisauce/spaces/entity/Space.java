@@ -35,8 +35,6 @@ public class Space {
     @JoinColumn(name = "companies_id", nullable = false)
     private Companies companies;
 
-
-
     public Space(SpaceRequestDto spaceRequestDto, Companies companies) {
         this.spaceName = spaceRequestDto.getSpaceName();
         this.companies = companies;
