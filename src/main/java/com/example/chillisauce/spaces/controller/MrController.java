@@ -1,22 +1,35 @@
 package com.example.chillisauce.spaces.controller;
 
+import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.spaces.dto.MrResponseDto;
 import com.example.chillisauce.spaces.service.MrService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class MrController {
     private final MrService mrService;
-    @PostMapping("/mr/{spaceid}")
-    public MrResponseDto createMr (@PathVariable("spaceid") Long spaceid, @RequestBody MrRequestDto mrRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return mrService.createMr(spaceid, mrRequestDto, userDetails.getUser());
+    @PostMapping("/mr/{companyName}/{spaceId}")
+    public ResponseEntity<ResponseMessage> createMr
+            (@PathVariable("companyName") String companyName,@PathVariable("spaceId") Long spaceId, @RequestBody MrRequestDto mrRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
+        return ResponseMessage.responseSuccess("미팅룸 생성 성공",mrService.createMr(companyName, spaceId, mrRequestDto, details));
+    }
+
+    @PatchMapping("/mr/{companyName}/{mrId}")
+    public ResponseEntity<ResponseMessage> updateMr
+            (@PathVariable("companyName") String companyName, @PathVariable("mrId") Long mrId, @RequestBody MrRequestDto mrRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
+        return ResponseMessage.responseSuccess("미팅룸 수정 성공",mrService.updateMr(companyName, mrId, mrRequestDto, details));
+    }
+
+    @DeleteMapping("/mr/{companyName}/{mrId}")
+    public ResponseEntity<ResponseMessage> deleteMr
+            (@PathVariable("companyName") String companyName, @PathVariable("mrId") Long mrId, @AuthenticationPrincipal UserDetailsImpl details){
+        return ResponseMessage.responseSuccess("미팅룸 삭제 완료",mrService.deleteMr(companyName, mrId,details));
     }
 }

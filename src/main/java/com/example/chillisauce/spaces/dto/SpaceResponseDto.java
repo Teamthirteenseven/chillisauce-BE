@@ -23,11 +23,13 @@ public class SpaceResponseDto {
     public SpaceResponseDto(Space space) {
         this.id = space.getId();
         this.spaceName = space.getSpaceName();
-        for (Box box : space.getBoxs()){
+        for (Box box : space.getBoxes()){
             boxlist.add(new BoxResponseDto(box));
         }
         for (Mr mr : space.getMrs()){
             mrlist.add(new MrResponseDto(mr));
         }
     }
+
+
 }
