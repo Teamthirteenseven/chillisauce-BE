@@ -18,18 +18,21 @@ public class MrController {
     @PostMapping("/mr/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> createMr
             (@PathVariable("companyName") String companyName,@PathVariable("spaceId") Long spaceId, @RequestBody MrRequestDto mrRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        return ResponseMessage.responseSuccess("미팅룸 생성 성공",mrService.createMr(companyName, spaceId, mrRequestDto, details));
+        mrService.createMr(companyName, spaceId, mrRequestDto, details);
+        return ResponseMessage.responseSuccess("미팅룸 생성 성공","");
     }
 
     @PatchMapping("/mr/{companyName}/{mrId}")
     public ResponseEntity<ResponseMessage> updateMr
             (@PathVariable("companyName") String companyName, @PathVariable("mrId") Long mrId, @RequestBody MrRequestDto mrRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        return ResponseMessage.responseSuccess("미팅룸 수정 성공",mrService.updateMr(companyName, mrId, mrRequestDto, details));
+        mrService.updateMr(companyName, mrId, mrRequestDto, details);
+        return ResponseMessage.responseSuccess("미팅룸 수정 성공","");
     }
 
     @DeleteMapping("/mr/{companyName}/{mrId}")
     public ResponseEntity<ResponseMessage> deleteMr
             (@PathVariable("companyName") String companyName, @PathVariable("mrId") Long mrId, @AuthenticationPrincipal UserDetailsImpl details){
-        return ResponseMessage.responseSuccess("미팅룸 삭제 완료",mrService.deleteMr(companyName, mrId,details));
+        mrService.deleteMr(companyName, mrId,details);
+        return ResponseMessage.responseSuccess("미팅룸 삭제 완료","");
     }
 }
