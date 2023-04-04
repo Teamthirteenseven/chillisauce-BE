@@ -5,13 +5,13 @@ import com.example.chillisauce.reservations.dto.ReservationResponseDto;
 import com.example.chillisauce.reservations.dto.ReservationTimeResponseDto;
 import com.example.chillisauce.reservations.dto.ReservationTimetableResponseDto;
 import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.reservations.entity.TempMeetingRoom;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
-import com.example.chillisauce.reservations.repository.TempMeetingRoomRepository;
 import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.users.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -34,7 +33,7 @@ import java.util.stream.IntStream;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final TempMeetingRoomRepository tempMeetingRoomRepository;
+    private final MrRepository meetingRoomRepository;
     // 예약 가능 첫 시각 : 오전 7시, 마지막 시각 : 22시
     private static final Integer OPEN_HOUR = 7;
     private static final Integer CLOSE_HOUR = 22;
@@ -73,14 +72,14 @@ public class ReservationService {
     public ReservationTimetableResponseDto getReservationTimetable(LocalDate selDate,
                                                                    Long meetingRoomId,
                                                                    UserDetailsImpl userDetails) {
-        TempMeetingRoom tempMeetingRoom = tempMeetingRoomRepository.findById(meetingRoomId).orElseThrow(
+        Mr meetingRoom = meetingRoomRepository.findById(meetingRoomId).orElseThrow(
                 () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
 
         User user = userDetails.getUser();
 
         // 회의실의 해당 날짜에 해당하는 모든 예약 리스트
         List<Reservation> all = reservationRepository
-                .findAllByMeetingRoomIdAndStartTimeBetween(tempMeetingRoom.getId(),
+                .findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
                         selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
         List<ReservationTimeResponseDto> timeList =
@@ -91,7 +90,7 @@ public class ReservationService {
                             LocalDateTime startDateTime = LocalDateTime.of(selDate, startTime);
                             return new ReservationTimeResponseDto(isOccupied(startDateTime, all), startTime, endTime);
                         }).toList();
-        return new ReservationTimetableResponseDto(tempMeetingRoom.getId(), timeList);
+        return new ReservationTimetableResponseDto(meetingRoom.getId(), timeList);
     }
 
     // 예약의 시작시간에 해당하는 타임은 true 반환
@@ -113,7 +112,7 @@ public class ReservationService {
     public ReservationResponseDto addReservation(Long meetingRoomId,
                                                  ReservationRequestDto requestDto,
                                                  UserDetailsImpl userDetails) {
-        TempMeetingRoom tempMeetingRoom = tempMeetingRoomRepository.findById(meetingRoomId).orElseThrow(
+        Mr meetingRoom = meetingRoomRepository.findById(meetingRoomId).orElseThrow(
                 () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
 
         User user = userDetails.getUser();
@@ -131,12 +130,12 @@ public class ReservationService {
         // 시간이 겹치는 예약은 할 수 없음
         reservationRepository
                 .findFirstByMeetingRoomAndStartTimeLessThanAndEndTimeGreaterThan(
-                        tempMeetingRoom.getId(), requestDto.getStart(), requestDto.getEnd())
+                        meetingRoom.getId(), requestDto.getStart(), requestDto.getEnd())
                 .ifPresent(x -> {
                     throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
                 });
 
-        Reservation reservation = new Reservation(requestDto, user, tempMeetingRoom);
+        Reservation reservation = new Reservation(requestDto, user, meetingRoom);
         reservationRepository.save(reservation);
         return new ReservationResponseDto(reservation);
     }

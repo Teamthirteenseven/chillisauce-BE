@@ -1,7 +1,6 @@
 package com.example.chillisauce.reservations.dto;
 
 import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.reservations.entity.TempMeetingRoom;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
