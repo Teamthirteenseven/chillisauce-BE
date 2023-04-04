@@ -60,7 +60,7 @@ public class JwtUtil {
                         .setSubject(email)
                         .claim(AUTHORIZATION_KEY, role)
                         .claim("id", id)
-                        .claim(username, username)
+                        .claim("username", username)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
