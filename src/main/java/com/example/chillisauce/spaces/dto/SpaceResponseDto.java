@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class SpaceResponseDto {
 
-    private Long id;
+    private Long spaceId;
 
     private String spaceName;
 
@@ -21,7 +21,7 @@ public class SpaceResponseDto {
 
     private final List<MrResponseDto> mrlist = new ArrayList<>();
     public SpaceResponseDto(Space space) {
-        this.id = space.getId();
+        this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
         for (Box box : space.getBoxes()){
             boxlist.add(new BoxResponseDto(box));

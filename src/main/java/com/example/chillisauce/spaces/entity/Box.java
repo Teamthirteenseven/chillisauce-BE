@@ -29,12 +29,16 @@ public class Box {
     @JoinColumn(name = "space_id")
     private Space space;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Box(BoxRequestDto boxRequestDto, User user) {
+
+    public Box(BoxRequestDto boxRequestDto) {
         this.boxName = boxRequestDto.getBoxName();
         this.x = boxRequestDto.getX();
         this.y = boxRequestDto.getY();
-        this.username = user.getUsername();
+        this.username = getUsername();
     }
 
     public void updateBox(BoxRequestDto boxRequestDto) {

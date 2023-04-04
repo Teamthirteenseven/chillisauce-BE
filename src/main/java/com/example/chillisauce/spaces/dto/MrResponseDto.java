@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class MrResponseDto {
-    private final Long id;
+    private final Long mrId;
     private final String mrName;
 
     private final String username;
@@ -15,7 +15,7 @@ public class MrResponseDto {
     private String y;
 
     public MrResponseDto(Mr mr) {
-        this.id = mr.getId();
+        this.mrId = mr.getId();
         this.mrName = mr.getMrName();
         this.username = mr.getUsername();
         this.x = mr.getX();
