@@ -66,6 +66,9 @@ public class ReservationService {
         });
     }
 
+    /**
+     * 타임테이블 조회
+     */
     @Transactional(readOnly = true)
     public ReservationTimetableResponseDto getReservationTimetable(LocalDate selDate,
                                                                    Long meetingRoomId,
@@ -120,13 +123,15 @@ public class ReservationService {
         endTime = endTime.plusMinutes(59);
         requestDto.setEnd(endTime);
 
+        //TODO: validateTime 에서 오늘 날짜 이전 것은 등록하지 못하게 수정(?)
         if (!validateTime(requestDto.getStart(), requestDto.getEnd())) {
             throw new ReservationException(ReservationErrorCode.NOT_PROPER_TIME);
         }
 
         // 시간이 겹치는 예약은 할 수 없음
         reservationRepository
-                .findFirstByMeetingRoomAndTime(tempMeetingRoom.getId(), requestDto.getStart(), requestDto.getEnd())
+                .findFirstByMeetingRoomAndStartTimeLessThanAndEndTimeGreaterThan(
+                        tempMeetingRoom.getId(), requestDto.getStart(), requestDto.getEnd())
                 .ifPresent(x -> {
                     throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
                 });
@@ -144,13 +149,14 @@ public class ReservationService {
         return !start.isAfter(end);
     }
 
+    @Transactional
     public ReservationResponseDto editReservation(Long reservationId,
                                                   ReservationRequestDto requestDto,
                                                   UserDetailsImpl userDetails) {
         return null;
     }
 
-
+    @Transactional
     public String deleteReservation(Long reservationId, UserDetailsImpl userDetails) {
         return "";
     }

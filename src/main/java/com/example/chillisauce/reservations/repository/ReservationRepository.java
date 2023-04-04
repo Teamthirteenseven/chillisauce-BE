@@ -14,7 +14,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("select r from Reservation r " +
             "where r.meetingRoom.id=:meetingRoomId and r.startTime< :endTime and r.endTime > :startTime")
-    Optional<Reservation> findFirstByMeetingRoomAndTime(
+    Optional<Reservation> findFirstByMeetingRoomAndStartTimeLessThanAndEndTimeGreaterThan(
             @Param("meetingRoomId") Long meetingRoomId,
             @Param("startTime") LocalDateTime start,
             @Param("endTime") LocalDateTime end);
@@ -27,4 +27,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endTime") LocalDateTime endTime);
 
     List<Reservation> findAllByMeetingRoomId(Long meetingRoomId);
+
+    @Query("select r from Reservation r join fetch r.user where r.user.id =:userId")
+    List<Reservation> findAllByUserId(@Param("userId") Long userId);
 }
