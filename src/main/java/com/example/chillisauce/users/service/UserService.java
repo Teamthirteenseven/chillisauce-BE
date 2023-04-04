@@ -32,6 +32,11 @@ public class UserService {
         if (found) {
             throw new UserException(UserErrorCode.DUPLICATE_COMPANY);
         }
+        //인증번호 중복확인(이메일인증 완료되면 에러코드와 같이 삭제할 것.)
+        found = companyRepository.findByCertification(companyRequestDto.getCertification()).isPresent();
+        if (found) {
+            throw new UserException(UserErrorCode.DUPLICATE_CERTIFICATION);
+        }
 
         //회사 등록(회사이름, 회사 인증번호)
         Companies company = companyRepository.save(new Companies(companyRequestDto));
