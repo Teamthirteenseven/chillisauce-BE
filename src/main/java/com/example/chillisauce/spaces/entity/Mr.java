@@ -1,15 +1,14 @@
 package com.example.chillisauce.spaces.entity;
 
-import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.users.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
+
 @Getter
 @Entity
 @RequiredArgsConstructor
@@ -26,6 +25,9 @@ public class Mr {
 
     private String username;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "space_id")
+    private Space space;
 
     public Mr(MrRequestDto mrRequestDto, User user) {
         this.mrName = mrRequestDto.getMrName();
@@ -34,4 +36,14 @@ public class Mr {
         this.username = user.getUsername();
     }
 
+
+    public void updateMr(MrRequestDto mrRequestDto) {
+        this.mrName = mrRequestDto.getMrName();
+        this.x = mrRequestDto.getX();
+        this.y = mrRequestDto.getY();
+    }
+    public void linkSpace(Space space) {
+        this.space = space;
+        space.getMrs().add(this);
+    }
 }

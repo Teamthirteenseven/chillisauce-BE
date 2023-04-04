@@ -14,7 +14,6 @@ public class BoxResponseDto {
 
     private String y;
 
-
     public BoxResponseDto(Box box) {
         this.id = box.getId();
         this.boxName = box.getBoxName();

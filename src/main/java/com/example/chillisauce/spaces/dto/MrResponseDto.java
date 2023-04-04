@@ -14,7 +14,6 @@ public class MrResponseDto {
 
     private String y;
 
-
     public MrResponseDto(Mr mr) {
         this.id = mr.getId();
         this.mrName = mr.getMrName();
