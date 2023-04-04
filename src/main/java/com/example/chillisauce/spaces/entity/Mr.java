@@ -1,5 +1,6 @@
 package com.example.chillisauce.spaces.entity;
 
+import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.users.entity.User;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -29,6 +31,8 @@ public class Mr {
     @JoinColumn(name = "space_id")
     private Space space;
 
+    @OneToMany(mappedBy = "meetingRoom")
+    List<Reservation> reservations;
     public Mr(MrRequestDto mrRequestDto, User user) {
         this.mrName = mrRequestDto.getMrName();
         this.x = mrRequestDto.getX();
