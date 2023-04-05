@@ -3,6 +3,8 @@ package com.example.chillisauce.users.controller;
 import com.example.chillisauce.jwt.JwtUtil;
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.users.dto.*;
+import com.example.chillisauce.users.service.EmailService;
+import com.example.chillisauce.users.service.EmailServiceImpl;
 import com.example.chillisauce.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,15 +14,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final EmailService emailService;
     private final JwtUtil jwtUtil;
 
-    @PostMapping( "/users/signup/admin")
+
+    @PostMapping("/users/signup/email")
+    public String SendMail(@RequestBody EmailRequestDto request) throws Exception {
+        return emailService.sendSimpleMessage(request.getEmail());
+    }
+
+    @PostMapping("/users/signup/admin")
     public ResponseEntity<ResponseMessage> signupAdmin(@RequestBody SignupRequestDto request) {
         /**
          * 파라미터로 dto를 2개 사용이 안되기 때문에 트리구조를 빗대어 dto를 설계.
@@ -44,5 +54,10 @@ public class UserController {
         LoginResponseDto user = userService.Login(loginRequestDto);
         response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getUsername(), user.getId(), user.getRole()));
         return ResponseMessage.responseSuccess("로그인 성공", "");
+    }
+
+    @PostMapping("/users/signup/match")
+    public ResponseEntity<ResponseMessage> checkCertificationMatch (@RequestBody HashMap<String, String> certification) {
+        return ResponseMessage.responseSuccess(userService.checkCertification(certification.get("certification")),"");
     }
 }

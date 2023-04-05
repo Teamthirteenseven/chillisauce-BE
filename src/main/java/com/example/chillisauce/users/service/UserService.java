@@ -71,6 +71,17 @@ public class UserService {
         return "일반 회원 가입 성공";
     }
 
+    //인증번호 일치여부 확인
+    @Transactional
+    public String checkCertification(String certification) {
+        Companies company = companyRepository.findByCertification(certification).orElseThrow(
+                () -> new UserException(UserErrorCode.INVALID_CERTIFICATION));
+        if (!company.getCertification().equals(certification)) {
+            throw new UserException(UserErrorCode.NOT_PROPER_CERTIFICATION);
+        }
+        return "인증번호가 일치합니다.";
+    }
+
     // 로그인
     @Transactional
     public LoginResponseDto Login(LoginRequestDto loginRequestDto) {
