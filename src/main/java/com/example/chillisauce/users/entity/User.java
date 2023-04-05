@@ -1,5 +1,6 @@
 package com.example.chillisauce.users.entity;
 
+import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.users.dto.AdminSignupRequestDto;
 import com.example.chillisauce.users.dto.UserSignupRequestDto;
 import lombok.Getter;
@@ -49,5 +50,6 @@ public class User {
         this.role = role;
         this.companies = companies;
     }
+
 
 }

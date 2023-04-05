@@ -3,6 +3,7 @@ package com.example.chillisauce.spaces.controller;
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
+import com.example.chillisauce.spaces.dto.BoxResponseDto;
 import com.example.chillisauce.spaces.service.BoxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,4 +37,15 @@ public class BoxController {
         return ResponseMessage.responseSuccess("박스 삭제 완료","");
     }
 
+    @PatchMapping("/box/{companyName}/{boxId}/user")
+    public ResponseEntity<ResponseMessage> updateBoxUser(@PathVariable String companyName, @PathVariable Long boxId, @RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
+        boxService.updateBoxUser(boxRequestDto,companyName,boxId,details);
+        return ResponseMessage.responseSuccess("유저 등록 완료", "");
+    }
+    //fromBoxId, toBoxId 는 Box 엔티티의 속성이 아니라 API 에서 사용하는 PathVariable 중 하나 임 DB 컬럼을 따로 만들 필요가 없음.
+    @PatchMapping("/box/{companyName}/{fromBoxId}/move/{toBoxId}")
+    public ResponseEntity<ResponseMessage> moveBox(@PathVariable String companyName, @PathVariable Long fromBoxId, @PathVariable Long toBoxId, @AuthenticationPrincipal UserDetailsImpl details) {
+        BoxResponseDto response = boxService.moveBox(companyName, fromBoxId, toBoxId, details);
+        return ResponseMessage.responseSuccess("유저 이동 완료", response);
+    }
 }

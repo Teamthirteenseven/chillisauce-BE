@@ -61,7 +61,7 @@ public class MrService {
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
         return mrRepository.findByIdAndSpaceCompanies(mrId, company).orElseThrow(
-                () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
+                () -> new SpaceException(SpaceErrorCode.MR_NOT_FOUND)
         );
     }
 

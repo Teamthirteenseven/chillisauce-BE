@@ -18,4 +18,5 @@ public class BoxResponseDto {
         this.x = box.getX();
         this.y = box.getY();
     }
+
 }
