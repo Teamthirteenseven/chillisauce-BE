@@ -3,9 +3,7 @@ package com.example.chillisauce.spaces.entity;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.users.entity.User;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import javax.persistence.*;
@@ -14,6 +12,8 @@ import java.util.List;
 @Getter
 @Entity
 @RequiredArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Mr {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,6 @@ public class Mr {
         this.y = mrRequestDto.getY();
         this.username = getUsername();
     }
-
 
     public void updateMr(MrRequestDto mrRequestDto) {
         this.mrName = mrRequestDto.getMrName();

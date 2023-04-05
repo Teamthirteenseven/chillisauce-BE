@@ -70,14 +70,14 @@ public class SpaceService {
             Box box = boxRepository.findById(boxRequestDto.getId()).orElseThrow(
                     () -> new SpaceException(SpaceErrorCode.BOX_NOT_FOUND)
             );
-            box.updateBox(boxRequestDto);
+            box.updateBox(boxRequestDto,details.getUser());
             space.addBox(box);
         }//Hibernate 에서 발생하는 "A collection with cascade='all-delete-orphan' was no longer referenced by the owning entity instance"
         // 오류를 방지하려고 set 대신 addbox 메서드를 만들어서 사용
 
-        // spaceRequestDto 의 박스 목록을 순회하며 각 Mr를 처리
+        // spaceRequestDto 의 Mr 목록을 순회하며 각 Mr를 처리
         for (MrRequestDto mrRequestDto : spaceRequestDto.getMrlist()) {
-            // boxRequestDto 의 ID를 사용하여 기존 Mr를 찾음
+            // MrRequestDto 의 ID를 사용하여 기존 Mr를 찾음
             Mr mr = mrRepository.findById(mrRequestDto.getId()).orElseThrow(
                     () -> new SpaceException(SpaceErrorCode.MR_NOT_FOUND)
             );
