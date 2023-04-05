@@ -9,5 +9,4 @@ public interface CompanyRepository extends JpaRepository<Companies, Long> {
     Optional<Companies> findByCompanyName (String companyName);
     Optional<Companies> findByCertification (String certification);
 
-
 }

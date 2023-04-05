@@ -22,6 +22,7 @@ public enum UserErrorCode implements ErrorStatusMessage {
     DUPLICATE_CERTIFICATION(BAD_REQUEST, "중복된 인증번호가 존재합니다"),
 
     NOT_PROPER_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    NOT_PROPER_CERTIFICATION(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
     NOT_PROPER_INPUTFORM(BAD_REQUEST, "입력한 형식이 맞지 않습니다."),
     NOT_HAVE_PERMISSION(BAD_REQUEST, "권한이 없습니다."),
     NOT_AUTHOR(BAD_REQUEST, "작성자만 삭제/수정할 수 있습니다."),
