@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 public class SpaceController {
     private final SpaceService spaceService;
 
-    //사무실 생성
+    //공간 생성
     @PostMapping("/{companyName}/space")
     public ResponseEntity<ResponseMessage> createSpace
             (@PathVariable("companyName") String companyName, @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
         spaceService.createSpace(companyName, spaceRequestDto, details);
         return ResponseMessage.responseSuccess("사무실 생성 성공","");
 
-    }//사무실 전체조회
+    }//공간 전체조회
     @GetMapping("/{companyName}/space")
     public ResponseEntity<ResponseMessage> allSpacelist
             (@PathVariable("companyName") String companyName,@AuthenticationPrincipal UserDetailsImpl details) {
@@ -30,14 +30,14 @@ public class SpaceController {
         return ResponseMessage.responseSuccess("사무실 조회 성공",spaceService.allSpacelist(companyName, details));
     }
 
-    //사무실 선택조회
+    //공간 선택조회
     @GetMapping("/{companyName}/space/{spaceId}")
     public ResponseEntity<ResponseMessage> getSpacelist
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("사무실 조회 성공",spaceService.getSpacelist(companyName, spaceId, details));
     }
-    //사무실 전체 수정
+    //공간 전체 수정
     @PatchMapping("/{companyName}/space/{spaceId}")
     public ResponseEntity<ResponseMessage> updateSpace
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId,
@@ -45,7 +45,7 @@ public class SpaceController {
         spaceService.updateSpace(companyName, spaceId, spaceRequestDto,details);
         return ResponseMessage.responseSuccess("사무실 수정 성공","");
     }
-
+    //공간 삭제
     @DeleteMapping("/{companyName}/space/{spaceId}")
     public ResponseEntity<ResponseMessage> deleteSpace
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details){
