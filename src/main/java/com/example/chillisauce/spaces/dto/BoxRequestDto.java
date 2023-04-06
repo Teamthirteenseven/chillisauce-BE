@@ -3,6 +3,7 @@ package com.example.chillisauce.spaces.dto;
 import lombok.Getter;
 
 
+
 @Getter
 public class BoxRequestDto {
 
@@ -15,5 +16,12 @@ public class BoxRequestDto {
     private String y;
 
     private String username;
+
+    public BoxRequestDto(String boxName, String x, String y) {
+        this.boxName = boxName;
+        this.x = x;
+        this.y = y;
+    }
+
 
 }

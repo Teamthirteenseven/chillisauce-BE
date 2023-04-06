@@ -7,7 +7,7 @@ import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.spaces.MrRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;

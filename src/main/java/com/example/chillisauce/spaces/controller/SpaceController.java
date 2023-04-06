@@ -22,13 +22,20 @@ public class SpaceController {
         spaceService.createSpace(companyName, spaceRequestDto, details);
         return ResponseMessage.responseSuccess("사무실 생성 성공","");
 
+    }//사무실 전체조회
+    @GetMapping("/{companyName}/space")
+    public ResponseEntity<ResponseMessage> allSpacelist
+            (@PathVariable("companyName") String companyName,@AuthenticationPrincipal UserDetailsImpl details) {
+
+        return ResponseMessage.responseSuccess("사무실 조회 성공",spaceService.allSpacelist(companyName, details));
     }
-    //사무실 조회
+
+    //사무실 선택조회
     @GetMapping("/{companyName}/space/{spaceId}")
     public ResponseEntity<ResponseMessage> getSpacelist
-            (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId) {
+            (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details) {
 
-        return ResponseMessage.responseSuccess("사무실 조회 성공",spaceService.getSpacelist(companyName, spaceId));
+        return ResponseMessage.responseSuccess("사무실 조회 성공",spaceService.getSpacelist(companyName, spaceId, details));
     }
     //사무실 전체 수정
     @PatchMapping("/{companyName}/space/{spaceId}")
