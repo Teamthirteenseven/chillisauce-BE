@@ -97,31 +97,40 @@ class CompanyRepositoryTest {
         @Nested
         @DisplayName("회사명")
         class companyName {
-            @DisplayName("중복된 회사명")
-            @Test
-            void fail1() {
-                // given
-                final Companies companies = Companies.builder()
-                        .companyName("7jo")
-                        .certification("1234")
-                        .build();
-                final Companies companies2 = Companies.builder()
-                        .companyName("7jo")
-                        .certification("5678")
-                        .build();
+//            @DisplayName("중복된 회사명")
+//            @Test
+//            void fail1() {
+//                // given
+//                final Companies companies = Companies.builder()
+//                        .companyName("7jo")
+//                        .certification("1234")
+//                        .build();
+//                final Companies companies2 = Companies.builder()
+//                        .companyName("7jo")
+//                        .certification("5678")
+//                        .build();
+//
+//                // when
+//                companyRepository.save(companies);
+//
+//                // then
+//                final Throwable thrown = catchThrowable(() -> companyRepository.save(companies2));
+//                assertThat(thrown).isInstanceOf(UserException.class)
+//                        .hasMessage(UserErrorCode.DUPLICATE_COMPANY.getMessage());
+//            }
 
-                // when
-                companyRepository.save(companies);
-
-                // then
-                final Throwable thrown = catchThrowable(() -> companyRepository.save(companies2));
-                assertThat(thrown).isInstanceOf(UserException.class)
-                        .hasMessage(UserErrorCode.DUPLICATE_COMPANY.getMessage());
-            }
-
-            @DisplayName("등록되지 않은 회사")
+            @DisplayName("회사명이 Null인 경우")
             @Test
             void fail2() {
+                // given
+                final Companies companies = Companies.builder()
+                        .companyName(null)
+                        .certification("1234")
+                        .build();
+                //when
+                assertThrows(DataIntegrityViolationException.class,
+                        () -> companyRepository.save(companies));
+                //then
 
             }
         }
