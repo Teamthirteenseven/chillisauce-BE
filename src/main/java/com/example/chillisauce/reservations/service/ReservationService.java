@@ -38,7 +38,6 @@ public class ReservationService {
     private static final Integer OPEN_HOUR = 7;
     private static final Integer CLOSE_HOUR = 22;
     private final Set<TimeUnit> timeSet;
-    private final HashMap<LocalTime, Boolean> timeMap;
 
     /**
      * timeSet 초기화
@@ -49,19 +48,6 @@ public class ReservationService {
             LocalTime start = LocalTime.of(x, 0);
             LocalTime end = LocalTime.of(x, 59);
             timeSet.add(new TimeUnit(start, end));
-        });
-    }
-
-    /**
-     * timeMap 초기화 : key=07:00 value=false
-     * key=시작시각, value=종료시각 (ex. key=07:00, value=08:00)
-     * 시작시각은 오전 7시부터 오후 22시까지
-     */
-    @PostConstruct
-    public void initializeTimeMap() {
-        IntStream.range(OPEN_HOUR, CLOSE_HOUR + 1).forEach(x -> {
-            LocalTime start = LocalTime.of(x, 0);
-            timeMap.put(start, false);
         });
     }
 
@@ -82,6 +68,7 @@ public class ReservationService {
                 .findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
                         selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
+        //TODO: 예약 수 x timeSet entry 만큼 loop 돌기 때문에 성능이 좋지 않음
         List<ReservationTimeResponseDto> timeList =
                 timeSet.stream().map(
                         x -> {
@@ -94,7 +81,7 @@ public class ReservationService {
     }
 
     // 예약의 시작시간에 해당하는 타임은 true 반환
-    boolean isOccupied(LocalDateTime time ,List<Reservation> all) {
+    boolean isOccupied(LocalDateTime time, List<Reservation> all) {
         for (Reservation reservation : all) {
             LocalDateTime start = reservation.getStartTime();
             LocalDateTime end = reservation.getEndTime();
@@ -148,15 +135,56 @@ public class ReservationService {
         return !start.isAfter(end);
     }
 
+    /**
+     * 예약 수정
+     */
     @Transactional
     public ReservationResponseDto editReservation(Long reservationId,
                                                   ReservationRequestDto requestDto,
                                                   UserDetailsImpl userDetails) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+
+        User user = userDetails.getUser();
+        if (!reservation.getUser().getEmail().equals(user.getEmail())) {
+            throw new ReservationException(ReservationErrorCode.INVALID_USER_RESERVATION_UPDATE);
+        }
+
+        //FIXME: requestDto setter 사용해서 59 하드코딩으로 더함 - 나중에 end LocalDateTime 받아야함
+        LocalDateTime endTime = LocalDateTime.of(requestDto.getStart().toLocalDate(), requestDto.getStart().toLocalTime());
+        endTime = endTime.plusMinutes(59);
+        requestDto.setEnd(endTime);
+
+        // 수정요청에 해당하는 시각에 예약이 없는지 검증
+        // 수정 대상 예약은 제외하고 검증해야함
+        List<Reservation> duplicatedReservations = reservationRepository
+                .findAllByMeetingRoomIdAndIdNotAndStartTimeLessThanAndEndTimeGreaterThan(
+                        reservation.getMeetingRoom().getId(),
+                        reservationId,
+                        requestDto.getStart(),
+                        requestDto.getEnd());
+
+        if (!duplicatedReservations.isEmpty()) {
+            throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
+        }
+
+        reservation.update(requestDto);
+
         return null;
     }
 
     @Transactional
     public String deleteReservation(Long reservationId, UserDetailsImpl userDetails) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+
+        User user = userDetails.getUser();
+        if (!reservation.getUser().equals(user)) {
+            throw new ReservationException(ReservationErrorCode.INVALID_USER_RESERVATION_UPDATE);
+        }
+
+        reservationRepository.deleteById(reservationId);
+
         return "";
     }
 }
