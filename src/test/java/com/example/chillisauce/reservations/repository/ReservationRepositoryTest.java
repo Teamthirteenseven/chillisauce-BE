@@ -1,27 +1,21 @@
 package com.example.chillisauce.reservations.repository;
 
 import com.example.chillisauce.reservations.entity.Reservation;
+import com.example.chillisauce.spaces.MrRepository;
+import com.example.chillisauce.spaces.SpaceRepository;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
-import com.example.chillisauce.spaces.repository.MrRepository;
-import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
-import net.bytebuddy.asm.Advice;
-import org.aspectj.lang.annotation.After;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

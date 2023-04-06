@@ -1,26 +1,16 @@
 package com.example.chillisauce.reservations.service;
 
 import com.example.chillisauce.reservations.dto.ReservationRequestDto;
-import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
-import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.entity.Mr;
-import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.spaces.MrRepository;
 import com.example.chillisauce.users.entity.User;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
