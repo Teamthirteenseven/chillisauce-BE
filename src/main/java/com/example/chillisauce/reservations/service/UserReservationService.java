@@ -19,6 +19,9 @@ import java.util.List;
 public class UserReservationService {
     private final ReservationRepository reservationRepository;
 
+    /**
+     * 특정 유저의 예약 내역 조회
+     */
     @Transactional(readOnly = true)
     public UserReservationListResponseDto getUserReservations(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
