@@ -3,6 +3,8 @@ package com.example.chillisauce.users.entity;
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.users.dto.AdminSignupRequestDto;
 import com.example.chillisauce.users.dto.UserSignupRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +12,9 @@ import javax.persistence.*;
 
 @Entity(name = "users")
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
