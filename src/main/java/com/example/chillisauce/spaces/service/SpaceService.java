@@ -8,13 +8,14 @@ import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.BoxRepository;
-import com.example.chillisauce.spaces.repository.MrRepository;
-import com.example.chillisauce.spaces.repository.SpaceRepository;
+import com.example.chillisauce.spaces.BoxRepository;
+import com.example.chillisauce.spaces.MrRepository;
+import com.example.chillisauce.spaces.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class SpaceService {
     private final SpaceRepository spaceRepository;
@@ -42,10 +44,26 @@ public class SpaceService {
         Space space = spaceRepository.save(new Space(spaceRequestDto, companies));
         return new SpaceResponseDto(space);
     }
-
-    //공간 조회
+    //전체 공간 조회
     @Transactional
-    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId) {
+    public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
+        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
+            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
+        }
+        List<Space> spaceList = spaceRepository.findAll();
+        List<SpaceResponseDto> spaceResponseDto = new ArrayList<>();
+        for (Space spaces : spaceList) {
+            spaceResponseDto.add(new SpaceResponseDto(spaces.getId(), spaces.getSpaceName()));
+        }
+        return spaceResponseDto;
+    }
+
+    //공간 선택 조회
+    @Transactional
+    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
+        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
+            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
+        }
         Space space = findCompanyNameAndSpaceId(companyName,spaceId);
         List<SpaceResponseDto> spaceResponseDto = new ArrayList<>();
         spaceResponseDto.add(new SpaceResponseDto(space));
@@ -108,6 +126,10 @@ public class SpaceService {
                 () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
         );
     }
+
+
+
+
 
 
 

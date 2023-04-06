@@ -1,8 +1,10 @@
 package com.example.chillisauce.spaces.dto;
 
+import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
+import com.example.chillisauce.users.entity.Companies;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,5 +33,11 @@ public class SpaceResponseDto {
         }
     }
 
+
+
+    public SpaceResponseDto(Long id, String spaceName) {
+        this.spaceId = id;
+        this.spaceName = spaceName;
+    }
 
 }

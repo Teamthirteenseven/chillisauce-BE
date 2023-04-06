@@ -4,6 +4,7 @@ import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
+@Nested
+@DisplayName("users Test")
 class UserRepositoryTest {
 
     @Autowired
@@ -18,35 +21,53 @@ class UserRepositoryTest {
     @Autowired
     private CompanyRepository companyRepository;
 
-
-    @DisplayName("회사 추가")
+    @DisplayName("관리자 추가")
     @Test
-    void addCompany() {
+    void addAdmin() {
         //given
-        Companies companies = companies();
-
-        //when
-        Companies saveCompany = companyRepository.save(companies);
-
-        //then
-        assertThat(saveCompany.getId()).isEqualTo(companies.getId());
-        assertThat(saveCompany.getCompanyName()).isEqualTo(companies.getCompanyName());
-        assertThat(saveCompany.getCertification()).isEqualTo(companies.getCertification());
-    }
-    private Companies companies () {
-        return Companies.builder()
-                .id(1L)
-                .companyName("7jo")
+        Companies companies = Companies.builder()
+                .companyName("호그와트")
                 .certification("1234")
                 .build();
+        User user = User.builder()
+                .email("123@123")
+                .password("1234")
+                .username("덤블도어")
+                .role(UserRoleEnum.ADMIN)
+                .companies(companies)
+                .build();
+
+        //when
+        companyRepository.save(companies);
+        User saveAdmin = userRepository.save(user);
+
+        //then
+        assertThat(saveAdmin.getId()).isEqualTo(user.getId());
+        assertThat(saveAdmin.getEmail()).isEqualTo(user.getEmail());
+        assertThat(saveAdmin.getPassword()).isEqualTo(user.getPassword());
+        assertThat(saveAdmin.getUsername()).isEqualTo(user.getUsername());
+        assertThat(saveAdmin.getRole()).isEqualTo(user.getRole());
+        assertThat(saveAdmin.getCompanies()).isNotNull();
     }
-    @DisplayName("사용자 추가")
+
+    @DisplayName("사원 추가")
     @Test
     void addUser() {
         //given
-        User user = user();
+        Companies companies = Companies.builder()
+                .companyName("7jo")
+                .certification("1234")
+                .build();
+        User user = User.builder()
+                .email("123@123")
+                .password("1234")
+                .username("해리포터")
+                .role(UserRoleEnum.USER)
+                .companies(companies)
+                .build();
 
         //when
+        companyRepository.save(companies);
         User saveUser = userRepository.save(user);
 
         //then
@@ -55,19 +76,7 @@ class UserRepositoryTest {
         assertThat(saveUser.getPassword()).isEqualTo(user.getPassword());
         assertThat(saveUser.getUsername()).isEqualTo(user.getUsername());
         assertThat(saveUser.getRole()).isEqualTo(user.getRole());
-//        assertThat(saveUser.getCompanies().getId()).isEqualTo(user.getCompanies().getId());
-//        assertThat(saveUser.getCompanies().getCompanyName()).isEqualTo(user.getCompanies().getCompanyName());
-//        assertThat(saveUser.getCompanies().getCertification()).isEqualTo(user.getCompanies().getCertification());
-    }
-    private User user () {
-        return User.builder()
-                .id(1L)
-                .email("123@123")
-                .password("1234")
-                .username("바니바니")
-                .role(UserRoleEnum.ADMIN)
-//                .companies(companies())
-                .build();
+        assertThat(saveUser.getCompanies()).isNotNull();
     }
 
 }
