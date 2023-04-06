@@ -26,27 +26,14 @@ class CompanyRepositoryTest {
     CompanyRepository companyRepository;
 
 
-    private Companies company() {
-        return Companies.builder()
-                .id(1L)
-                .companyName("7jo")
-                .certification("1234")
-                .build();
-    }
-
-    private Companies company2() {
-        return Companies.builder()
-                .id(2L)
-                .companyName("7jo")
-                .certification("5678")
-                .build();
-    }
-
     @DisplayName("회사 생성 성공")
     @Test
     void addCompany() {
         //given
-        Companies companies = company();
+        final Companies companies = Companies.builder()
+                .companyName("7jo")
+                .certification("1234")
+                .build();
 
         //when
         Companies saveCompanies = companyRepository.save(companies);
@@ -61,7 +48,10 @@ class CompanyRepositoryTest {
     @Test
     void findCompanyName() {
         //given
-        Companies companies = company();
+        final Companies companies = Companies.builder()
+                .companyName("7jo")
+                .certification("1234")
+                .build();
 
         //when
         companyRepository.save(companies);
@@ -78,7 +68,10 @@ class CompanyRepositoryTest {
     @Test
     void CertificationMatched() {
         //given
-        Companies companies = company();
+        final Companies companies = Companies.builder()
+                .companyName("7jo")
+                .certification("1234")
+                .build();
 
         //when
         companyRepository.save(companies);
@@ -97,28 +90,6 @@ class CompanyRepositoryTest {
         @Nested
         @DisplayName("회사명")
         class companyName {
-//            @DisplayName("중복된 회사명")
-//            @Test
-//            void fail1() {
-//                // given
-//                final Companies companies = Companies.builder()
-//                        .companyName("7jo")
-//                        .certification("1234")
-//                        .build();
-//                final Companies companies2 = Companies.builder()
-//                        .companyName("7jo")
-//                        .certification("5678")
-//                        .build();
-//
-//                // when
-//                companyRepository.save(companies);
-//
-//                // then
-//                final Throwable thrown = catchThrowable(() -> companyRepository.save(companies2));
-//                assertThat(thrown).isInstanceOf(UserException.class)
-//                        .hasMessage(UserErrorCode.DUPLICATE_COMPANY.getMessage());
-//            }
-
             @DisplayName("회사명이 Null인 경우")
             @Test
             void fail2() {
@@ -133,6 +104,7 @@ class CompanyRepositoryTest {
                 //then
 
             }
+
         }
 
     }
