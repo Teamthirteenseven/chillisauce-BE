@@ -52,7 +52,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String email, String username, Long id, UserRoleEnum role) {
+    public String createToken(String email, String username, Long id, UserRoleEnum role, String companyName) {
         Date date = new Date();
 
         return BEARER_PREFIX +
@@ -61,6 +61,7 @@ public class JwtUtil {
                         .claim(AUTHORIZATION_KEY, role)
                         .claim("id", id)
                         .claim("username", username)
+                        .claim("companyName",companyName)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
