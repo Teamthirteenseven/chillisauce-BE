@@ -6,6 +6,7 @@ import lombok.*;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @NoArgsConstructor
@@ -18,11 +19,14 @@ public class Box {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
+    @NotEmpty
     private String boxName;
-
+    @Column(nullable = false)
+    @NotEmpty
     private String x;
-
+    @Column(nullable = false)
+    @NotEmpty
     private String y;
 
     private String username;
