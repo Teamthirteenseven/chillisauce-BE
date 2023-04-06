@@ -106,7 +106,7 @@ public class BoxService {
 //        );
 //        return new BoxResponseDto(toBox);
 //    }
-
+    //box 에 user 정보 업데이트 및 user box 이동
     @Transactional
     public BoxResponseDto moveBoxWithUser(String companyName, Long fromBoxId, Long toBoxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
         Box fromBox = findCompanyNameAndBoxId(companyName, fromBoxId);

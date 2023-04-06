@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,8 @@ public class Space {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
+    @NotEmpty
     private String spaceName;
 
     //CascadeType.ALL은 모든 Cascade Type을 적용하는 것으로, 부모 엔티티의 변경사항이 자식 엔티티에도 전파되어 모든 변경사항을 함께 저장하고 관리하게 됩니다.
