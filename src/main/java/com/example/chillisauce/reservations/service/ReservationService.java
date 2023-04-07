@@ -116,7 +116,7 @@ public class ReservationService {
 
         // 시간이 겹치는 예약은 할 수 없음
         reservationRepository
-                .findFirstByMeetingRoomAndStartTimeLessThanAndEndTimeGreaterThan(
+                .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
                         meetingRoom.getId(), requestDto.getStart(), requestDto.getEnd())
                 .ifPresent(x -> {
                     throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
