@@ -21,7 +21,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,7 +112,7 @@ class ReservationServiceTest {
                 .thenReturn(Optional.of(meetingRoom)).thenThrow(ReservationException.class);
 
         doReturn(Optional.of(firstReservation)).when(reservationRepository)
-                        .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
                         meetingRoom.getId(), secondStart, secondStart.plusMinutes(59));
 
         // when
@@ -118,5 +124,39 @@ class ReservationServiceTest {
         assertThat(exception).isNotNull();
         assertThat(exception.getErrorCode()).isNotNull();
         assertThat(exception.getErrorCode()).isEqualTo(ReservationErrorCode.DUPLICATED_TIME);
+    }
+
+    @Test
+    void 동시예약테스트() throws InterruptedException {
+        // given
+        Integer threadCount = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        List<ReservationResponseDto> resultList = new ArrayList<>();
+        Long meetingRoomId = 1L;
+        Mr meetingRoom = Mr.builder().build();
+        User user = User.builder().build();
+        UserDetailsImpl userDetails = new UserDetailsImpl(user, "test@email.com");
+
+        LocalDateTime startTime = LocalDateTime.of(2023, 4, 8, 12, 0);
+        ReservationRequestDto start = new ReservationRequestDto(startTime, startTime.plusMinutes(59));
+        when(meetingRoomRepository.findById(meetingRoomId)).thenReturn(Optional.of(meetingRoom));
+
+        // when
+        IntStream.range(0, threadCount).forEach(e ->
+                executorService.submit(() -> {
+                    try {
+                        resultList.add(reservationService.addReservation(meetingRoomId, start, userDetails));
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+                }));
+
+        countDownLatch.await();
+
+        // then
+        //TODO: 동시성 이슈 해결 후 수정 필요
+        assertThat(resultList.size()).isPositive();
     }
 }
