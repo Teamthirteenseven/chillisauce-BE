@@ -1,10 +1,11 @@
 package com.example.chillisauce.spaces.dto;
 
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
 
 
 @Getter
+@NoArgsConstructor
 public class BoxRequestDto {
 
     private Long id;

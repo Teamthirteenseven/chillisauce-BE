@@ -15,6 +15,7 @@ import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BoxService {
     private final BoxRepository boxRepository;
-
     private final CompanyRepository companyRepository;
-
     private final SpaceService spaceService;
-
     private final UserRepository userRepository;
+
 
     //Box 생성
     @Transactional
