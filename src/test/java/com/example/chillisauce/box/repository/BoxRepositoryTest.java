@@ -1,15 +1,19 @@
-package com.example.chillisauce.spaces.repository;
+package com.example.chillisauce.box.repository;
 
 import com.example.chillisauce.spaces.BoxRepository;
 import com.example.chillisauce.spaces.entity.Box;
+import com.example.chillisauce.users.entity.Companies;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.validation.ConstraintViolationException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DataJpaTest
@@ -37,37 +41,27 @@ class BoxRepositoryTest {
         Assertions.assertThat(saveBox.getY()).isEqualTo(box.getY());
 
     }
-//    @Test
-//    void NotsaveBox() {
-//        //given
-//        Box box = Box.builder()
-//                .boxName("테스트2")
-//                .id(1l)
-//                .x("200")
-//                .y("200").build();
-//
-//        Box box2 = Box.builder()
-//                .boxName("테스트2")
-//                .id(1l)
-//                .x("200")
-//                .y("200").build();
-//        //when, then
-//        Assertions.assertThatThrownBy(() -> boxRepository.save(box2))
-//                .isInstanceOf(ConstraintViolationException.class);
-//    }
-//
-//    @Test
-//    void NotBox() {
-//        //given
-//        Box box = Box.builder()
-//                .boxName("")
-//                .id(1l)
-//                .x("")
-//                .y("").build();
-//
-//        Assertions.assertThatThrownBy(() -> boxRepository.save(box))
-//                .isInstanceOf(DataIntegrityViolationException.class);
-//    }
-//
+
+    @Nested
+    @DisplayName("실패 케이스")
+    class FailCases {
+        @Nested
+        @DisplayName("Null")
+        class NullBox {
+            @DisplayName("Box정보가 Null인 경우")
+            @Test
+            void fail2() {
+                // given
+                final Box box = Box.builder()
+                        .boxName(null)
+                        .x(null)
+                        .y(null)
+                        .build();
+                //when
+                assertThrows(ConstraintViolationException.class,
+                        () -> boxRepository.save(box));
+            }
+        }
+    }
 }
 
