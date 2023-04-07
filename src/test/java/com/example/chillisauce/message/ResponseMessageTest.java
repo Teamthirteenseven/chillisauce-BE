@@ -29,16 +29,31 @@ class ResponseMessageTest {
     }
 
     @Test
-    public void 메시지_인터페이스를_파라미터로_받으면_에러를_응답() {
+    public void 에러응답테스트_에러상태메시지_인터페이스를_파라미터로_받기() {
         // given
         ErrorStatusMessage errorStatusMessage = new ErrorStatusMessageImpl(HttpStatus.BAD_REQUEST, "error message");
 
         // when
-        ResponseEntity<ResponseMessage> responseMessageResponseEntity = ResponseMessage.responseError(errorStatusMessage);
+        ResponseEntity<ResponseMessage> result = ResponseMessage.responseError(errorStatusMessage);
 
         // then
-        assertThat(responseMessageResponseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(responseMessageResponseEntity.getBody()).isNotNull();
-        assertThat(responseMessageResponseEntity.getBody().getMessage()).isEqualTo("error message");
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().getMessage()).isEqualTo("error message");
+    }
+
+    @Test
+    public void 성공응답테스트() {
+        // given
+        String message = "응답 성공";
+        Object data = new Object();
+
+        // when
+        ResponseEntity<ResponseMessage> result = ResponseMessage.responseSuccess(message, data);
+
+        // then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().getMessage()).isEqualTo("응답 성공");
     }
 }
