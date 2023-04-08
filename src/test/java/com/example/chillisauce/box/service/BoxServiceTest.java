@@ -1,8 +1,8 @@
 package com.example.chillisauce.box.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.BoxRepository;
-import com.example.chillisauce.spaces.SpaceRepository;
+import com.example.chillisauce.spaces.repository.BoxRepository;
+import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.BoxResponseDto;
 import com.example.chillisauce.spaces.entity.Box;
@@ -25,7 +25,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 import java.util.stream.Stream;
 

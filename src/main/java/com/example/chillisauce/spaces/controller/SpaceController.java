@@ -37,7 +37,7 @@ public class SpaceController {
 
         return ResponseMessage.responseSuccess("사무실 조회 성공",spaceService.getSpacelist(companyName, spaceId, details));
     }
-    //공간 전체 수정
+    //공간 개별 수정
     @PatchMapping("/{companyName}/space/{spaceId}")
     public ResponseEntity<ResponseMessage> updateSpace
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId,

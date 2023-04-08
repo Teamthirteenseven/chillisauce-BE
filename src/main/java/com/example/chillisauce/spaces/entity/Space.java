@@ -55,9 +55,8 @@ public class Space {
         this.mrs.add(mr);
         mr.linkSpace(this);
     }
-    public void updateSpaceName(String newSpaceName) {
-        this.spaceName = newSpaceName;
+
+    public void updateSpace(SpaceRequestDto spaceRequestDto) {
+        this.spaceName = spaceRequestDto.getSpaceName();
     }
-
-
 }

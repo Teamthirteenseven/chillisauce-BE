@@ -7,7 +7,7 @@ import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.MrRepository;
+import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
@@ -36,6 +36,7 @@ public class MrService {
     }
 
     //Mr 개별 수정
+    @Transactional
     public MrResponseDto updateMr(String companyName, Long mrId, MrRequestDto mrRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
@@ -46,6 +47,7 @@ public class MrService {
         return new MrResponseDto(mr);
     }
     //Mr 개별 삭제
+    @Transactional
     public MrResponseDto deleteMr(String companyName, Long mrId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
