@@ -33,8 +33,6 @@ public class SpaceResponseDto {
         }
     }
 
-
-
     public SpaceResponseDto(Long id, String spaceName) {
         this.spaceId = id;
         this.spaceName = spaceName;

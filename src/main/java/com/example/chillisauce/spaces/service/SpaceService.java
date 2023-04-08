@@ -3,13 +3,11 @@ package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.*;
-import com.example.chillisauce.spaces.entity.Box;
-import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.Floor;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.BoxRepository;
-import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.spaces.repository.FloorRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
@@ -22,22 +20,42 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class SpaceService {
     private final SpaceRepository spaceRepository;
     private final CompanyRepository companyRepository;
-    private final BoxRepository boxRepository;
-    private final MrRepository mrRepository;
+
+    private final FloorRepository floorRepository;
 
 
-    //공간 생성
+
+    //플로우 안에 공간 생성
+    @Transactional
+    public SpaceResponseDto createSpaceinfloor(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details, Long floorId) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
+        }
+        Floor floor = floorRepository.findById(floorId).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.FLOOR_NOT_FOUND)
+        );
+        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+        );
+        Space space = spaceRepository.save(new Space(spaceRequestDto, companies, floor));
+        floor.getSpaces().add(space);
+        return new SpaceResponseDto(space);
+    }
+
+    //공간생성
     @Transactional
     public SpaceResponseDto createSpace(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
+
         Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
@@ -70,6 +88,8 @@ public class SpaceService {
 
         return spaceResponseDto;
     }
+
+
     //공간 전체 수정
 //    @Transactional
 //    public SpaceResponseDto updateSpace(String companyName, Long spaceId, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
@@ -107,7 +127,7 @@ public class SpaceService {
 //
 //        return new SpaceResponseDto(spaceRepository.save(space));
 //    }
-    //개별수정
+    //공간 개별 수정
     @Transactional
     public SpaceResponseDto updateSpace(String companyName, Long spaceId, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
