@@ -1,4 +1,4 @@
-package com.example.chillisauce.spaces;
+package com.example.chillisauce.spaces.repository;
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.users.entity.Companies;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,8 +1,8 @@
 package com.example.chillisauce.reservations.repository;
 
 import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.spaces.MrRepository;
-import com.example.chillisauce.spaces.SpaceRepository;
+import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.users.entity.Companies;
