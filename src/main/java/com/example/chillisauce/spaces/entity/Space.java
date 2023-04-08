@@ -41,10 +41,23 @@ public class Space {
     @JoinColumn(name = "companies_id", nullable = false)
     private Companies companies;
 
+    @ManyToOne
+    @JoinColumn(name = "floor_id")
+    private Floor floor;
+
+
+
+    public Space(SpaceRequestDto spaceRequestDto, Companies companies, Floor floor) {
+        this.spaceName = spaceRequestDto.getSpaceName();
+        this.companies = companies;
+        this.floor = floor;
+    }
+
     public Space(SpaceRequestDto spaceRequestDto, Companies companies) {
         this.spaceName = spaceRequestDto.getSpaceName();
         this.companies = companies;
     }
+
 
     public void addBox(Box box) {
         this.boxes.add(box);
@@ -55,6 +68,7 @@ public class Space {
         this.mrs.add(mr);
         mr.linkSpace(this);
     }
+
 
     public void updateSpace(SpaceRequestDto spaceRequestDto) {
         this.spaceName = spaceRequestDto.getSpaceName();
