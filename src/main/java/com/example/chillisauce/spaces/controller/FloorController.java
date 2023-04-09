@@ -19,7 +19,7 @@ public class FloorController {
     public ResponseEntity<ResponseMessage> createFloor
             (@PathVariable("companyName") String companyName, @RequestBody FloorRequestDto floorRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
         floorService.createFloor(companyName, floorRequestDto, details);
-        return ResponseMessage.responseSuccess("층 생성 성공","");
+        return ResponseMessage.responseSuccess("Floor 생성 성공","");
     }
 
     @GetMapping("/{companyName}/{floorId}")
