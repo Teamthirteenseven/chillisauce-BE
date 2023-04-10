@@ -19,6 +19,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailServiceImpl emailServiceImpl;
 
     //관리자 회원가입
     @Transactional
@@ -33,12 +34,19 @@ public class UserService {
             throw new UserException(UserErrorCode.DUPLICATE_COMPANY);
         }
         //인증번호 중복확인(이메일인증 완료되면 에러코드와 같이 삭제할 것.)
-        found = companyRepository.findByCertification(companyRequestDto.getCertification()).isPresent();
-        if (found) {
-            throw new UserException(UserErrorCode.DUPLICATE_CERTIFICATION);
-        }
+//        found = companyRepository.findByCertification(companyRequestDto.getCertification()).isPresent();
+//        if (found) {
+//            throw new UserException(UserErrorCode.DUPLICATE_CERTIFICATION);
+//        }
+
+        //메일인증을 통해 발급받은 certification
+//        String certification = emailServiceImpl.sendSimpleMessage(adminSignupRequestDto.getEmail()).substring(16);
 
         //회사 등록(회사이름, 회사 인증번호)
+//        Companies createCompany = Companies.builder()
+//                .companyName(companyRequestDto.getCompanyName())
+//                .certification(certification)
+//                .build();
         Companies company = companyRepository.save(new Companies(companyRequestDto));
 
         //비밀번호 중복확인
@@ -62,7 +70,7 @@ public class UserService {
         String password = checkPasswordMatch(userSignupRequestDto.getPassword(), userSignupRequestDto.getPasswordCheck());
         //일반 사원 권한 부여
         UserRoleEnum role = UserRoleEnum.USER;
-        //회사 인증번호와 입력한 인증번호 매치 여부 확인 버튼이 만들어지면 없앨 예정
+
         Companies company = companyRepository.findByCertification(userSignupRequestDto.getCertification()).orElseThrow(
                 () -> new UserException(UserErrorCode.INVALID_CERTIFICATION));
 
@@ -74,8 +82,8 @@ public class UserService {
     //인증번호 일치여부 확인
     @Transactional
     public String checkCertification(String certification) {
-        //사원이 입력한 인증번호로 해당 회사를 찾기
-        Companies company = companyRepository.findByCertification(certification).orElseThrow(
+        //사원이 입력한 인증번호로 해당 회사를 찾기 (일반 사원만 해당되는 것이라 구분을 어떻게 해야할지)
+        companyRepository.findByCertification(certification).orElseThrow(
                 () -> new UserException(UserErrorCode.INVALID_CERTIFICATION));
 
         return "인증번호가 확인 되었습니다.";

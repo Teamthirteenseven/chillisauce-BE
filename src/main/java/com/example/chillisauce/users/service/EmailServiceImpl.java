@@ -1,7 +1,10 @@
 package com.example.chillisauce.users.service;
 
+import com.example.chillisauce.users.exception.UserErrorCode;
+import com.example.chillisauce.users.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -16,21 +19,21 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService{
     private final JavaMailSender emailSender;
-    public static final String certificationKey = createKey();
+    public static final String certification = createKey();
 
-    private MimeMessage createMessage(String to) throws Exception {
+    private MimeMessage createMessage(String to, String certificationKey) throws Exception {
         log.info("보내는대상={}", to);
         log.info("인증번호={}", certificationKey);
-//        System.out.println("보내는 대상: " + to);
-//        System.out.println("인증번호: " + certificationKey);
+        log.info("인증번호22={}", certification);
+
         MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
-        message.setSubject("bist 인증코드 발송");//제목
+        message.setSubject("pixeldesk 인증코드 발송");//제목
 
         String msgg = "";
         msgg+= "<div style='margin:20px;'>";
-        msgg+= "<h1> 안녕하세요 bist 입니다. </h1>";
+        msgg+= "<h1> 안녕하세요 pixeldesk 입니다. </h1>";
         msgg+= "<br>";
         msgg+= "<p>아래 코드를 복사해 입력해주세요<p>";
         msgg+= "<br>";
@@ -43,13 +46,13 @@ public class EmailServiceImpl implements EmailService{
         msgg+= certificationKey+"</strong><div><br/> ";
         msgg+= "</div>";
         message.setText(msgg, "utf-8", "html");//내용
-        message.setFrom(new InternetAddress("bist@bist.com","bist"));//보내는 사람
+        message.setFrom(new InternetAddress("limsanggyu91@gmail.com","pixeldesk"));//보내는 사람
 
         return message;
     }
 
     public static String createKey() {
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         Random rnd = new Random();
 
         for (int i = 0; i < 8; i++) { // 인증코드 8자리
@@ -74,13 +77,14 @@ public class EmailServiceImpl implements EmailService{
     }
     @Override
     public String sendSimpleMessage(String to)throws Exception {
-        MimeMessage message = createMessage(to);
+        String certificationKey = createKey();
+        MimeMessage message = createMessage(to, certificationKey);
         try {//예외처리
             emailSender.send(message);
         } catch (MailException es) {
             es.printStackTrace();
-            throw new IllegalArgumentException();
+            throw new UserException(UserErrorCode.NOT_PROPER_EMAIL);
         }
-        return "인증번호: " + certificationKey;
+        return  "certification : " + certificationKey;
     }
 }

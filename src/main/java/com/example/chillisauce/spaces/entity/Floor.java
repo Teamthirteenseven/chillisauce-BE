@@ -37,11 +37,6 @@ public class Floor {
         this.companies = companies;
     }
 
-//    public void addSpace(Space space) {
-//        this.spaces.add(space);
-//        space.linkFloor(this);
-//    }
-
     public void updateFloor(FloorRequestDto floorRequestDto) {
         this.floorName = floorRequestDto.getFloorName();
     }
