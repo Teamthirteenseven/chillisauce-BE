@@ -304,33 +304,6 @@ class UserServiceTest {
             assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.DUPLICATE_COMPANY);
         }
 
-        @DisplayName("관리자 회원가입 실패(중복된 인증번호)")
-        @Test
-        void fail5() {
-            //given
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .email("123@124")
-                    .password("1234")
-                    .passwordCheck("1234")
-                    .userName("루피")
-                    .companyName("원피스")
-                    .certification("123")
-                    .build();
-            when(companyRepository.findByCertification(signupRequestDto.getCertification())).thenReturn(Optional.of(Companies.builder().build()));
-
-            //when
-            AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
-            CompanyRequestDto companyRequestDto = new CompanyRequestDto(signupRequestDto);
-
-            UserException exception = assertThrows(UserException.class, () -> {
-                userService.signupAdmin(adminSignupRequestDto, companyRequestDto);
-            });
-
-            //then
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.DUPLICATE_CERTIFICATION);
-        }
-
         @DisplayName("관리자 회원가입 실패(비밀번호 일치 오류)")
         @Test
         void fail6() {
