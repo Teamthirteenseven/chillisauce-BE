@@ -9,14 +9,17 @@ import com.example.chillisauce.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.HashMap;
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -31,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/users/signup/admin")
-    public ResponseEntity<ResponseMessage> signupAdmin(@RequestBody SignupRequestDto request) {
+    public ResponseEntity<ResponseMessage> signupAdmin(@Valid @RequestBody SignupRequestDto request) {
         /**
          * 파라미터로 dto를 2개 사용이 안되기 때문에 트리구조를 빗대어 dto를 설계.
          * 현재 SignupRequest라는 dto에서 필요한 모든 값을 입력 받고,

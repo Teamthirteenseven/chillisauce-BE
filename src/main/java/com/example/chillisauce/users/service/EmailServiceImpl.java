@@ -81,6 +81,6 @@ public class EmailServiceImpl implements EmailService{
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
-        return "인증번호: " + certificationKey;
+        return "certification: " + certificationKey;
     }
 }
