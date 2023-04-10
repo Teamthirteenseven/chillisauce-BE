@@ -55,7 +55,6 @@ class BoxServiceTest {
 
     private static BoxService boxService;
     private SpaceService spaceService;
-
     private Companies companies;
     private User user;
     private UserDetailsImpl details;
@@ -72,37 +71,22 @@ class BoxServiceTest {
         spaceService = Mockito.mock(SpaceService.class);
         boxService = new BoxService(boxRepository, companyRepository, spaceService, userRepository);
 
-        companies = Companies.builder()
-                .companyName("호랑이")
-                .certification("CERTIFIED")
-                .build();
+        companies = Companies.builder().build();
         Mockito.lenient().when(companyRepository.findByCompanyName(Mockito.anyString())).thenReturn(Optional.of(companies));
 
         user = User.builder()
-                .id(0L)
-                .email("tiger@tiger")
-                .username("")
-                .password("test")
                 .role(UserRoleEnum.ADMIN)
-                .companies(companies)
                 .build();
         Mockito.lenient().when(userRepository.save(Mockito.any(User.class))).thenReturn(new User());
 
         details = new UserDetailsImpl(user, null);
 
-        space = Space.builder()
-                .id(1L)
-                .spaceName("박스 생성 테스트")
-                .companies(companies)
-                .build();
+        space = Space.builder().build();
+
         Mockito.lenient().when(spaceRepository.save(Mockito.any(Space.class))).thenReturn(new Space());
 
 
         box = Box.builder()
-                .boxName("이민재자리")
-                .x("777")
-                .y("777")
-                .space(space)
                 .build();
         Mockito.lenient().when(boxRepository.save(Mockito.any(Box.class))).thenReturn(box);
     }
@@ -308,31 +292,15 @@ class BoxServiceTest {
         @MethodSource("provideTriConsumer")
         void Commontest_NotHavePermission(TriConsumer<Long, BoxRequestDto, UserDetailsImpl> operation) {
             // given
-            Companies companies = Companies.builder()
-                    .companyName("쥐")
-                    .certification("A")
-                    .build();
+            Companies companies = Companies.builder().build();
             Mockito.lenient().when(companyRepository.findByCompanyName(Mockito.anyString())).thenReturn(Optional.of(companies));
 
             User user = User.builder()
-                    .id(0L)
-                    .email("mouse@mouse")
-                    .username("")
-                    .password("test")
                     .role(UserRoleEnum.USER)
-                    .companies(companies)
                     .build();
             Mockito.lenient().when(userRepository.save(Mockito.any(User.class))).thenReturn(new User());
-
             UserDetailsImpl details = new UserDetailsImpl(user, null);
-
-            Space space = Space.builder()
-                    .id(1L)
-                    .spaceName("박스 생성 권한 없음 테스트")
-                    .companies(companies)
-                    .build();
             Mockito.lenient().when(spaceRepository.save(Mockito.any(Space.class))).thenReturn(new Space());
-
             BoxRequestDto boxRequestDto = new BoxRequestDto("이민재자리", "777", "777");
 
             // when, then

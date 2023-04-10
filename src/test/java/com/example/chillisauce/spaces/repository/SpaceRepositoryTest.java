@@ -64,7 +64,6 @@ class SpaceRepositoryTest {
                 // given
                 final Space space = Space.builder()
                         .spaceName(null)
-
                         .build();
                 //when
                 assertThrows(ConstraintViolationException.class,

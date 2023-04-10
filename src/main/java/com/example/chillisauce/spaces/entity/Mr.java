@@ -7,6 +7,7 @@ import lombok.*;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Getter
@@ -19,10 +20,14 @@ public class Mr {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @NotEmpty
     private String mrName;
-
+    @Column(nullable = false)
+    @NotEmpty
     private String x;
-
+    @Column(nullable = false)
+    @NotEmpty
     private String y;
 
     private String username;

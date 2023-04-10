@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class FloorService {
@@ -50,6 +52,42 @@ public class FloorService {
         return floorResponseDto;
     }
 
+    //Floor 전체 조회
+    @Transactional
+    public List<FloorResponseDto> getFloor (String companyName, UserDetailsImpl details) {
+        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
+        }
+        List<Floor> floorList = floorRepository.findAll();
+        List<FloorResponseDto> floorResponseDto = new ArrayList<>();
+        for (Floor floors : floorList){
+            floorResponseDto.add(new FloorResponseDto(floors.getId(), floors.getFloorName()));
+        }
+        return floorResponseDto;
+    }
+    //floor 수정
+    @Transactional
+    public FloorResponseDto updateFloor (String companyName, Long floorId, FloorRequestDto floorRequestDto, UserDetailsImpl details){
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
+        }
+        Floor floor = findCompanyNameAndSpaceId(companyName, floorId);
+        floor.updateFloor(floorRequestDto);
+        floorRepository.save(floor);
+        return new FloorResponseDto(floor);
+    }
+
+    //floor 삭제
+    @Transactional
+    public FloorResponseDto deleteFloor (String companyName, Long floorId, UserDetailsImpl details) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
+        }
+        Floor floor = findCompanyNameAndSpaceId(companyName, floorId);
+        floorRepository.deleteById(floorId);
+        return new FloorResponseDto(floor);
+    }
+
     public Floor findCompanyNameAndSpaceId(String companyName, Long floorId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
@@ -58,4 +96,5 @@ public class FloorService {
                 () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
         );
     }
+
 }
