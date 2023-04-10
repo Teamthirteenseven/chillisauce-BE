@@ -74,7 +74,7 @@ public class UserService {
     //인증번호 일치여부 확인
     @Transactional
     public String checkCertification(String certification) {
-        //사원이 입력한 인증번호로 해당 회사를 찾기
+        //사원이 입력한 인증번호로 해당 회사를 찾기 (일반 사원만 해당되는 것이라 구분을 어떻게 해야할지)
         Companies company = companyRepository.findByCertification(certification).orElseThrow(
                 () -> new UserException(UserErrorCode.INVALID_CERTIFICATION));
 
