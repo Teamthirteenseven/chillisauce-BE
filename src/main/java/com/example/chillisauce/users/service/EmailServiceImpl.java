@@ -19,10 +19,12 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService{
     private final JavaMailSender emailSender;
+    public static final String certification = createKey();
 
     private MimeMessage createMessage(String to, String certificationKey) throws Exception {
         log.info("보내는대상={}", to);
         log.info("인증번호={}", certificationKey);
+        log.info("인증번호22={}", certification);
 
         MimeMessage message = emailSender.createMimeMessage();
 
@@ -83,6 +85,6 @@ public class EmailServiceImpl implements EmailService{
             es.printStackTrace();
             throw new UserException(UserErrorCode.NOT_PROPER_EMAIL);
         }
-        return "certification: " + certificationKey;
+        return  "certification : " + certificationKey;
     }
 }
