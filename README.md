@@ -29,7 +29,7 @@
 - refactor : 기능의 변화가 아닌 코드 리팩터링  
   ex) git commit -m "refactor : 변수 이름 변경"
 
-- test : 테스트 코드 추가/수정  
+- test : 테스트 코드 추가/수정
 
 - release : 버전 릴리즈  
 
