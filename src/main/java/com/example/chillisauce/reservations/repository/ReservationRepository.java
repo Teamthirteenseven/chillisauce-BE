@@ -32,6 +32,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("select r from Reservation r join fetch r.user where r.user.id =:userId")
     List<Reservation> findAllByUserId(@Param("userId") Long userId);
 
+    @Query("select r from Reservation r join fetch r.user join fetch r.meetingRoom")
+    List<Reservation> findAll();
+
     @Query("select r from Reservation r " +
             "where r.meetingRoom.id = :mrId and r.id != :reservationId " +
             "and r.startTime < :endTime and r.endTime > :startTime")

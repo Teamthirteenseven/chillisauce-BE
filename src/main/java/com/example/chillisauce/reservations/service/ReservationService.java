@@ -1,9 +1,6 @@
 package com.example.chillisauce.reservations.service;
 
-import com.example.chillisauce.reservations.dto.ReservationRequestDto;
-import com.example.chillisauce.reservations.dto.ReservationResponseDto;
-import com.example.chillisauce.reservations.dto.ReservationTimeResponseDto;
-import com.example.chillisauce.reservations.dto.ReservationTimetableResponseDto;
+import com.example.chillisauce.reservations.dto.*;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
@@ -12,7 +9,9 @@ import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
+import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +32,7 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final MrRepository meetingRoomRepository;
+    private final CompanyRepository companyRepository;
     // 예약 가능 첫 시각 : 오전 7시, 마지막 시각 : 22시
     private static final Integer OPEN_HOUR = 7;
     private static final Integer CLOSE_HOUR = 22;
@@ -48,6 +48,18 @@ public class ReservationService {
             LocalTime end = LocalTime.of(x, 59);
             timeSet.add(new TimeUnit(start, end));
         });
+    }
+
+    /**
+     * 회사 전체 예약 조회
+     */
+    public ReservationListResponseDto getAllReservations(String companyName, UserDetailsImpl userDetails) {
+        Companies companies = companyRepository.findByCompanyName(companyName)
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.COMPANY_NOT_FOUND));
+
+        List<Reservation> all = reservationRepository.findAll();
+
+        return new ReservationListResponseDto(all.stream().map(ReservationDetailResponseDto::new).toList());
     }
 
     /**

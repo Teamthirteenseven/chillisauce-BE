@@ -27,6 +27,21 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     /**
+     * 전체 예약 조회
+     */
+    @Operation(summary = "전체 예약 조회",
+            description = "특정 회의실의 특정 날짜 예약 내역을 타임단위로 조회합니다.")
+    @GetMapping("/{companyName}/reservations/all")
+    public ResponseEntity<ResponseMessage> getAllReservations(
+            @Parameter(description = "회사 이름", required = true, example = "testCompany")
+            @PathVariable String companyName,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseMessage
+                .responseSuccess("전체 예약 조회 성공", reservationService.getAllReservations(companyName, userDetails));
+    }
+
+    /**
      * 1개 회의실의 해당 날짜의 예약 타임 테이블 조회
      * 쿼리파라미터가 없으면 오늘 날짜의 예약 타임 테이블 조회
      */
