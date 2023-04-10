@@ -26,5 +26,9 @@ public class FloorResponseDto {
         }
     }
 
+    public FloorResponseDto(Long id, String floorName) {
+        this.floorId = id;
+        this.floorName = floorName;
+    }
 }
 
