@@ -1,6 +1,7 @@
 package com.example.chillisauce.reservations.dto;
 
 import com.example.chillisauce.reservations.entity.Reservation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "예약 요청 DTO")
 public class ReservationRequestDto {
     LocalDateTime start;
     LocalDateTime end;
