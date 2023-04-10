@@ -29,7 +29,7 @@ public class UserController {
 
 
     @PostMapping("/users/signup/email")
-    public String SendMail(@RequestBody EmailRequestDto request) throws Exception {
+    public String SendMail(@RequestBody SignupRequestDto request) throws Exception {
         return emailService.sendSimpleMessage(request.getEmail());
     }
 
