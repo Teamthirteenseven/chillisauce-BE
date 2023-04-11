@@ -22,7 +22,7 @@ public class FloorController {
         return ResponseMessage.responseSuccess("Floor 생성 성공","");
     }
     //floor 선택조회
-    @GetMapping("/{companyName}/{floorId}")
+    @GetMapping("/floor/{companyName}/{floorId}")
     public ResponseEntity<ResponseMessage> getFloorlist
             (@PathVariable("companyName") String companyName, @PathVariable("floorId") Long floorId, @AuthenticationPrincipal UserDetailsImpl details) {
 
@@ -35,7 +35,7 @@ public class FloorController {
         return ResponseMessage.responseSuccess("Floor 조회 성공",floorService.getFloor(companyName,details));
     }
     //floor 수정
-    @PatchMapping("/{companyName}/{floorId}")
+    @PatchMapping("/floor/{companyName}/{floorId}")
     public ResponseEntity<ResponseMessage> updateFloor
             (@PathVariable("companyName") String companyName, @PathVariable("floorId") Long floorId, @RequestBody FloorRequestDto floorRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         floorService.updateFloor(companyName,floorId,floorRequestDto,details);
@@ -43,7 +43,7 @@ public class FloorController {
     }
 
     //floor 삭제
-    @DeleteMapping("/{companyName}/{floorId}")
+    @DeleteMapping("/floor/{companyName}/{floorId}")
     public ResponseEntity<ResponseMessage> deleteFloor
             (@PathVariable("companyName") String companyName, @PathVariable("floorId") Long floorId, @AuthenticationPrincipal UserDetailsImpl details){
         floorService.deleteFloor(companyName,floorId,details);
