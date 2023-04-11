@@ -129,7 +129,7 @@ public class BoxService {
     }
 
     //companyName find , BoxId 두개 합쳐놓은 메서드
-    private Box findCompanyNameAndBoxId(String companyName, Long boxId) {
+    public Box findCompanyNameAndBoxId(String companyName, Long boxId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
