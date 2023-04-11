@@ -1,6 +1,7 @@
 package com.example.chillisauce.reservations.dto;
 
 import com.example.chillisauce.reservations.entity.Reservation;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,9 @@ public class ReservationDetailResponseDto {
     Long reservationId;
     Long mrId;
     String username;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime start;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime end;
 //    List<String> userList;
 
