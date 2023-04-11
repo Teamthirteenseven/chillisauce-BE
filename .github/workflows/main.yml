@@ -37,8 +37,8 @@ jobs:
       - run: touch ./src/main/resources/application.properties
       - run: touch ./src/test/resources/application.properties
       - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-      - run: head -1 "${{ secrets.APPLICATION_TEST }}"
       - run: echo "${{ secrets.APPLICATION_TEST }}" > ./src/test/resources/application.properties
+      - run: head -1 ./src/test/resources/application.properties
       #    - uses: actions/upload-artifact@v3
       #      with:
       #        name: application.properties
