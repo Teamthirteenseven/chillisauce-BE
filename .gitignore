@@ -30,7 +30,7 @@ out/
 **/resources/application.yml
 **/resources/application-common.yml
 **/resources/application-db.yml
-
+**/resources/application-test.properties
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
