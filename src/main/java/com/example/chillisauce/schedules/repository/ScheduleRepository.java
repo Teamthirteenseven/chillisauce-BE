@@ -11,5 +11,6 @@ import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedules, Long> {
 
-    List<Schedules> findAllByStartTime(@Param("startTime") LocalDateTime selDate);
+    @Query("select s from Schedules s where s.startTime >= :startTime and s.startTime <= :endTime")
+    List<Schedules> findAllByStartTime(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 }
