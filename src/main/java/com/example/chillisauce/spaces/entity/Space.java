@@ -37,6 +37,9 @@ public class Space {
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Mr> mrs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<MultiBox> multiboxes = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "companies_id", nullable = false)
     private Companies companies;
@@ -67,6 +70,11 @@ public class Space {
     public void addMr(Mr mr) {
         this.mrs.add(mr);
         mr.linkSpace(this);
+    }
+
+    public void addMultiBox(MultiBox multiBox) {
+        this.getMultiboxes().add(multiBox);
+        multiBox.linkSpace(this);
     }
 
 

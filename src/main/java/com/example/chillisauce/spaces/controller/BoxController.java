@@ -51,7 +51,7 @@ public class BoxController {
 
     @PatchMapping("/box/{companyName}/{fromBoxId}/move/{toBoxId}/user")
     public ResponseEntity<ResponseMessage> moveBoxWithUser(@PathVariable String companyName, @PathVariable Long fromBoxId, @PathVariable Long toBoxId, @RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
-        BoxResponseDto response = boxService.moveBoxWithUser(companyName, fromBoxId, toBoxId, boxRequestDto, details);
-        return ResponseMessage.responseSuccess("사용자 등록 및 이동 완료", response);
+        boxService.moveBoxWithUser(companyName, fromBoxId, toBoxId, boxRequestDto, details);
+        return ResponseMessage.responseSuccess("사용자 등록 및 이동 완료", "");
     }
 }
