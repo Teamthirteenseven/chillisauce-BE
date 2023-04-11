@@ -1,0 +1,19 @@
+= flexidesk API 문서
+flexidesk API 명세서입니다
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Reservation-API]]
+== 예약 API
+
+[[POST-Reservation]]
+=== 예약 등록
+operation::post-reservation[]
+
+[[GET-All-Reservations]]
+=== 전체 예약 조회
+operation::get-all-reservations[]

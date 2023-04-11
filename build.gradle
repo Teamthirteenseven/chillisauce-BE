@@ -60,7 +60,7 @@ dependencies {
     // swagger openapi
     implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.11'
 
-    // spring rest doc
+    // spring rest docs
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.7.RELEASE'
 
@@ -71,6 +71,7 @@ ext {
 }
 
 test {
+    useJUnitPlatform()
     jacoco {
         destinationFile = file("$buildDir/jacoco/jacoco.exec")
     }
@@ -78,20 +79,21 @@ test {
 }
 
 asciidoctor {
-    inputs.dir  snippetsDir
-    configurations 'asciidoctorExt'
     dependsOn test
+    configurations 'asciidoctorExt'
+    inputs.dir snippetsDir
+
+    baseDirFollowsSourceFile()
 }
 
-bootJar {
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+tasks.register('copyDocument', Copy) {
     dependsOn asciidoctor
-    from ("${asciidoctor.outputDir}/html5") {
-        into 'static/docs'
-    }
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
 }
 
 jacoco {
@@ -104,4 +106,8 @@ jacocoTestReport {
         xml.enabled true
         csv.enabled true
     }
+}
+
+build {
+    dependsOn copyDocument
 }
