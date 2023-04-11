@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -22,7 +23,7 @@ public class ScheduleService {
     public ScheduleListResponseDto getSchedules(LocalDate selDate, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
-        List<Schedules> schedules = scheduleRepository.findAllByStartTime(selDate.atStartOfDay());
+        List<Schedules> schedules = scheduleRepository.findAllByStartTime(selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
         List<ScheduleResponseDto> dtoList = schedules.stream().map(ScheduleResponseDto::new).toList();
 
