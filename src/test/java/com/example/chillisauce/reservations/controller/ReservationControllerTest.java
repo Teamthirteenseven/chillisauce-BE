@@ -147,6 +147,12 @@ class ReservationControllerTest {
                             )
                     ));
         }
+
+        @Test
+        @WithMockUser
+        void 예약수정성공() {
+
+        }
     }
 
     @Nested
