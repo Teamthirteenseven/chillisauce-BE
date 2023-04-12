@@ -178,7 +178,7 @@ public class BoxControllerTest {
             Long toBoxId = 2L;
             String url = "/boxes/" + companyName + "/" + formBoxId + "/move/" + toBoxId + "/user";
             BoxRequestDto boxRequestDto = new BoxRequestDto("Box 수정 테스트", "200", "300");
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 테스트", null, "200", "300");
+            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 OK???", null, "200", "300");
             when(boxService.moveBoxWithUser(eq(companyName), eq(formBoxId), eq(toBoxId), any(), any())).thenReturn(boxResponseDto);
 
             //when

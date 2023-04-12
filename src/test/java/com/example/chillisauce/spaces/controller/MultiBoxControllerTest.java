@@ -110,7 +110,7 @@ public class MultiBoxControllerTest {
             Long multiboxId = 1L;
             String url = "/multibox/" + companyName + "/" + multiboxId;
             MultiBoxRequestDto multiBoxRequestDto = new MultiBoxRequestDto("MultiBox 생성 테스트", "555", "444");
-            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", null, "200", "300");
+            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 수정 OK???", null, "200", "300");
             when(multiBoxService.updateMultiBox(eq(companyName), eq(multiboxId), any(), any())).thenReturn(multiBoxResponseDto);
 
             //when

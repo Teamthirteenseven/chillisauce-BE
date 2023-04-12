@@ -150,7 +150,7 @@ public class FloorControllerTest {
             List<FloorResponseDto> responseDtoList = new ArrayList<>();
             responseDtoList.add(new FloorResponseDto(1L, "Floor 생성 테스트"));
 
-            FloorRequestDto floorRequestDto = new FloorRequestDto("Floor 생성 테스트");
+            FloorRequestDto floorRequestDto = new FloorRequestDto("Floor 수정 테스트");
             when(floorService.getFloor(eq(companyName), any())).thenReturn(responseDtoList);
 
             //when

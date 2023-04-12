@@ -214,7 +214,7 @@ public class SpaceControllerTest {
             Long spaceId = 1L;
             String url = "/spaces/" + companyName + "/" + spaceId;
             SpaceRequestDto spaceRequestDto = new SpaceRequestDto("Test 공간");
-            SpaceResponseDto spaceResponseDto = new SpaceResponseDto(1L, "Test 공간");
+            SpaceResponseDto spaceResponseDto = new SpaceResponseDto(1L, "수정 성공했나요?");
             when(spaceService.updateSpace(eq(companyName), eq(spaceId), any(), any())).thenReturn(spaceResponseDto);
 
             //when
@@ -226,7 +226,7 @@ public class SpaceControllerTest {
 
             //then
             result.andExpect(status().isOk())
-                    .andDo(document("post-updateSpace",
+                    .andDo(document("patch-updateSpace",
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(

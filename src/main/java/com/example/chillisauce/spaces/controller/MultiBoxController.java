@@ -15,28 +15,28 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MultiBoxController {
     private final MultiBoxService multiBoxService;
-
+    //MultiBox 생성
     @PostMapping("/multibox/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> createMultiBox
             (@PathVariable("companyName")String companyName , @PathVariable("spaceId") Long spaceId, @RequestBody MultiBoxRequestDto multiBoxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         multiBoxService.createMultiBox(companyName,spaceId, multiBoxRequestDto, details);
         return ResponseMessage.responseSuccess("MultiBox 생성 성공","");
     }
-
+    //MultiBox 수정
     @PatchMapping("/multibox/{companyName}/{multiBoxId}")
     public ResponseEntity<ResponseMessage> updateMultiBox
             (@PathVariable("companyName") String companyName,@PathVariable("multiBoxId") Long multiBoxId, @RequestBody MultiBoxRequestDto multiBoxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         multiBoxService.updateMultiBox(companyName, multiBoxId, multiBoxRequestDto, details);
         return ResponseMessage.responseSuccess("MultiBox 수정 성공","");
     }
-
+    //MultiBox 삭제
     @DeleteMapping("/multibox/{companyName}/{multiBoxId}")
     public ResponseEntity<ResponseMessage> deleteBox
             (@PathVariable("companyName") String companyName, @PathVariable("multiBoxId") Long multiBoxId, @AuthenticationPrincipal UserDetailsImpl details){
         multiBoxService.deleteMultiBox(companyName, multiBoxId,details);
         return ResponseMessage.responseSuccess("MultiBox 삭제 완료","");
     }
-
+    //MultiBox 이동
     @PatchMapping("/multibox/{companyName}/{fromMultiBoxId}/move/{toMultiBoxId}/user")
     public ResponseEntity<ResponseMessage> moveMultiBoxWithUser(@PathVariable String companyName, @PathVariable Long fromMultiBoxId, @PathVariable Long toMultiBoxId, @RequestBody MultiBoxRequestDto multiBoxRequestDto, @AuthenticationPrincipal UserDetailsImpl details,@PathVariable Long fromBoxId) {
         multiBoxService.moveMultiBoxWithUser(companyName, fromMultiBoxId, toMultiBoxId, multiBoxRequestDto, details, fromBoxId);
