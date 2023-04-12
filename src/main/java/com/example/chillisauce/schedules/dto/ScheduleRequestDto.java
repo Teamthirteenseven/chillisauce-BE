@@ -18,3 +18,4 @@ public class ScheduleRequestDto {
     String scComment;
 
 }
+

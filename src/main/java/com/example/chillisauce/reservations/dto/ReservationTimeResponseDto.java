@@ -1,12 +1,12 @@
 package com.example.chillisauce.reservations.dto;
 
-import com.example.chillisauce.reservations.entity.Reservation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
 
@@ -15,6 +15,7 @@ import java.time.LocalTime;
  */
 @Slf4j
 @Getter
+@NoArgsConstructor
 @Schema(description = "예약 타임테이블 시각 단위 응답 DTO")
 public class ReservationTimeResponseDto {
     @Schema(description = "해당 시각 예약 여부")
@@ -28,6 +29,7 @@ public class ReservationTimeResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     LocalTime end;
 
+    @Builder
     public ReservationTimeResponseDto(Boolean isCheckOut, LocalTime start, LocalTime end) {
         this.isCheckOut = isCheckOut;
         this.start = LocalTime.of(start.getHour(), start.getMinute());

@@ -31,7 +31,7 @@ public class ReservationController {
      */
     @Operation(summary = "전체 예약 조회",
             description = "특정 회의실의 특정 날짜 예약 내역을 타임단위로 조회합니다.")
-    @GetMapping("/{companyName}/reservations/all")
+    @GetMapping("/reservations/{companyName}/all")
     public ResponseEntity<ResponseMessage> getAllReservations(
             @Parameter(description = "회사 이름", required = true, example = "testCompany")
             @PathVariable String companyName,

@@ -181,7 +181,7 @@ public class ReservationService {
 
         reservation.update(requestDto);
 
-        return null;
+        return new ReservationResponseDto(reservation);
     }
 
     @Transactional
@@ -194,7 +194,7 @@ public class ReservationService {
             throw new ReservationException(ReservationErrorCode.INVALID_USER_RESERVATION_UPDATE);
         }
 
-        reservationRepository.deleteById(reservationId);
+        reservationRepository.deleteById(reservation.getId());
 
         return "";
     }

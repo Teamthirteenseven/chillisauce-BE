@@ -14,6 +14,22 @@ flexidesk API 명세서입니다
 === 예약 등록
 operation::post-reservation[]
 
+
 [[GET-All-Reservations]]
 === 전체 예약 조회
 operation::get-all-reservations[]
+
+
+[[GET-Reservation-Timetable]]
+=== 회의실 당일 예약 타임테이블 조회
+operation::get-all-reservations[]
+
+
+[[PATCH-Reservation]]
+=== 예약 수정
+operation::patch-reservation[]
+
+
+[[DELETE-Reservation]]
+=== 예약 삭제
+operation::delete-reservation[]
