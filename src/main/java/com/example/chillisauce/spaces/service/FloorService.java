@@ -61,7 +61,7 @@ public class FloorService {
         List<Floor> floorList = floorRepository.findAll();
         List<FloorResponseDto> floorResponseDto = new ArrayList<>();
         for (Floor floors : floorList){
-            floorResponseDto.add(new FloorResponseDto(floors.getId(), floors.getFloorName()));
+            floorResponseDto.add(new FloorResponseDto(floors));
         }
         return floorResponseDto;
     }
