@@ -11,6 +11,8 @@ import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,119 +45,127 @@ class ReservationServiceTest {
     @InjectMocks
     ReservationService reservationService;
 
-    @Test
-    void 예약등록성공() {
-        // given
-        Long meetingRoomId = 1L;
-        LocalDate startDate = LocalDate.of(2023, 4, 8);
-        LocalTime startTime = LocalTime.of(12, 0);
-        LocalDate endDate = LocalDate.of(2023, 4, 8);
-        LocalTime endTime = LocalTime.of(13, 0);
-        LocalDateTime start = LocalDateTime.of(startDate, startTime);
-        LocalDateTime end = LocalDateTime.of(endDate, endTime);
-        ReservationRequestDto requestDto = new ReservationRequestDto(start, end);
-        User user = User.builder()
-                .id(1L)
-                .email("test@email.com")
-                .username("tester")
-                .password("12345678")
-                .role(UserRoleEnum.USER)
-                .build();
+    @Nested
+    @DisplayName("예약 서비스 성공 케이스")
+    class ServiceSuccessCase {
+        @Test
+        void 예약등록성공() {
+            // given
+            Long meetingRoomId = 1L;
+            LocalDate startDate = LocalDate.of(2023, 4, 8);
+            LocalTime startTime = LocalTime.of(12, 0);
+            LocalDate endDate = LocalDate.of(2023, 4, 8);
+            LocalTime endTime = LocalTime.of(13, 0);
+            LocalDateTime start = LocalDateTime.of(startDate, startTime);
+            LocalDateTime end = LocalDateTime.of(endDate, endTime);
+            ReservationRequestDto requestDto = new ReservationRequestDto(start, end);
+            User user = User.builder()
+                    .id(1L)
+                    .email("test@email.com")
+                    .username("tester")
+                    .password("12345678")
+                    .role(UserRoleEnum.USER)
+                    .build();
 
-        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
+            UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
 
-        // when
-        when(meetingRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(new Mr()))
-                .thenThrow(ReservationException.class);
+            // when
+            when(meetingRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(new Mr()))
+                    .thenThrow(ReservationException.class);
 
-        ReservationResponseDto result = reservationService.addReservation(meetingRoomId, requestDto, userDetails);
+            ReservationResponseDto result = reservationService.addReservation(meetingRoomId, requestDto, userDetails);
 
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getStart()).isEqualTo(start);
-        assertThat(result.getEnd()).isEqualTo(LocalDateTime.of(startDate, startTime).plusMinutes(59));
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getStart()).isEqualTo(start);
+            assertThat(result.getEnd()).isEqualTo(LocalDateTime.of(startDate, startTime).plusMinutes(59));
+        }
     }
 
-    @Test
-    void 예약등록실패_중복되는_시간이_있으면_예외가_발생한다() {
-        // given
-        User user = User.builder()
-                .id(1L)
-                .email("test@email.com")
-                .username("tester")
-                .password("12345678")
-                .role(UserRoleEnum.USER)
-                .build();
+    @Nested
+    @DisplayName("예약 서비스 실패 케이스")
+    class ServiceFailCase {
+        @Test
+        void 예약등록실패_중복되는_시간이_있으면_예외가_발생한다() {
+            // given
+            User user = User.builder()
+                    .id(1L)
+                    .email("test@email.com")
+                    .username("tester")
+                    .password("12345678")
+                    .role(UserRoleEnum.USER)
+                    .build();
 
-        Mr meetingRoom = Mr.builder()
-                .id(1L)
-                .mrName("testMeetingRoom")
-                .x("100")
-                .y("100")
-                .username("tester")
-                .build();
+            Mr meetingRoom = Mr.builder()
+                    .id(1L)
+                    .mrName("testMeetingRoom")
+                    .x("100")
+                    .y("100")
+                    .username("tester")
+                    .build();
 
-        LocalDateTime firstStart = LocalDateTime.of(2023, 4, 8, 12, 0);
-        LocalDateTime firstEnd = LocalDateTime.of(2023, 4, 8, 15, 30);
-        LocalDateTime secondStart = LocalDateTime.of(2023, 4, 8, 12, 0);
-        LocalDateTime secondEnd = LocalDateTime.of(2023, 4, 8, 14, 30);
-        Reservation firstReservation = Reservation.builder()
-                .startTime(firstStart)
-                .endTime(firstEnd)
-                .build();
+            LocalDateTime firstStart = LocalDateTime.of(2023, 4, 8, 12, 0);
+            LocalDateTime firstEnd = LocalDateTime.of(2023, 4, 8, 15, 30);
+            LocalDateTime secondStart = LocalDateTime.of(2023, 4, 8, 12, 0);
+            LocalDateTime secondEnd = LocalDateTime.of(2023, 4, 8, 14, 30);
+            Reservation firstReservation = Reservation.builder()
+                    .startTime(firstStart)
+                    .endTime(firstEnd)
+                    .build();
 
-        ReservationRequestDto secondReservationDto = new ReservationRequestDto(secondStart, secondEnd);
-        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
+            ReservationRequestDto secondReservationDto = new ReservationRequestDto(secondStart, secondEnd);
+            UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
 
-        when(meetingRoomRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(meetingRoom)).thenThrow(ReservationException.class);
+            when(meetingRoomRepository.findById(any(Long.class)))
+                    .thenReturn(Optional.of(meetingRoom)).thenThrow(ReservationException.class);
 
-        doReturn(Optional.of(firstReservation)).when(reservationRepository)
-                .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
-                        meetingRoom.getId(), secondStart, secondStart.plusMinutes(59));
+            doReturn(Optional.of(firstReservation)).when(reservationRepository)
+                    .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                            meetingRoom.getId(), secondStart, secondStart.plusMinutes(59));
 
-        // when
-        final ReservationException exception =
-                assertThrows(ReservationException.class,
-                        () -> reservationService.addReservation(meetingRoom.getId(), secondReservationDto, userDetails));
+            // when
+            final ReservationException exception =
+                    assertThrows(ReservationException.class,
+                            () -> reservationService.addReservation(meetingRoom.getId(), secondReservationDto, userDetails));
 
-        // then
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(ReservationErrorCode.DUPLICATED_TIME);
-    }
+            // then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReservationErrorCode.DUPLICATED_TIME);
+        }
 
-    @Test
-    void 동시예약테스트() throws InterruptedException {
-        // given
-        Integer threadCount = 3;
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        @Test
+        void 예약등록_동시예약발생() throws InterruptedException {
+            // given
+            Integer threadCount = 3;
+            ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+            CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
-        List<ReservationResponseDto> resultList = new ArrayList<>();
-        Long meetingRoomId = 1L;
-        Mr meetingRoom = Mr.builder().build();
-        User user = User.builder().build();
-        UserDetailsImpl userDetails = new UserDetailsImpl(user, "test@email.com");
+            List<ReservationResponseDto> resultList = new ArrayList<>();
+            Long meetingRoomId = 1L;
+            Mr meetingRoom = Mr.builder().build();
+            User user = User.builder().build();
+            UserDetailsImpl userDetails = new UserDetailsImpl(user, "test@email.com");
 
-        LocalDateTime startTime = LocalDateTime.of(2023, 4, 8, 12, 0);
-        ReservationRequestDto start = new ReservationRequestDto(startTime, startTime.plusMinutes(59));
-        when(meetingRoomRepository.findById(meetingRoomId)).thenReturn(Optional.of(meetingRoom));
+            LocalDateTime startTime = LocalDateTime.of(2023, 4, 8, 12, 0);
+            ReservationRequestDto start = new ReservationRequestDto(startTime, startTime.plusMinutes(59));
+            when(meetingRoomRepository.findById(meetingRoomId)).thenReturn(Optional.of(meetingRoom));
 
-        // when
-        IntStream.range(0, threadCount).forEach(e ->
-                executorService.submit(() -> {
-                    try {
-                        resultList.add(reservationService.addReservation(meetingRoomId, start, userDetails));
-                    } finally {
-                        countDownLatch.countDown();
-                    }
-                }));
+            // when
+            IntStream.range(0, threadCount).forEach(e ->
+                    executorService.submit(() -> {
+                        try {
+                            resultList.add(reservationService.addReservation(meetingRoomId, start, userDetails));
+                        } finally {
+                            countDownLatch.countDown();
+                        }
+                    }));
 
-        countDownLatch.await();
+            countDownLatch.await();
 
-        // then
-        //TODO: 동시성 이슈 해결 후 수정 필요
-        assertThat(resultList.size()).isPositive();
+            // then
+            //TODO: 동시성 이슈 해결 후 수정 필요
+            assertThat(resultList.size()).isPositive();
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.example.chillisauce.reservations.controller;
 
-import com.example.chillisauce.reservations.dto.ReservationDetailResponseDto;
-import com.example.chillisauce.reservations.dto.ReservationListResponseDto;
+import com.example.chillisauce.reservations.dto.*;
 import com.example.chillisauce.reservations.service.ReservationService;
+import com.example.chillisauce.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,13 +23,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentRequest;
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentResponse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -62,10 +62,10 @@ class ReservationControllerTest {
     class ControllerSuccessCase {
         @Test
         @WithMockUser
-        void 회사_전체_예약조회_성공() throws Exception{
+        void 예약조회성공_회사_전체() throws Exception {
             // given
             String companyName = "testCompany";
-            String url = "/"+companyName+"/reservations/all";
+            String url = "/reservations/" +companyName+"/all";
             ReservationListResponseDto all = getAllReservationResponse();
             when(reservationService.getAllReservations(eq(companyName), any())).thenReturn(all);
 
@@ -120,16 +120,76 @@ class ReservationControllerTest {
 
         @Test
         @WithMockUser
-        void 예약등록_성공() throws Exception {
+        void 예약조회성공_특정날짜_특정회의실 () throws Exception{
             // given
             String url = "/reservations/1";
+            ReservationTimetableResponseDto timeTable = getReservationTimeTable();
+            when(reservationService.getReservationTimetable(any(), anyLong(), any())).thenReturn(timeTable);
+
+            // when
+            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
+                    .param("selDate", "2023-04-13")
+                    .header("Authorization", "Bearer Token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            result.andExpect(status().isOk())
+                    .andDo(document("get-reservation-timetable",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
+                                    fieldWithPath("data.mrId").type(JsonFieldType.NUMBER).description("회의실 id"),
+                                    fieldWithPath("data.timeList").type(JsonFieldType.ARRAY).description("타임테이블"),
+                                    fieldWithPath("data.timeList[].isCheckOut").type(JsonFieldType.BOOLEAN).description("예약 여부"),
+                                    fieldWithPath("data.timeList[].start").type(JsonFieldType.STRING).description("시작시각"),
+                                    fieldWithPath("data.timeList[].end").type(JsonFieldType.STRING).description("종료시각")
+                            )
+                    ));
+        }
+
+        private ReservationTimetableResponseDto getReservationTimeTable() {
+            Long mrId = 1L;
+
+            ReservationTimeResponseDto timeOne = ReservationTimeResponseDto.builder().isCheckOut(false)
+                    .start(LocalTime.of(7, 0))
+                    .end(LocalTime.of(7, 59))
+                    .build();
+
+            ReservationTimeResponseDto timeTwo = ReservationTimeResponseDto.builder().isCheckOut(true)
+                    .start(LocalTime.of(8, 0))
+                    .end(LocalTime.of(8, 59))
+                    .build();
+
+            ReservationTimeResponseDto timeLast = ReservationTimeResponseDto.builder()
+                    .isCheckOut(false)
+                    .start(LocalTime.of(22, 0))
+                    .end(LocalTime.of(22, 59))
+                    .build();
+
+            return new ReservationTimetableResponseDto(mrId, List.of(timeOne, timeTwo, timeLast));
+        }
+
+        @Test
+        @WithMockUser
+        void 예약등록성공() throws Exception {
+            // given
+            String url = "/reservations/1";
+            LocalDateTime start = LocalDateTime.of(2023, 4, 10, 12, 0);
+            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 12, 59);
+            ReservationResponseDto response = new ReservationResponseDto(start, end);
+            when(reservationService.addReservation(eq(1L), any(), any(UserDetailsImpl.class))).thenReturn(response);
 
             // when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url)
                     .header("Authorization", "Bearer Token")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content("{\"start\":\"2023-04-10T12:00\", \"end\":\"2023-04-10T14:00\"}"));
+                    .content("{\"start\":\"2023-04-10T12:00\", " +
+                            "\"end\":\"2023-04-10T12:59\"}"));
 
             // then
             result.andExpect(status().isOk())
@@ -143,15 +203,73 @@ class ReservationControllerTest {
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-                                    fieldWithPath("data").type(JsonFieldType.NULL).description("결과값")
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
+                                    fieldWithPath("data.start").type(JsonFieldType.STRING).description("시작시각"),
+                                    fieldWithPath("data.end").type(JsonFieldType.STRING).description("종료시각")
                             )
                     ));
         }
 
         @Test
         @WithMockUser
-        void 예약수정성공() {
+        void 예약수정성공() throws Exception{
+            // given
+            String url = "/reservations/1";
+            LocalDateTime start = LocalDateTime.of(2023, 4, 10, 12, 0);
+            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 12, 59);
+            ReservationResponseDto response = new ReservationResponseDto(start, end);
+            when(reservationService.editReservation(eq(1L), any(), any())).thenReturn(response);
 
+            // when
+            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.patch(url)
+                    .header("Authorization", "Bearer Token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content("{\"start\":\"2023-04-10T12:00\", \"end\":\"2023-04-10T12:59\"}"));
+
+            // then
+            result.andExpect(status().isOk())
+                    .andDo(document("patch-reservation",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("start").type(JsonFieldType.STRING).description("시작시각"),
+                                    fieldWithPath("end").type(JsonFieldType.STRING).description("종료시각")
+                            ),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
+                                    fieldWithPath("data.start").type(JsonFieldType.STRING).description("시작시각"),
+                                    fieldWithPath("data.end").type(JsonFieldType.STRING).description("종료시각")
+                            )
+                    ));
+        }
+
+        @Test
+        @WithMockUser
+        void 예약삭제성공() throws Exception{
+            // given
+            String url = "/reservations/1";
+            when(reservationService.deleteReservation(eq(1L), any())).thenReturn("");
+
+            // when
+            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.delete(url)
+                    .header("Authorization", "Bearer Token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            result.andExpect(status().isOk())
+                    .andDo(document("delete-reservation",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("결과값")
+                            )
+                    ));
         }
     }
 
