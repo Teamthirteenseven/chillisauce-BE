@@ -16,21 +16,20 @@ public class BoxController {
 
     private final BoxService boxService;
 
-    @PostMapping("/box/{companyName}/{spaceId}")
+    @PostMapping("/boxes/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> createBox
             (@PathVariable("companyName")String companyName ,@PathVariable("spaceId") Long spaceId,@RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         boxService.createBox(companyName,spaceId, boxRequestDto, details);
         return ResponseMessage.responseSuccess("박스 생성 성공","");
     }
-
-    @PatchMapping("/box/{companyName}/{boxId}")
+    @PatchMapping("/boxes/{companyName}/{boxId}")
     public ResponseEntity<ResponseMessage> updateBox
             (@PathVariable("companyName") String companyName,@PathVariable("boxId") Long boxId, @RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         boxService.updateBox(companyName, boxId, boxRequestDto, details);
         return ResponseMessage.responseSuccess("박스 수정 성공","");
     }
 
-    @DeleteMapping("/box/{companyName}/{boxId}")
+    @DeleteMapping("/boxes/{companyName}/{boxId}")
     public ResponseEntity<ResponseMessage> deleteBox
             (@PathVariable("companyName") String companyName, @PathVariable("boxId") Long boxId, @AuthenticationPrincipal UserDetailsImpl details){
         boxService.deleteBox(companyName, boxId,details);
@@ -49,7 +48,7 @@ public class BoxController {
 //        return ResponseMessage.responseSuccess("유저 이동 완료", response);
 //    }
 
-    @PatchMapping("/box/{companyName}/{fromBoxId}/move/{toBoxId}/user")
+    @PatchMapping("/boxes/{companyName}/{fromBoxId}/move/{toBoxId}/user")
     public ResponseEntity<ResponseMessage> moveBoxWithUser(@PathVariable String companyName, @PathVariable Long fromBoxId, @PathVariable Long toBoxId, @RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
         boxService.moveBoxWithUser(companyName, fromBoxId, toBoxId, boxRequestDto, details);
         return ResponseMessage.responseSuccess("사용자 등록 및 이동 완료", "");

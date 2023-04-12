@@ -8,15 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoxRequestDto {
 
-    private Long id;
 
     private String boxName;
 
     private String x;
 
     private String y;
-
-    private String username;
 
     public BoxRequestDto(String boxName, String x, String y) {
         this.boxName = boxName;

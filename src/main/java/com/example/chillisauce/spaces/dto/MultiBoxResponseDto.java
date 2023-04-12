@@ -1,9 +1,11 @@
 package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.spaces.entity.MultiBox;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class MultiBoxResponseDto {
     private final Long multiBoxId;
     private final String multiBoxName;

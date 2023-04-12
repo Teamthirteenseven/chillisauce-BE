@@ -1,9 +1,13 @@
 package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.spaces.entity.Box;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class BoxResponseDto {
     private final Long boxId;
     private final String boxName;

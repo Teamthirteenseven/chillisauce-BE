@@ -28,7 +28,7 @@ public class BoxService {
     private final UserRepository userRepository;
 
 
-    //multiBox 생성
+    //Box 생성
     @Transactional
     public BoxResponseDto createBox (String companyName, Long spaceId, BoxRequestDto boxRequestDto, UserDetailsImpl details){
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
@@ -41,7 +41,7 @@ public class BoxService {
         space.addBox(box);//box.setSpace(space); 기존 set addBox 메서드로 교체
         return new BoxResponseDto(box);
     }
-    //multiBox 개별 수정
+    //Box 개별 수정
     @Transactional
     public BoxResponseDto updateBox(String companyName, Long boxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
@@ -52,7 +52,7 @@ public class BoxService {
         boxRepository.save(box);
         return new BoxResponseDto(box);
     }
-    //multiBox 개별 삭제
+    //Box 개별 삭제
     @Transactional
     public BoxResponseDto deleteBox(String companyName, Long boxId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {

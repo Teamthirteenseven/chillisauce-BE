@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class MultiBoxRequestDto {
-    private Long id;
+
 
     private String multiBoxName;
 
@@ -14,7 +14,10 @@ public class MultiBoxRequestDto {
 
     private String y;
 
-    private String username;
-
+    public MultiBoxRequestDto(String multiBoxName, String x, String y) {
+        this.multiBoxName = multiBoxName;
+        this.x = x;
+        this.y = y;
+    }
 
 }

@@ -18,14 +18,14 @@ public class SpaceController {
     private final SpaceService spaceService;
 
     //플로우 안에 공간 생성
-    @PostMapping("/{companyName}/{floorId}")
+    @PostMapping("/spaces/{companyName}/{floorId}")
     public ResponseEntity<ResponseMessage> createSpaceinfloor
             (@PathVariable("companyName") String companyName, @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details,@PathVariable("floorId") Long floorId) {
         spaceService.createSpaceinfloor(companyName, spaceRequestDto, details, floorId);
         return ResponseMessage.responseSuccess("공간 생성 성공","");
     }
     //공간 생성
-    @PostMapping("/spaces/{companyName}/space")
+    @PostMapping("/spaces/{companyName}")
     public ResponseEntity<ResponseMessage> createSpace
             (@PathVariable("companyName") String companyName, @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
         spaceService.createSpace(companyName, spaceRequestDto, details);
@@ -33,7 +33,7 @@ public class SpaceController {
     }
 
     //공간 전체조회
-    @GetMapping("/{companyName}/space")
+    @GetMapping("/spaces/{companyName}")
     public ResponseEntity<ResponseMessage> allSpacelist
             (@PathVariable("companyName") String companyName,@AuthenticationPrincipal UserDetailsImpl details) {
 
@@ -41,14 +41,14 @@ public class SpaceController {
     }
 
     //공간 선택조회
-    @GetMapping("/{companyName}/space/{spaceId}")
+    @GetMapping("/spaces/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> getSpacelist
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("공간 조회 성공",spaceService.getSpacelist(companyName, spaceId, details));
     }
     //공간 개별 수정
-    @PatchMapping("/{companyName}/space/{spaceId}")
+    @PatchMapping("/spaces/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> updateSpace
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId,
                                       @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
@@ -56,7 +56,7 @@ public class SpaceController {
         return ResponseMessage.responseSuccess("공간 수정 성공","");
     }
     //공간 삭제
-    @DeleteMapping("/{companyName}/space/{spaceId}")
+    @DeleteMapping("/spaces/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> deleteSpace
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details){
         spaceService.deleteSpace(companyName,spaceId,details);
