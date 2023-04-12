@@ -1,6 +1,7 @@
 package com.example.chillisauce.reservations.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
+import com.example.chillisauce.reservations.dto.ReservationListRequestDto;
 import com.example.chillisauce.reservations.dto.ReservationRequestDto;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
@@ -69,7 +70,7 @@ public class ReservationController {
     public ResponseEntity<ResponseMessage> addReservation(
             @Parameter(description = "회의실 id 값", required = true, example = "3")
             @PathVariable Long meetingRoomId,
-            @RequestBody ReservationRequestDto requestDto,
+            @RequestBody ReservationListRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage
                 .responseSuccess("예약 등록 성공", reservationService.addReservation(meetingRoomId, requestDto, userDetails));
@@ -84,7 +85,7 @@ public class ReservationController {
     public ResponseEntity<ResponseMessage> editReservation(
             @Parameter(description = "예약 id 값", required = true, example = "3")
             @PathVariable Long reservationId,
-            @RequestBody ReservationRequestDto requestDto,
+            @RequestBody ReservationListRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage
                 .responseSuccess("예약 수정 성공", reservationService.editReservation(reservationId, requestDto, userDetails));

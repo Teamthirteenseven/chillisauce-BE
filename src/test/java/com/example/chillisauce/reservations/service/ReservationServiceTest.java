@@ -1,5 +1,6 @@
 package com.example.chillisauce.reservations.service;
 
+import com.example.chillisauce.reservations.dto.ReservationListRequestDto;
 import com.example.chillisauce.reservations.dto.ReservationRequestDto;
 import com.example.chillisauce.reservations.dto.ReservationResponseDto;
 import com.example.chillisauce.reservations.entity.Reservation;
@@ -57,8 +58,9 @@ class ReservationServiceTest {
             LocalDate endDate = LocalDate.of(2023, 4, 8);
             LocalTime endTime = LocalTime.of(13, 0);
             LocalDateTime start = LocalDateTime.of(startDate, startTime);
-            LocalDateTime end = LocalDateTime.of(endDate, endTime);
-            ReservationRequestDto requestDto = new ReservationRequestDto(start, end);
+            ReservationRequestDto unitDto = new ReservationRequestDto(start);
+            List<ReservationRequestDto> list = List.of(unitDto);
+            ReservationListRequestDto requestDto = new ReservationListRequestDto(list);
             User user = User.builder()
                     .id(1L)
                     .email("test@email.com")
@@ -113,7 +115,9 @@ class ReservationServiceTest {
                     .endTime(firstEnd)
                     .build();
 
-            ReservationRequestDto secondReservationDto = new ReservationRequestDto(secondStart, secondEnd);
+            ReservationRequestDto unitDto = new ReservationRequestDto(secondStart);
+            List<ReservationRequestDto> list = List.of(unitDto);
+            ReservationListRequestDto secondReservationDto = new ReservationListRequestDto(list);
             UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
 
             when(meetingRoomRepository.findById(any(Long.class)))
@@ -148,7 +152,9 @@ class ReservationServiceTest {
             UserDetailsImpl userDetails = new UserDetailsImpl(user, "test@email.com");
 
             LocalDateTime startTime = LocalDateTime.of(2023, 4, 8, 12, 0);
-            ReservationRequestDto start = new ReservationRequestDto(startTime, startTime.plusMinutes(59));
+            ReservationRequestDto unitDto = new ReservationRequestDto(startTime);
+            List<ReservationRequestDto> list = List.of(unitDto);
+            ReservationListRequestDto start = new ReservationListRequestDto(list);
             when(meetingRoomRepository.findById(meetingRoomId)).thenReturn(Optional.of(meetingRoom));
 
             // when

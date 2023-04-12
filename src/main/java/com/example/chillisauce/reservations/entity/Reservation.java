@@ -28,15 +28,8 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     Mr meetingRoom;
 
-    public Reservation(ReservationRequestDto requestDto, User user, Mr meetingRoom) {
-        this.startTime = requestDto.getStart();
-        this.endTime = requestDto.getEnd();
-        this.user = user;
-        this.meetingRoom = meetingRoom;
-    }
-
-    public void update(ReservationRequestDto requestDto) {
-        this.startTime = requestDto.getStart();
-        this.endTime = requestDto.getEnd();
+    public void update(LocalDateTime startTime, LocalDateTime endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }
