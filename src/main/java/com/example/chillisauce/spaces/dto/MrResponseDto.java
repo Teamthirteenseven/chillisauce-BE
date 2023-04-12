@@ -1,9 +1,13 @@
 package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.spaces.entity.Mr;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class MrResponseDto {
     private final Long mrId;
     private final String mrName;
@@ -21,5 +25,7 @@ public class MrResponseDto {
         this.x = mr.getX();
         this.y = mr.getY();
     }
+
+
 }
 

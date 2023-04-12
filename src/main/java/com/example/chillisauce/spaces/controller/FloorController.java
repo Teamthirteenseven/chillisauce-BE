@@ -3,7 +3,6 @@ package com.example.chillisauce.spaces.controller;
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.FloorRequestDto;
-import com.example.chillisauce.spaces.dto.SpaceRequestDto;
 import com.example.chillisauce.spaces.service.FloorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,27 +14,28 @@ import org.springframework.web.bind.annotation.*;
 public class FloorController {
 
     private final FloorService floorService;
-    @PostMapping("/{companyName}/floor")
+    //floor 생성
+    @PostMapping("/floors/{companyName}")
     public ResponseEntity<ResponseMessage> createFloor
             (@PathVariable("companyName") String companyName, @RequestBody FloorRequestDto floorRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
         floorService.createFloor(companyName, floorRequestDto, details);
         return ResponseMessage.responseSuccess("Floor 생성 성공","");
     }
     //floor 선택조회
-    @GetMapping("/floor/{companyName}/{floorId}")
+    @GetMapping("/floors/{companyName}/{floorId}")
     public ResponseEntity<ResponseMessage> getFloorlist
             (@PathVariable("companyName") String companyName, @PathVariable("floorId") Long floorId, @AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("해당 Floor 조회 성공",floorService.getFloorlist(companyName, floorId, details));
     }
     //floor만 조회
-    @GetMapping("/{companyName}/floor")
+    @GetMapping("/floors/{companyName}")
     public ResponseEntity<ResponseMessage> getFloor(@PathVariable("companyName") String companyName, @AuthenticationPrincipal UserDetailsImpl details){
 
         return ResponseMessage.responseSuccess("Floor 조회 성공",floorService.getFloor(companyName,details));
     }
     //floor 수정
-    @PatchMapping("/floor/{companyName}/{floorId}")
+    @PatchMapping("/floors/{companyName}/{floorId}")
     public ResponseEntity<ResponseMessage> updateFloor
             (@PathVariable("companyName") String companyName, @PathVariable("floorId") Long floorId, @RequestBody FloorRequestDto floorRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         floorService.updateFloor(companyName,floorId,floorRequestDto,details);
@@ -43,7 +43,7 @@ public class FloorController {
     }
 
     //floor 삭제
-    @DeleteMapping("/floor/{companyName}/{floorId}")
+    @DeleteMapping("/floors/{companyName}/{floorId}")
     public ResponseEntity<ResponseMessage> deleteFloor
             (@PathVariable("companyName") String companyName, @PathVariable("floorId") Long floorId, @AuthenticationPrincipal UserDetailsImpl details){
         floorService.deleteFloor(companyName,floorId,details);
