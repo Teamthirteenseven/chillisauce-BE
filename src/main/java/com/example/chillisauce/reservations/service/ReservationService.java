@@ -108,32 +108,38 @@ public class ReservationService {
      */
     @Transactional
     public ReservationResponseDto addReservation(Long meetingRoomId,
-                                                 ReservationRequestDto requestDto,
+                                                 ReservationListRequestDto requestDto,
                                                  UserDetailsImpl userDetails) {
         Mr meetingRoom = meetingRoomRepository.findById(meetingRoomId).orElseThrow(
                 () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
 
         User user = userDetails.getUser();
 
-        //FIXME: requestDto setter 사용해서 59 하드코딩으로 더함 - 나중에 end LocalDateTime 받아야함
-        LocalDateTime endTime = LocalDateTime.of(requestDto.getStart().toLocalDate(), requestDto.getStart().toLocalTime());
-        endTime = endTime.plusMinutes(59);
-        requestDto.setEnd(endTime);
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationRequestDto::getStart)
+                .sorted().toList();
+        LocalDateTime start = list.get(0);
+        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
         //TODO: validateTime 에서 오늘 날짜 이전 것은 등록하지 못하게 수정(?)
-        if (!validateTime(requestDto.getStart(), requestDto.getEnd())) {
+        if (!validateTime(start, end)) {
             throw new ReservationException(ReservationErrorCode.NOT_PROPER_TIME);
         }
 
         // 시간이 겹치는 예약은 할 수 없음
         reservationRepository
                 .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
-                        meetingRoom.getId(), requestDto.getStart(), requestDto.getEnd())
+                        meetingRoom.getId(), start, end)
                 .ifPresent(x -> {
                     throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
                 });
 
-        Reservation reservation = new Reservation(requestDto, user, meetingRoom);
+        Reservation reservation = Reservation.builder()
+                .user(user)
+                .meetingRoom(meetingRoom)
+                .startTime(start)
+                .endTime(end)
+                .build();
+
         reservationRepository.save(reservation);
         return new ReservationResponseDto(reservation);
     }
@@ -147,11 +153,11 @@ public class ReservationService {
     }
 
     /**
-     * 예약 수정
+     * 예약 수정 - 시간 변경
      */
     @Transactional
     public ReservationResponseDto editReservation(Long reservationId,
-                                                  ReservationRequestDto requestDto,
+                                                  ReservationListRequestDto requestDto,
                                                   UserDetailsImpl userDetails) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND));
@@ -161,10 +167,10 @@ public class ReservationService {
             throw new ReservationException(ReservationErrorCode.INVALID_USER_RESERVATION_UPDATE);
         }
 
-        //FIXME: requestDto setter 사용해서 59 하드코딩으로 더함 - 나중에 end LocalDateTime 받아야함
-        LocalDateTime endTime = LocalDateTime.of(requestDto.getStart().toLocalDate(), requestDto.getStart().toLocalTime());
-        endTime = endTime.plusMinutes(59);
-        requestDto.setEnd(endTime);
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationRequestDto::getStart)
+                .sorted().toList();
+        LocalDateTime start = list.get(0);
+        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
         // 수정요청에 해당하는 시각에 예약이 없는지 검증
         // 수정 대상 예약은 제외하고 검증해야함
@@ -172,14 +178,14 @@ public class ReservationService {
                 .findAllByMeetingRoomIdAndIdNotAndStartTimeLessThanAndEndTimeGreaterThan(
                         reservation.getMeetingRoom().getId(),
                         reservationId,
-                        requestDto.getStart(),
-                        requestDto.getEnd());
+                        start,
+                        end);
 
         if (!duplicatedReservations.isEmpty()) {
             throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
         }
 
-        reservation.update(requestDto);
+        reservation.update(start, end);
 
         return new ReservationResponseDto(reservation);
     }
