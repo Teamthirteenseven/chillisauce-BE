@@ -1,6 +1,5 @@
 package com.example.chillisauce.schedules.entity;
 
-import com.example.chillisauce.reservations.dto.ReservationRequestDto;
 import com.example.chillisauce.schedules.dto.ScheduleRequestDto;
 import com.example.chillisauce.users.entity.User;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Schedules {
+public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -36,7 +35,7 @@ public class Schedules {
     @Column(nullable = false)
     String comment;
 
-    public Schedules(ScheduleRequestDto requestDto, User user) {
+    public Schedule(ScheduleRequestDto requestDto, User user) {
         this.user = user;
         this.title = requestDto.getScTitle();
         this.startTime = requestDto.getScStart();

@@ -1,6 +1,6 @@
 package com.example.chillisauce.schedules.dto;
 
-import com.example.chillisauce.schedules.entity.Schedules;
+import com.example.chillisauce.schedules.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ public class ScheduleResponseDto {
     LocalDateTime scEnd;
     String scComment;
 
-    public ScheduleResponseDto(Schedules schedules) {
+    public ScheduleResponseDto(Schedule schedules) {
         this.scId = schedules.getId();
         this.scTitle = schedules.getTitle();
         this.scStart = schedules.getStartTime();
