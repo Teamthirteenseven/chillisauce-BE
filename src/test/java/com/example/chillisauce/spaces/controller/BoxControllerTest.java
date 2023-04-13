@@ -176,10 +176,10 @@ public class BoxControllerTest {
             String companyName = "testCompany";
             Long formBoxId = 1L;
             Long toBoxId = 2L;
-            String url = "/boxes/" + companyName + "/" + formBoxId + "/move/" + toBoxId + "/user";
+            String url = "/boxes/" + companyName + "/" + toBoxId + "/move" ;
             BoxRequestDto boxRequestDto = new BoxRequestDto("Box 수정 테스트", "200", "300");
             BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 OK???", null, "200", "300");
-            when(boxService.moveBoxWithUser(eq(companyName), eq(formBoxId), eq(toBoxId), any(), any())).thenReturn(boxResponseDto);
+            when(boxService.moveBoxWithUser(eq(companyName), eq(toBoxId), any(), any())).thenReturn(boxResponseDto);
 
             //when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders.patch(url)

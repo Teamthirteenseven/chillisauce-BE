@@ -57,4 +57,5 @@ public class SpaceResponseDto {
         this.spaceName = spaceName;
 
     }
+
 }
