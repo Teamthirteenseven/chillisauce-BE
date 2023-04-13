@@ -43,7 +43,7 @@ public class FloorService {
     @Transactional
     public List<FloorResponseDto> getFloorlist(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
-            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         Floor floor = findCompanyNameAndSpaceId(companyName,floorId);
         List<FloorResponseDto> floorResponseDto = new ArrayList<>();
@@ -56,12 +56,17 @@ public class FloorService {
     @Transactional
     public List<FloorResponseDto> getFloor (String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
-            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        List<Floor> floorList = floorRepository.findAll();
+        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+        );
+        List<Floor> floorList = floorRepository.findAllByCompaniesId(companies.getId());
         List<FloorResponseDto> floorResponseDto = new ArrayList<>();
-        for (Floor floors : floorList){
-            floorResponseDto.add(new FloorResponseDto(floors));
+        for (Floor floor : floorList) {
+            if(floor.getCompanies().equals(companies)) {
+                floorResponseDto.add(new FloorResponseDto(floor));
+            }
         }
         return floorResponseDto;
     }

@@ -9,9 +9,6 @@ import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.service.BoxService;
-import com.example.chillisauce.spaces.service.SpaceService;
-import com.example.chillisauce.users.dto.CompanyRequestDto;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
@@ -24,7 +21,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 import java.util.stream.Stream;

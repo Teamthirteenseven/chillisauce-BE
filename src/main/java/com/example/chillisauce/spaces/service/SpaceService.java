@@ -53,7 +53,7 @@ public class SpaceService {
     @Transactional
     public SpaceResponseDto createSpace(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
-            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
 
         Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
@@ -66,12 +66,17 @@ public class SpaceService {
     @Transactional
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
-            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        List<Space> spaceList = spaceRepository.findAll();
+        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+        );
+        List<Space> spaceList = spaceRepository.findAllByCompaniesId(companies.getId());
         List<SpaceResponseDto> spaceResponseDto = new ArrayList<>();
-        for (Space spaces : spaceList) {
-            spaceResponseDto.add(new SpaceResponseDto(spaces.getId(), spaces.getSpaceName()));
+        for (Space space : spaceList) {
+            if(space.getCompanies().equals(companies)) {
+                spaceResponseDto.add(new SpaceResponseDto(space));
+            }
         }
         return spaceResponseDto;
     }
@@ -157,6 +162,16 @@ public class SpaceService {
                 () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
         );
     }
+
+    public Space findCompanyName(String companyName) {
+        Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+        );
+        return spaceRepository.findByCompanies(company).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
+        );
+    }
+
 
 
 
