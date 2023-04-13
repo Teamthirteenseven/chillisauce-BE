@@ -61,6 +61,10 @@ public class Space {
         this.companies = companies;
     }
 
+    public Space(Companies companies) {
+        this.companies = companies;
+    }
+
 
     public void addBox(Box box) {
         this.boxes.add(box);

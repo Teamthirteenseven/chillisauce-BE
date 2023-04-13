@@ -105,7 +105,7 @@ public class MrControllerTest {
             String companyName = "testCompany";
             Long mrId = 1L;
             String url = "/mr/" + companyName + "/" + mrId;
-            MrRequestDto mrRequestDto = new MrRequestDto("Mr 테스트 생성", "777", "888");
+            MrRequestDto mrRequestDto = new MrRequestDto("Mr 수정 OK?", "777", "888");
             MrResponseDto mrResponseDto = new MrResponseDto(1L, "Mr 수정 OK?","", "777", "888");
             when(mrService.updateMr(eq(companyName), eq(mrId), any(), any())).thenReturn(mrResponseDto);
 

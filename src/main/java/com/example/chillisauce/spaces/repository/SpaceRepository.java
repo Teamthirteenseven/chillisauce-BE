@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SpaceRepository extends JpaRepository<Space, Long> {
-    List<Space> findAllBySpaceName(String spaceName);
+
     Optional<Space> findByIdAndCompanies(Long spaceId, Companies companies);
+
+    Optional<Space> findByCompanies(Companies companies);
+    List<Space> findAllByCompaniesId(Long companiesId);
 }
+

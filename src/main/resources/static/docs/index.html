@@ -2321,7 +2321,7 @@ Content-Length: 176
   "statusCode" : 200,
   "data" : [ {
     "floorId" : 1,
-    "floorName" : "Floor 생성 테스트",
+    "floorName" : "Floor 수정 테스트",
     "spaceList" : [ ]
   } ]
 }</code></pre>
@@ -2384,7 +2384,7 @@ Content-Length: 176
   "statusCode" : 200,
   "data" : [ {
     "floorId" : 1,
-    "floorName" : "Floor 생성 테스트",
+    "floorName" : "Floor 수정 테스트",
     "spaceList" : [ ]
   } ]
 }</code></pre>
@@ -2618,7 +2618,7 @@ Content-Length: 84
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "mrName" : "Mr 테스트 생성",
+  "mrName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }'</code></pre>
@@ -2633,11 +2633,11 @@ Content-Length: 84
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 72
+Content-Length: 66
 Host: localhost:8080
 
 {
-  "mrName" : "Mr 테스트 생성",
+  "mrName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -2665,7 +2665,7 @@ Content-Length: 84
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "mrName" : "Mr 테스트 생성",
+  "mrName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }' | http PATCH 'http://localhost:8080/mr/testCompany/1' \
@@ -2680,7 +2680,7 @@ Content-Length: 84
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "mrName" : "Mr 테스트 생성",
+  "mrName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -3052,7 +3052,7 @@ Content-Length: 83
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "multiBoxName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }'</code></pre>
@@ -3067,11 +3067,11 @@ Content-Length: 83
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 84
+Content-Length: 80
 Host: localhost:8080
 
 {
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "multiBoxName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3099,7 +3099,7 @@ Content-Length: 83
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "multiBoxName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }' | http PATCH 'http://localhost:8080/multibox/testCompany/1' \
@@ -3114,7 +3114,7 @@ Content-Length: 83
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "multiBoxName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3631,7 +3631,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 212
+Content-Length: 260
 
 {
   "message" : "공간 조회 성공",
@@ -3639,6 +3639,8 @@ Content-Length: 212
   "data" : [ {
     "spaceId" : 1,
     "spaceName" : "Test 공간",
+    "floorId" : null,
+    "floorName" : null,
     "boxlist" : [ ],
     "mrlist" : [ ],
     "multiboxlist" : [ ]
@@ -3680,6 +3682,8 @@ Content-Length: 212
   "data" : [ {
     "spaceId" : 1,
     "spaceName" : "Test 공간",
+    "floorId" : null,
+    "floorName" : null,
     "boxlist" : [ ],
     "mrlist" : [ ],
     "multiboxlist" : [ ]
@@ -3728,6 +3732,16 @@ Content-Length: 212
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].spaceName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Space 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].floorId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Floor id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].floorName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Floor name</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].boxlist[]</code></p></td>
@@ -3779,7 +3793,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 212
+Content-Length: 260
 
 {
   "message" : "공간 조회 성공",
@@ -3787,6 +3801,8 @@ Content-Length: 212
   "data" : [ {
     "spaceId" : 1,
     "spaceName" : "Test 공간",
+    "floorId" : null,
+    "floorName" : null,
     "boxlist" : [ ],
     "mrlist" : [ ],
     "multiboxlist" : [ ]
@@ -3824,6 +3840,8 @@ Content-Length: 212
   "data" : [ {
     "spaceId" : 1,
     "spaceName" : "Test 공간",
+    "floorId" : null,
+    "floorName" : null,
     "boxlist" : [ ],
     "mrlist" : [ ],
     "multiboxlist" : [ ]
@@ -3874,6 +3892,16 @@ Content-Length: 212
 <td class="tableblock halign-left valign-top"><p class="tableblock">Space 이름</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].floorId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Floor id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].floorName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Floor name</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].boxlist[]</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BoxList</p></td>
@@ -3903,7 +3931,7 @@ Content-Length: 212
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "spaceName" : "Test 공간"
+  "spaceName" : "수정 성공했나요?"
 }'</code></pre>
 </div>
 </div>
@@ -3916,11 +3944,11 @@ Content-Length: 212
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 35
+Content-Length: 47
 Host: localhost:8080
 
 {
-  "spaceName" : "Test 공간"
+  "spaceName" : "수정 성공했나요?"
 }</code></pre>
 </div>
 </div>
@@ -3946,7 +3974,7 @@ Content-Length: 81
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "spaceName" : "Test 공간"
+  "spaceName" : "수정 성공했나요?"
 }' | http PATCH 'http://localhost:8080/spaces/testCompany/1' \
     'Content-Type:application/json' \
     'Authorization:Bearer Token' \
@@ -3959,7 +3987,7 @@ Content-Length: 81
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "spaceName" : "Test 공간"
+  "spaceName" : "수정 성공했나요?"
 }</code></pre>
 </div>
 </div>

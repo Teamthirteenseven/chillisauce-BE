@@ -163,6 +163,8 @@ public class SpaceControllerTest {
                                     fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("결과값"),
                                     fieldWithPath("data[].spaceId").type(JsonFieldType.NUMBER).description("Space id"),
                                     fieldWithPath("data[].spaceName").type(JsonFieldType.STRING).description("Space 이름"),
+                                    fieldWithPath("data[].floorId").type(JsonFieldType.NULL).description("Floor id"),
+                                    fieldWithPath("data[].floorName").type(JsonFieldType.NULL).description("Floor name"),
                                     fieldWithPath("data[].boxlist[]").type(JsonFieldType.ARRAY).description("BoxList"),
                                     fieldWithPath("data[].mrlist[]").type(JsonFieldType.ARRAY).description("MrList"),
                                     fieldWithPath("data[].multiboxlist[]").type(JsonFieldType.ARRAY).description("MultiBoxList")
@@ -199,6 +201,8 @@ public class SpaceControllerTest {
                                     fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("결과값"),
                                     fieldWithPath("data[].spaceId").type(JsonFieldType.NUMBER).description("Space id"),
                                     fieldWithPath("data[].spaceName").type(JsonFieldType.STRING).description("Space 이름"),
+                                    fieldWithPath("data[].floorId").type(JsonFieldType.NULL).description("Floor id"),
+                                    fieldWithPath("data[].floorName").type(JsonFieldType.NULL).description("Floor name"),
                                     fieldWithPath("data[].boxlist[]").type(JsonFieldType.ARRAY).description("BoxList"),
                                     fieldWithPath("data[].mrlist[]").type(JsonFieldType.ARRAY).description("MrList"),
                                     fieldWithPath("data[].multiboxlist[]").type(JsonFieldType.ARRAY).description("MultiBoxList")
@@ -213,7 +217,7 @@ public class SpaceControllerTest {
             String companyName = "testCompany";
             Long spaceId = 1L;
             String url = "/spaces/" + companyName + "/" + spaceId;
-            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("Test 공간");
+            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("수정 성공했나요?");
             SpaceResponseDto spaceResponseDto = new SpaceResponseDto(1L, "수정 성공했나요?");
             when(spaceService.updateSpace(eq(companyName), eq(spaceId), any(), any())).thenReturn(spaceResponseDto);
 
