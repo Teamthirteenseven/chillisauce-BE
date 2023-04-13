@@ -2,6 +2,7 @@ package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.repository.BoxRepository;
+import com.example.chillisauce.spaces.repository.MultiBoxRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.BoxResponseDto;
@@ -48,6 +49,9 @@ class BoxServiceTest {
     @Mock
     private BoxRepository boxRepository;
 
+    @Mock
+    private MultiBoxRepository multiBoxRepository;
+
     private static BoxService boxService;
     private SpaceService spaceService;
     private Companies companies;
@@ -64,7 +68,7 @@ class BoxServiceTest {
     @BeforeEach
     void setup() {
         spaceService = Mockito.mock(SpaceService.class);
-        boxService = new BoxService(boxRepository, companyRepository, spaceService, userRepository);
+        boxService = new BoxService(boxRepository, companyRepository, spaceService, userRepository, multiBoxRepository);
 
         companies = Companies.builder().build();
         Mockito.lenient().when(companyRepository.findByCompanyName(Mockito.anyString())).thenReturn(Optional.of(companies));
@@ -145,7 +149,6 @@ class BoxServiceTest {
         @Test
         void testMoveBoxWithUser() {
             // given
-            Long fromBoxId = 1L;
             Long toBoxId = 2L;
 
             Companies companies = Companies.builder()
@@ -164,19 +167,6 @@ class BoxServiceTest {
                     .build();
             Mockito.lenient().when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-            Box fromBox = Box.builder()
-                    .id(fromBoxId)
-                    .boxName("from box")
-                    .x("1")
-                    .y("1")
-                    .space(new Space())
-                    .user(user)
-                    .build();
-
-            when(boxRepository.findByIdAndSpaceCompanies(Mockito.eq(fromBox.getId()), Mockito.any(Companies.class)))
-                    .thenReturn(Optional.of(fromBox));
-
-
             Box toBox = Box.builder()
                     .id(toBoxId)
                     .boxName("to box")
@@ -193,14 +183,12 @@ class BoxServiceTest {
             BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
 
             // when
-            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser("test", fromBox.getId(), toBox.getId(), boxRequestDto, new UserDetailsImpl(user, user.getUsername()));
+            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser("test", toBox.getId(), boxRequestDto, new UserDetailsImpl(user, user.getUsername()));
 
             // then
             assertEquals(boxResponseDto.getBoxName(), boxRequestDto.getBoxName());
             assertEquals(boxResponseDto.getX(), boxRequestDto.getX());
             assertEquals(boxResponseDto.getY(), boxRequestDto.getY());
-            assertNull(fromBox.getUser());
-            assertNull(fromBox.getUsername());
             assertEquals(user, toBox.getUser());
             assertEquals(user.getUsername(), toBox.getUsername());
         }
@@ -233,7 +221,6 @@ class BoxServiceTest {
         @Test
         void testToBoxupdateUser() {
             //given
-
             Companies companies = Companies.builder()
                     .companyName("까마귀")
                     .build();
@@ -269,12 +256,12 @@ class BoxServiceTest {
                     .space(space)
                     .build();
             when(companyRepository.findByCompanyName(anyString())).thenReturn(Optional.of(companies));
-            when(boxRepository.findByIdAndSpaceCompanies(eq(1L),any(Companies.class))).thenReturn(Optional.of(fromBox));
             when(boxRepository.findByIdAndSpaceCompanies(eq(2L),any(Companies.class))).thenReturn(Optional.of(toBox));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
+            when(boxRepository.findFirstByUserId(anyLong())).thenReturn(Optional.of(fromBox));
             //When
             SpaceException exception = assertThrows(SpaceException.class, () -> {
-                boxService.moveBoxWithUser("까마귀", 1L,2L ,boxRequestDto, details);
+                boxService.moveBoxWithUser("까마귀", 2L,boxRequestDto, details);
             });
             //then
             assertThat(exception.getErrorCode()).isEqualTo(SpaceErrorCode.BOX_ALREADY_IN_USER);

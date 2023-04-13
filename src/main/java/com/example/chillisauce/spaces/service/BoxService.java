@@ -4,10 +4,12 @@ import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.BoxResponseDto;
 import com.example.chillisauce.spaces.entity.Box;
+import com.example.chillisauce.spaces.entity.MultiBox;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.BoxRepository;
+import com.example.chillisauce.spaces.repository.MultiBoxRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
@@ -18,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -27,38 +31,42 @@ public class BoxService {
     private final SpaceService spaceService;
     private final UserRepository userRepository;
 
+    private final MultiBoxRepository multiBoxRepository;
+
 
     //Box 생성
     @Transactional
-    public BoxResponseDto createBox (String companyName, Long spaceId, BoxRequestDto boxRequestDto, UserDetailsImpl details){
+    public BoxResponseDto createBox(String companyName, Long spaceId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
+        Space space = spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
 
         Box box = new Box(boxRequestDto);
         boxRepository.saveAndFlush(box);
         space.addBox(box);//box.setSpace(space); 기존 set addBox 메서드로 교체
         return new BoxResponseDto(box);
     }
+
     //Box 개별 수정
     @Transactional
     public BoxResponseDto updateBox(String companyName, Long boxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Box box = findCompanyNameAndBoxId(companyName,boxId);
+        Box box = findCompanyNameAndBoxId(companyName, boxId);
         box.updateBox(boxRequestDto);
         boxRepository.save(box);
         return new BoxResponseDto(box);
     }
+
     //Box 개별 삭제
     @Transactional
     public BoxResponseDto deleteBox(String companyName, Long boxId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Box box = findCompanyNameAndBoxId(companyName,boxId);
+        Box box = findCompanyNameAndBoxId(companyName, boxId);
         boxRepository.deleteById(boxId);
         return new BoxResponseDto(box);
     }
@@ -104,30 +112,58 @@ public class BoxService {
 //        );
 //        return new BoxResponseDto(toBox);
 //    }
-    //multiBox 에 user 정보 업데이트 및 user box 이동
+
     @Transactional
-    public BoxResponseDto moveBoxWithUser(String companyName, Long fromBoxId, Long toBoxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
-        Box fromBox = findCompanyNameAndBoxId(companyName, fromBoxId);
-        Box toBox = findCompanyNameAndBoxId(companyName, toBoxId);
+    public BoxResponseDto moveBoxWithUser(String companyName, Long toBoxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
         User user = userRepository.findById(details.getUser().getId()).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.USER_NOT_FOUND)
         );
 
-        // 기존 박스에서 user 정보 삭제
-        fromBox.setUser(null);
-        fromBox.setUsername(null);
+        Optional<Box> box = boxRepository.findFirstByUserId(details.getUser().getId());
+        Optional<MultiBox> multiBox = multiBoxRepository.findFirstByUserId(details.getUser().getId());
+        if (box.isPresent()) {
+            Box boxInstance = box.get();
+            Box toBox = findCompanyNameAndBoxId(companyName, toBoxId);
 
-        // 새로운 박스에 user 정보 업데이트
-        if (toBox.user == null) {
-            toBox.updateBox(boxRequestDto, user);
-            boxRepository.save(toBox);
+            // 기존 박스에서 user 정보 삭제
+            boxInstance.setUser(null);
+            boxInstance.setUsername(null);
+            log.info("boxid {}:" ,boxInstance.getId());
+            // 새로운 박스에 user 정보 업데이트
+            if (toBox.user == null) {
+                toBox.updateBox(boxRequestDto, user);
+            } else {
+                throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
+            }
+
+            return new BoxResponseDto(toBox);
+        } else if (multiBox.isPresent()) {
+            Box toBox = findCompanyNameAndBoxId(companyName, toBoxId);
+
+            multiBox.get().setUser(null);
+            multiBox.get().setUsername(null);
+
+            if (toBox.user == null) {
+                toBox.updateBox(boxRequestDto, user);
+            } else {
+                throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
+            }
+
+            return new BoxResponseDto(toBox);
         } else {
-            throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
-        }
+            Box toBox = findCompanyNameAndBoxId(companyName, toBoxId);
 
-        return new BoxResponseDto(toBox);
+            if (toBox.user == null) {
+                toBox.updateBox(boxRequestDto, user);
+                boxRepository.save(toBox);
+            } else {
+                throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
+            }
+
+            return new BoxResponseDto(toBox);
     }
 
+}
     //companyName find , BoxId 두개 합쳐놓은 메서드
     public Box findCompanyNameAndBoxId(String companyName, Long boxId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(

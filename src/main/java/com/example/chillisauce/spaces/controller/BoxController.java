@@ -48,9 +48,9 @@ public class BoxController {
 //        return ResponseMessage.responseSuccess("유저 이동 완료", response);
 //    }
 
-    @PatchMapping("/boxes/{companyName}/{fromBoxId}/move/{toBoxId}/user")
-    public ResponseEntity<ResponseMessage> moveBoxWithUser(@PathVariable String companyName, @PathVariable Long fromBoxId, @PathVariable Long toBoxId, @RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
-        boxService.moveBoxWithUser(companyName, fromBoxId, toBoxId, boxRequestDto, details);
+    @PatchMapping("/boxes/{companyName}/{toBoxId}/move")
+    public ResponseEntity<ResponseMessage> moveBoxWithUser(@PathVariable String companyName,  @PathVariable Long toBoxId, @RequestBody BoxRequestDto boxRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
+        boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
         return ResponseMessage.responseSuccess("사용자 등록 및 이동 완료", "");
     }
 }
