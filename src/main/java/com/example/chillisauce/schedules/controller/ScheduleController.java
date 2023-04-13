@@ -21,17 +21,25 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     /**
-     * 당일 스케줄 전체 조회
+     * 당일 스케줄 조회
      */
     @GetMapping("/schedules")
-    public ResponseEntity<ResponseMessage> getSchedules(
+    public ResponseEntity<ResponseMessage> getDaySchedules(
             @RequestParam(value = "selDate", required = false, defaultValue = "#{T(java.time.LocalDate).now()}")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate selDate,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseMessage.responseSuccess("당일 스케줄 전체 조회 성공", scheduleService.getSchedules(selDate, userDetails));
+        return ResponseMessage.responseSuccess("당일 스케줄 조회 성공", scheduleService.getDaySchedules(selDate, userDetails));
     }
 
+    /**
+     * 개인 전체 스케줄 조회
+     */
+    @GetMapping("/schedules/all")
+    public ResponseEntity<ResponseMessage> getAllSchedules(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseMessage.responseSuccess("개인 전체 스케줄 조회 성공", scheduleService.getAllSchedules(userDetails));
+    }
     /**
      * 개인 스케줄 등록
      */

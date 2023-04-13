@@ -2,13 +2,10 @@ package com.example.chillisauce.reservations.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.reservations.dto.ReservationListRequestDto;
-import com.example.chillisauce.reservations.dto.ReservationRequestDto;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.SchemaProperty;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
