@@ -11,7 +11,6 @@ public interface SpaceRepository extends JpaRepository<Space, Long> {
 
     Optional<Space> findByIdAndCompanies(Long spaceId, Companies companies);
 
-    Optional<Space> findByCompanies(Companies companies);
     List<Space> findAllByCompaniesId(Long companiesId);
 }
 

@@ -54,7 +54,7 @@ public class SpaceService {
     @Transactional
     public SpaceResponseDto createSpace(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
-            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
 
         Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
@@ -90,7 +90,7 @@ public class SpaceService {
     @Transactional
     public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
-            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
         SpaceResponseDto responseDto;
