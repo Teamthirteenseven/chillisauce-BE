@@ -3,10 +3,8 @@ package com.example.chillisauce.spaces.service;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.FloorRequestDto;
 import com.example.chillisauce.spaces.dto.FloorResponseDto;
-import com.example.chillisauce.spaces.dto.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
-import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
@@ -27,6 +25,7 @@ import java.util.List;
 public class FloorService {
     private final CompanyRepository companyRepository;
     private final FloorRepository floorRepository;
+    private final SpaceService spaceService;
     //Floor 생성
     @Transactional
     public FloorResponseDto createFloor(String companyName, FloorRequestDto floorRequestDto, UserDetailsImpl details) {
@@ -64,9 +63,8 @@ public class FloorService {
         List<Floor> floorList = floorRepository.findAllByCompaniesId(companies.getId());
         List<FloorResponseDto> floorResponseDto = new ArrayList<>();
         for (Floor floor : floorList) {
-            if(floor.getCompanies().equals(companies)) {
-                floorResponseDto.add(new FloorResponseDto(floor));
-            }
+
+            floorResponseDto.add(new FloorResponseDto(floor));
         }
         return floorResponseDto;
     }

@@ -17,6 +17,7 @@ import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,7 +35,6 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BoxServiceTest {
 
     @Mock
@@ -51,7 +51,7 @@ class BoxServiceTest {
 
     @Mock
     private MultiBoxRepository multiBoxRepository;
-
+    @InjectMocks
     private static BoxService boxService;
     private SpaceService spaceService;
     private Companies companies;
