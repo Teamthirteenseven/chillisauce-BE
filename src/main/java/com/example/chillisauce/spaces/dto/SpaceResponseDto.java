@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -20,42 +21,45 @@ public class SpaceResponseDto {
     private Long floorId;
     private String floorName;
 
-    private final List<BoxResponseDto> boxlist = new ArrayList<>();
+    private List<BoxResponseDto> boxlist = new ArrayList<>();
 
-    private final List<MrResponseDto> mrlist = new ArrayList<>();
+    private List<MrResponseDto> mrlist = new ArrayList<>();
 
-    private final List<MultiBoxResponseDto> multiboxlist = new ArrayList<>();
+    private List<MultiBoxResponseDto> multiboxlist = new ArrayList<>();
 
     public SpaceResponseDto(Space space) {
-        if (space.getFloor() != null) {
-            this.floorId = space.getFloor().getId();
-        } else {
-            this.floorId = null; //Space 선택조회시 에러 발생 이슈
-        }
-
-        if (space.getFloor() != null) {
-            this.floorName = space.getFloor().getFloorName();
-        } else {
-            this.floorName = null;
-        }
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
-        for (Box box : space.getBoxes()) {
-            boxlist.add(new BoxResponseDto(box));
-        }
-        for (Mr mr : space.getMrs()) {
-            mrlist.add(new MrResponseDto(mr));
-        }
-        for (MultiBox multiBox : space.getMultiboxes()) {
-            multiboxlist.add(new MultiBoxResponseDto(multiBox));
-        }
+        this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
+        this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
+        this.multiboxlist = space.getMultiboxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
     }
+
 
 
     public SpaceResponseDto(Long id, String spaceName) {
         this.spaceId = id;
         this.spaceName = spaceName;
+    }
 
+    public SpaceResponseDto(Space space, Long floorId, String floorName) {
+        this.spaceId = space.getId();
+        this.spaceName = space.getSpaceName();
+        this.floorId = floorId;
+        this.floorName = floorName;
+        this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
+        this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
+        this.multiboxlist = space.getMultiboxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
+    }
+
+    public SpaceResponseDto(Space space, Floor floor) {
+        this.spaceId = space.getId();
+        this.spaceName = space.getSpaceName();
+        this.floorId = floor.getId();
+        this.floorName = floor.getFloorName();
+        this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
+        this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
+        this.multiboxlist = space.getMultiboxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
     }
 
 }
