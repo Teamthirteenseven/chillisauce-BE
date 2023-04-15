@@ -25,7 +25,6 @@ import java.util.List;
 public class FloorService {
     private final CompanyRepository companyRepository;
     private final FloorRepository floorRepository;
-    private final SpaceService spaceService;
     //Floor 생성
     @Transactional
     public FloorResponseDto createFloor(String companyName, FloorRequestDto floorRequestDto, UserDetailsImpl details) {
@@ -44,7 +43,7 @@ public class FloorService {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        Floor floor = findCompanyNameAndSpaceId(companyName,floorId);
+        Floor floor = findCompanyNameAndFloorId(companyName,floorId);
         List<FloorResponseDto> floorResponseDto = new ArrayList<>();
         floorResponseDto.add(new FloorResponseDto(floor));
 
@@ -74,7 +73,7 @@ public class FloorService {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Floor floor = findCompanyNameAndSpaceId(companyName, floorId);
+        Floor floor = findCompanyNameAndFloorId(companyName, floorId);
         floor.updateFloor(floorRequestDto);
         floorRepository.save(floor);
         return new FloorResponseDto(floor);
@@ -86,12 +85,12 @@ public class FloorService {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Floor floor = findCompanyNameAndSpaceId(companyName, floorId);
+        Floor floor = findCompanyNameAndFloorId(companyName, floorId);
         floorRepository.deleteById(floorId);
         return new FloorResponseDto(floor);
     }
 
-    public Floor findCompanyNameAndSpaceId(String companyName, Long floorId) {
+    public Floor findCompanyNameAndFloorId(String companyName, Long floorId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );

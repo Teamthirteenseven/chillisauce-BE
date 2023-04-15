@@ -16,7 +16,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collections;
 import java.util.List;
@@ -156,7 +155,32 @@ public class SpaceServiceTest {
             assertEquals("테스트 Space", spaceResponseDto.getSpaceName());
             assertEquals(floor.getId(), spaceResponseDto.getFloorId());
             assertEquals(floor.getFloorName(), spaceResponseDto.getFloorName());
+        }
 
+        @Test
+        void Space_공간_선택_조회_Floor_null() {
+            //given
+            String companyName = "testCompany";
+            Long spaceId = 1L;
+
+            Space space = Space.builder()
+                    .spaceName("테스트 Space")
+                    .floor(floor)
+                    .companies(companies)
+                    .build();
+            when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
+            when(spaceRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(space));
+
+            //when
+            List<SpaceResponseDto> result = spaceService.getSpacelist(companyName, spaceId, details);
+
+            //Then
+            assertNotNull(result);
+            assertEquals(1, result.size());
+            SpaceResponseDto spaceResponseDto = result.get(0);
+            assertEquals("테스트 Space", spaceResponseDto.getSpaceName());
+            assertNull(spaceResponseDto.getFloorId());
+            assertNull(spaceResponseDto.getFloorName());
         }
 
 
@@ -198,11 +222,6 @@ public class SpaceServiceTest {
     @DisplayName("예외 케이스")
     class ExceptionCase {
 
-        @BeforeEach
-        void setup() {
-            MockitoAnnotations.openMocks(this);
-        }
-
         @Test
         void Space_공간_전체_조회_예외_테스트() {
             String companyName = "testCompany";
@@ -226,6 +245,17 @@ public class SpaceServiceTest {
         }
 
         @Test
+        void Space_공간_전체_조회_해당_회사_없음() {
+            String companyName = "testCompany";
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
+
+            //When,Then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                spaceService.allSpacelist(companyName, details);
+            });
+            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
+        }
+        @Test
         void Space_공간_선택_조회_예외_테스트() {
             String companyName = "testCompany";
             String differentCompanyName = "differentCompany";
@@ -246,6 +276,7 @@ public class SpaceServiceTest {
             });
             assertThat(exception.getErrorCode()).isEqualTo(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
+
 
         @Test
         void Floor_안에_Space_생성_권한_없음() {
@@ -303,6 +334,77 @@ public class SpaceServiceTest {
                 spaceService.deleteSpace(companyName, spaceId, details);
             });
             assertEquals(SpaceErrorCode.NOT_HAVE_PERMISSION, exception.getErrorCode());
+        }
+        @Test
+        void 해당_회사_없음() {
+            //given
+            String companyName = "testCompany";
+            Long spaceId = 1L;
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
+
+            //When,Then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
+            });
+            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
+        }
+        @Test
+        void 해당_회사_아이디_없음() {
+            //given
+            String companyName = "testCompany";
+            Long spaceId = 1L;
+            Companies company = Companies.builder()
+                    .companyName("testCompany")
+                    .build();
+
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(company));
+            when(spaceRepository.findByIdAndCompanies(spaceId, company)).thenReturn(Optional.empty());
+
+            //when,Then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
+            });
+            assertEquals(SpaceErrorCode.SPACE_NOT_FOUND, exception.getErrorCode());
+        }
+
+        @Test
+        void Space_공간_생성_해당_회사_없음() {
+            String companyName = "testCompany";
+
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
+            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
+            //When,Then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                spaceService.createSpace(companyName,spaceRequestDto, details);
+            });
+            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
+        }
+        @Test
+        void Floor_안에_공간_생성_해당_Floor_없음() {
+            //given
+            String companyName = "testCompany";
+            Long floorId = 1L;
+            when(floorRepository.findById(floorId)).thenReturn(Optional.empty());
+            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
+            //when,then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                spaceService.createSpaceinfloor(companyName,spaceRequestDto,details,floorId);
+            });
+            assertEquals(SpaceErrorCode.FLOOR_NOT_FOUND, exception.getErrorCode());
+        }
+        @Test
+        void Floor_안에_공간_생성_해당_회사_없음() {
+            String companyName = "testCompany";
+            Long floorId = 1L;
+            Floor floor = Floor.builder().build();
+            when(floorRepository.findById(floorId)).thenReturn(Optional.of(floor));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
+            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
+            //When,Then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                spaceService.createSpaceinfloor(companyName,spaceRequestDto, details, floorId);
+            });
+            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
         }
     }
 }
