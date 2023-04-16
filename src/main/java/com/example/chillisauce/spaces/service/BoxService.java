@@ -43,7 +43,7 @@ public class BoxService {
         Space space = spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
 
         Box box = new Box(boxRequestDto);
-        boxRepository.saveAndFlush(box);
+        boxRepository.save(box);
         space.addBox(box);//box.setSpace(space); 기존 set addBox 메서드로 교체
         return new BoxResponseDto(box);
     }
@@ -71,48 +71,6 @@ public class BoxService {
         return new BoxResponseDto(box);
     }
 
-    // Box 에 User 정보 업데이트
-//    @Transactional
-//    public BoxResponseDto updateBoxUser(BoxRequestDto boxRequestDto, String companyName, Long boxId, UserDetailsImpl details) {
-//        Box box = findCompanyNameAndBoxId(companyName, boxId);
-//        User user = userRepository.findById(details.getUser().getId()).orElseThrow(
-//                () -> new SpaceException(SpaceErrorCode.USER_NOT_FOUND)
-//        );
-//        if (box.user != null){
-//            throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
-//        }
-//
-//        box.updateBox(boxRequestDto.getBoxName(), boxRequestDto.getX(), boxRequestDto.getY(), user);
-//        boxRepository.save(box);
-//        return new BoxResponseDto(box);
-//    }
-//    //Box 이동
-//    @Transactional
-//    public BoxResponseDto moveBox(String companyName, Long fromBoxId, Long toBoxId, UserDetailsImpl details) {
-//        Box fromBox = findCompanyNameAndBoxId(companyName, fromBoxId);
-//        Box toBox = findCompanyNameAndBoxId(companyName, toBoxId);
-//        User user = userRepository.findById(details.getUser().getId()).orElseThrow(
-//                () -> new SpaceException(SpaceErrorCode.USER_NOT_FOUND)
-//        );
-//        log.info("Moving box {} from company {} to box {} for user {}", fromBoxId, companyName, toBoxId, details.getUsername());
-//
-//        // 기존 박스에서 user 정보 삭제
-//        fromBox.setUser(null);
-//        fromBox.setUsername(null);
-//        // 새로운 박스에 user 정보 업데이트
-//        if (toBox.user == null) {
-//            toBox.setUser(user);
-//            toBox.setUsername(user.getUsername());
-//        } else {
-//            throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
-//        }
-//
-//        toBox = boxRepository.findById(toBoxId).orElseThrow(
-//                () -> new SpaceException(SpaceErrorCode.BOX_NOT_FOUND)
-//        );
-//        return new BoxResponseDto(toBox);
-//    }
-
     @Transactional
     public BoxResponseDto moveBoxWithUser(String companyName, Long toBoxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
         User user = userRepository.findById(details.getUser().getId()).orElseThrow(
@@ -128,7 +86,6 @@ public class BoxService {
             // 기존 박스에서 user 정보 삭제
             boxInstance.setUser(null);
             boxInstance.setUsername(null);
-            log.info("boxid {}:" ,boxInstance.getId());
             // 새로운 박스에 user 정보 업데이트
             if (toBox.user == null) {
                 toBox.updateBox(boxRequestDto, user);

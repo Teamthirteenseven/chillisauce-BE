@@ -30,7 +30,7 @@ public class MrService {
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
         Mr mr = new Mr(mrRequestDto);
-        mrRepository.saveAndFlush(mr);
+        mrRepository.save(mr);
         space.addMr(mr);//mr.setSpace(space); 기존 set addMr 메서드로 교체, space 에 mr 연결
         return new MrResponseDto(mr);
     }
@@ -41,7 +41,7 @@ public class MrService {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Mr mr = findCompanyNameAndBoxId(companyName,mrId);
+        Mr mr = findCompanyNameAndMrId(companyName,mrId);
         mr.updateMr(mrRequestDto);
         mrRepository.save(mr);
         return new MrResponseDto(mr);
@@ -52,13 +52,13 @@ public class MrService {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        Mr mr = findCompanyNameAndBoxId(companyName,mrId);
+        Mr mr = findCompanyNameAndMrId(companyName,mrId);
         mrRepository.deleteById(mrId);
         return new MrResponseDto(mr);
     }
 
     //companyName find , MrId 두개 합쳐놓은 메서드
-    private Mr findCompanyNameAndBoxId(String companyName, Long mrId) {
+    public Mr findCompanyNameAndMrId(String companyName, Long mrId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );

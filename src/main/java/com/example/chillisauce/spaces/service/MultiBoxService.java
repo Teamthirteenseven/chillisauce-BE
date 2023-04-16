@@ -48,7 +48,7 @@ public class MultiBoxService {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        MultiBox multiBox = findCompanyNameAndBoxId(companyName,multiBoxId);
+        MultiBox multiBox = findCompanyNameAndMultiBoxId(companyName,multiBoxId);
         multiBox.updateMultiBox(multiBoxRequestDto);
         multiBoxRepository.save(multiBox);
         return new MultiBoxResponseDto(multiBox);
@@ -59,42 +59,16 @@ public class MultiBoxService {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-        MultiBox multiBox = findCompanyNameAndBoxId(companyName,multiBoxId);
+        MultiBox multiBox = findCompanyNameAndMultiBoxId(companyName,multiBoxId);
         multiBoxRepository.deleteById(multiBoxId);
         return new MultiBoxResponseDto(multiBox);
     }
-    //박스 이동
-    @Transactional
-    public MultiBoxResponseDto moveMultiBoxWithUser
-            (String companyName, Long fromMultiBoxId, Long toMultiId, MultiBoxRequestDto multiBoxRequestDto, UserDetailsImpl details,Long fromBoxId) {
-        MultiBox fromMultiBox = findCompanyNameAndBoxId(companyName, fromMultiBoxId);
-        MultiBox toMultiBox = findCompanyNameAndBoxId(companyName, toMultiId);
-        Box fromBox = boxService.findCompanyNameAndBoxId(companyName, fromBoxId);
-        User user = userRepository.findById(details.getUser().getId()).orElseThrow(
-                () -> new SpaceException(SpaceErrorCode.USER_NOT_FOUND)
-        );
-
-        // 기존 박스에서 user 정보 삭제
-        fromBox.setUsername(null);
-        fromBox.setUser(null);
-        fromMultiBox.setUser(null);
-        fromMultiBox.setUsername(null);
-
-        // 새로운 박스에 user 정보 업데이트
-
-        toMultiBox.updateMultiBox(multiBoxRequestDto, user);
-        multiBoxRepository.save(toMultiBox);
-
-
-        return new MultiBoxResponseDto(toMultiBox);
-    }
-
-    public MultiBox findCompanyNameAndBoxId(String companyName, Long multiBoxId) {
+    public MultiBox findCompanyNameAndMultiBoxId(String companyName, Long multiBoxId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
         return multiBoxRepository.findByIdAndSpaceCompanies(multiBoxId, company).orElseThrow(
-                () -> new SpaceException(SpaceErrorCode.BOX_NOT_FOUND)
+                () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
         );
     }
 }

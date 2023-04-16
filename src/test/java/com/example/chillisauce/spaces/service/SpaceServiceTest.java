@@ -1,5 +1,6 @@
 package com.example.chillisauce.spaces.service;
 import com.example.chillisauce.security.UserDetailsImpl;
+
 import com.example.chillisauce.spaces.dto.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
@@ -14,6 +15,7 @@ import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -165,7 +167,7 @@ public class SpaceServiceTest {
 
             Space space = Space.builder()
                     .spaceName("테스트 Space")
-                    .floor(floor)
+                    .floor(null)
                     .companies(companies)
                     .build();
             when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
@@ -219,122 +221,149 @@ public class SpaceServiceTest {
     }
 
     @Nested
-    @DisplayName("예외 케이스")
-    class ExceptionCase {
+    @DisplayName("공간 권한 없음 예외 케이스")
+    class NotPermissionExceptionCase {
+        // given
+        String companyName = "testCompany";
+        Long floorId = 1L;
+        Long spaceId = 1L;
+        UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
+        SpaceRequestDto requestDto = new SpaceRequestDto("SpaceTest");
 
-        @Test
-        void Space_공간_전체_조회_예외_테스트() {
-            String companyName = "testCompany";
-            String differentCompanyName = "differentCompany";
-
-            Companies companies = Companies.builder()
-                    .companyName(differentCompanyName)
-                    .build();
-
-            User user = User.builder()
-                    .role(UserRoleEnum.ADMIN)
-                    .companies(companies)
-                    .build();
-
-            UserDetailsImpl details = new UserDetailsImpl(user, null);
-
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                spaceService.allSpacelist(companyName, details);
-            });
-            assertThat(exception.getErrorCode()).isEqualTo(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+        public static void NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
+            SpaceException exception = assertThrows(SpaceException.class, executable);
+            assertEquals(expectedErrorCode, exception.getErrorCode());
         }
-
-        @Test
-        void Space_공간_전체_조회_해당_회사_없음() {
-            String companyName = "testCompany";
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
-
-            //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                spaceService.allSpacelist(companyName, details);
-            });
-            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
-        }
-        @Test
-        void Space_공간_선택_조회_예외_테스트() {
-            String companyName = "testCompany";
-            String differentCompanyName = "differentCompany";
-            Long spaceId = 1L;
-            Companies companies = Companies.builder()
-                    .companyName(differentCompanyName)
-                    .build();
-
-            User user = User.builder()
-                    .role(UserRoleEnum.ADMIN)
-                    .companies(companies)
-                    .build();
-
-            UserDetailsImpl details = new UserDetailsImpl(user, null);
-
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                spaceService.getSpacelist(companyName, spaceId, details);
-            });
-            assertThat(exception.getErrorCode()).isEqualTo(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
-        }
-
 
         @Test
         void Floor_안에_Space_생성_권한_없음() {
-            //given
-            String companyName = "testCompany";
-            Long floorId = 1L;
-            UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
-
             //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                SpaceRequestDto requestDto = new SpaceRequestDto("테스트 space");
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
                 spaceService.createSpaceinfloor(companyName, requestDto, details, floorId);
             });
-            assertEquals(SpaceErrorCode.NOT_HAVE_PERMISSION, exception.getErrorCode());
         }
 
         @Test
         void 공간_생성_권한_없음() {
-            //given
-            String companyName = "testCompany";
-            UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
-
             //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                SpaceRequestDto requestDto = new SpaceRequestDto("테스트 space");
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
                 spaceService.createSpace(companyName, requestDto, details);
             });
-            assertEquals(SpaceErrorCode.NOT_HAVE_PERMISSION, exception.getErrorCode());
         }
 
         @Test
         void 공간_수정_권한_없음() {
             //given
-            String companyName = "testCompany";
-            Long spaceId = 1L;
-            UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
-
-            //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                SpaceRequestDto requestDto = new SpaceRequestDto("테스트 space");
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
                 spaceService.updateSpace(companyName, spaceId, requestDto, details);
             });
-            assertEquals(SpaceErrorCode.NOT_HAVE_PERMISSION, exception.getErrorCode());
         }
 
         @Test
         void 공간_삭제_권한_없음() {
             //given
-            String companyName = "testCompany";
-            Long spaceId = 1L;
-            UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
-
-            //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
                 spaceService.deleteSpace(companyName, spaceId, details);
             });
-            assertEquals(SpaceErrorCode.NOT_HAVE_PERMISSION, exception.getErrorCode());
         }
+    }
+    @Nested
+    @DisplayName("해당 회사 권한 없음 예외 케이스")
+    class CompanyNotPermissionExceptionCase {
+        // given
+        String companyName = "missingCompany";
+
+        String differentCompanyName = "differentCompany";
+        Long spaceId = 1L;
+        Companies companies = Companies.builder()
+                .companyName(differentCompanyName)
+                .build();
+        User user = User.builder()
+                .role(UserRoleEnum.ADMIN)
+                .companies(companies)
+                .build();
+
+        UserDetailsImpl details = new UserDetailsImpl(user, null);
+
+        public static void COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
+            SpaceException exception = assertThrows(SpaceException.class, executable);
+            assertEquals(expectedErrorCode, exception.getErrorCode());
+        }
+        @Test
+        void 전체_공간_조회_해당_회사_권한_없음() {
+            // when & then
+            CompanyNotPermissionExceptionCase.COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
+                spaceService.allSpacelist(companyName, details);
+            });
+        }
+
+        @Test
+        void 선택_공간_조회_해당_회사_권한_없음() {
+            // when & then
+            CompanyNotPermissionExceptionCase.COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
+                spaceService.getSpacelist(companyName,spaceId,details);
+            });
+        }
+    }
+    @Nested
+    @DisplayName("회사 이름 으로 찾을 수 없는 경우")
+    class findByCompanyName {
+        // given
+        String companyName = "testCompany";
+        Long floorId = 1L;
+        SpaceRequestDto requestDto = new SpaceRequestDto("SpaceTest");
+
+        public static void COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
+            SpaceException exception = assertThrows(SpaceException.class, executable);
+            assertEquals(expectedErrorCode, exception.getErrorCode());
+        }
+
+        @Test
+        void Floor_안에_Space_생성_해당_회사_없음() {
+            //when
+            when(floorRepository.findById(floorId)).thenReturn(Optional.of(floor));
+            //then
+            findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
+                spaceService.createSpaceinfloor(companyName, requestDto, details, floorId);
+            });
+        }
+
+        @Test
+        void Space_생성_해당_회사_없음() {
+            //when,then
+            findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
+                spaceService.createSpace(companyName, requestDto, details);
+            });
+        }
+
+        @Test
+        void Space_전체_공간_조회_해당_회사_없음() {
+            //when,then
+            findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
+                spaceService.allSpacelist(companyName, details);
+            });
+        }
+    }
+    @Nested
+    @DisplayName("회사 이름 으로 찾을 수 없는 경우")
+    class findByFloorId {
+        @Test
+        void Floor_안에_공간_생성_해당_Floor_없음() {
+            //given
+            String companyName = "testCompany";
+            Long floorId = 1L;
+            when(floorRepository.findById(floorId)).thenReturn(Optional.empty());
+            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
+            //when,then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                spaceService.createSpaceinfloor(companyName, spaceRequestDto, details, floorId);
+            });
+            assertEquals(SpaceErrorCode.FLOOR_NOT_FOUND, exception.getErrorCode());
+        }
+    }
+    @Nested
+    @DisplayName("회사 이름과 공간 ID로 층을 찾을 수 없는 경우")
+    class findCompanyNameAndFloorId {
         @Test
         void 해당_회사_없음() {
             //given
@@ -348,6 +377,7 @@ public class SpaceServiceTest {
             });
             assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
         }
+
         @Test
         void 해당_회사_아이디_없음() {
             //given
@@ -366,46 +396,9 @@ public class SpaceServiceTest {
             });
             assertEquals(SpaceErrorCode.SPACE_NOT_FOUND, exception.getErrorCode());
         }
-
-        @Test
-        void Space_공간_생성_해당_회사_없음() {
-            String companyName = "testCompany";
-
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
-            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
-            //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                spaceService.createSpace(companyName,spaceRequestDto, details);
-            });
-            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
-        }
-        @Test
-        void Floor_안에_공간_생성_해당_Floor_없음() {
-            //given
-            String companyName = "testCompany";
-            Long floorId = 1L;
-            when(floorRepository.findById(floorId)).thenReturn(Optional.empty());
-            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
-            //when,then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                spaceService.createSpaceinfloor(companyName,spaceRequestDto,details,floorId);
-            });
-            assertEquals(SpaceErrorCode.FLOOR_NOT_FOUND, exception.getErrorCode());
-        }
-        @Test
-        void Floor_안에_공간_생성_해당_회사_없음() {
-            String companyName = "testCompany";
-            Long floorId = 1L;
-            Floor floor = Floor.builder().build();
-            when(floorRepository.findById(floorId)).thenReturn(Optional.of(floor));
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
-            SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
-            //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                spaceService.createSpaceinfloor(companyName,spaceRequestDto, details, floorId);
-            });
-            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
-        }
     }
+
 }
+
+
 
