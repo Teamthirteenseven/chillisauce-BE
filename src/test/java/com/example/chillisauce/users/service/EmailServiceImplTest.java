@@ -80,7 +80,7 @@ class EmailServiceImplTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.NOT_PROPER_EMAIL);
+            assertThat(exception.getMessage()).isEqualTo("이메일 형식이 맞지 않습니다.");
         }
     }
 }
