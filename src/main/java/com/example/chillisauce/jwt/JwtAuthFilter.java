@@ -1,11 +1,7 @@
 package com.example.chillisauce.jwt;
 
-import com.example.chillisauce.security.SecurityExceptionDto;
+import com.example.chillisauce.message.ResponseMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,27 +22,44 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-
-        String token = jwtUtil.resolveToken(request);
-
-        if(token != null) {
-            if(!jwtUtil.validateToken(token)){
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String accessToken = jwtUtil.getHeaderToken(request, "Access");
+        String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
+        if(accessToken != null) {
+            if(!jwtUtil.validateToken(accessToken)){
                 jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
                 return;
             }
-            Claims info = jwtUtil.getUserInfoFromToken(token);    //토큰에서 user정보 가져옴(payload)
-            setAuthentication(info.getSubject());   //getSubject 헤더값
+            setAuthentication(jwtUtil.getUserInfoFromToken(accessToken));
         }
-        filterChain.doFilter(request,response);
+        //엑세스토큰 만료 && 리프레시토큰 존재
+        else if (refreshToken != null) {
+            //리프레시토큰 검증 && 리프레시토큰 DB에서 존재유무 확인
+            boolean isRefreshToken = jwtUtil.refreshTokenValidation(refreshToken);
+            //리프레시 토큰이 유효하고 DB와 비교했을 때 똑같다면
+            if (isRefreshToken) {
+                //리프레시토큰으로 정보 가져오기
+                String joginemail = jwtUtil.getUserInfoFromToken(refreshToken);
+                // 새로운 어세스 토큰 발급
+                String newAccessToken = jwtUtil.createToken(joginemail, "Access");
+                // 헤더에 어세스 토큰 추가
+                jwtUtil.setHeaderAccessToken(response, newAccessToken);
+                // Security context에 인증 정보 넣기
+                setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken));
+            }
+            //리프레시토큰 만료 || 리프레시토큰이 DB와 일치하지 않으면
+            else {
+                jwtExceptionHandler(response, "RefreshToken Expired", HttpStatus.BAD_REQUEST.value());
+                return;
+            }
+        }
+        filterChain.doFilter(request, response);
     }
 
-    public void setAuthentication(String username) {
+    public void setAuthentication(String email) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = jwtUtil.createAuthentication(username);
+        Authentication authentication = jwtUtil.createAuthentication(email);
         context.setAuthentication(authentication);
-
         SecurityContextHolder.setContext(context);
     }
 
@@ -54,10 +67,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setStatus(statusCode);
         response.setContentType("application/json");
         try {
-            String json = new ObjectMapper().writeValueAsString(new SecurityExceptionDto(statusCode, msg));
+            String json = new ObjectMapper().writeValueAsString(new ResponseMessage(msg, statusCode, ""));
             response.getWriter().write(json);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
+
 }

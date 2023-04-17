@@ -1,25 +1,28 @@
 package com.example.chillisauce.users.service;
 
+import com.example.chillisauce.jwt.JwtUtil;
 import com.example.chillisauce.users.dto.*;
 import com.example.chillisauce.users.entity.Companies;
+import com.example.chillisauce.users.entity.RefreshToken;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.CompanyRepository;
+import com.example.chillisauce.users.repository.RefreshTokenRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Optional;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,8 +38,13 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private CompanyRepository companyRepository;
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
+    @Mock
+    private JwtUtil jwtUtil;
     @Spy
     private BCryptPasswordEncoder passwordEncoder;
+
 
     @Nested
     @DisplayName("성공 케이스")
@@ -122,7 +130,68 @@ class UserServiceTest {
         @DisplayName("로그인")
         @Test
         void login() {
+            List<Cookie> cookies = new ArrayList<>();
+            HttpServletResponse response = mock(HttpServletResponse.class);
+
+            doAnswer(invocation -> {
+                Cookie cookie = invocation.getArgument(0);
+                cookies.add(cookie);
+                return null;
+            }).when(response).addCookie(any(Cookie.class));
+
             //given
+            User saveAdmin = User.builder()
+                    .email("123@123")
+                    .password(passwordEncoder.encode("1234qwer!"))
+                    .username("루피")
+                    .role(UserRoleEnum.ADMIN)
+                    .companies(Companies.builder()
+                            .companyName("원피스")
+                            .certification("1234")
+                            .build())
+                    .build();
+            LoginRequestDto loginRequestDto = LoginRequestDto.builder()
+                    .email("123@123")
+                    .password("1234qwer!")
+                    .build();
+
+            String fakeAccess = "fakeAccess";
+            String fakeRefresh = "fakeRefresh";
+
+            TokenDto tokenDto = new TokenDto(fakeAccess, fakeRefresh);
+
+            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
+            Mockito.when(jwtUtil.createAllToken(loginRequestDto.getEmail())).thenReturn(tokenDto);
+            Mockito.when(refreshTokenRepository.findByEmail("123@123")).thenReturn(Optional.empty());
+
+
+
+            //when
+            String result = userService.Login(loginRequestDto, response);
+
+            //then
+            assertThat(saveAdmin).isNotNull();
+            assertThat("로그인 성공").isEqualTo(result);
+
+            Optional<Cookie> accessTokenCookie = cookies.stream().filter(cookie -> JwtUtil.ACCESS_TOKEN.equals(cookie.getName())).findFirst();
+            Optional<Cookie> refreshTokenCookie = cookies.stream().filter(cookie -> JwtUtil.REFRESH_TOKEN.equals(cookie.getName())).findFirst();
+
+            assertThat(accessTokenCookie).isPresent();
+            assertThat(refreshTokenCookie).isPresent();
+            assertThat(accessTokenCookie.get().getValue()).isNotEmpty();
+            assertThat(refreshTokenCookie.get().getValue()).isNotEmpty();
+
+        }
+
+        @DisplayName("리프레시토큰 저장 성공")
+        @Test
+        void refreshToken() {
+            //given
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            LoginRequestDto loginRequestDto = LoginRequestDto.builder()
+                    .email("123@123")
+                    .password("1234")
+                    .build();
             User saveAdmin = User.builder()
                     .email("123@123")
                     .password(passwordEncoder.encode("1234"))
@@ -133,21 +202,39 @@ class UserServiceTest {
                             .certification("1234")
                             .build())
                     .build();
-            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
-//        Mockito.when(passwordEncoder.matches("1234", saveAdmin.getPassword())).thenReturn(true);
 
-            LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-                    .email("123@123")
-                    .password("1234")
+
+            TokenDto tokenDto = TokenDto.builder()
+                    .accessToken("fake")
+                    .refreshToken("fakeRefresh")
                     .build();
 
+            RefreshToken refreshToken = RefreshToken.builder()
+                    .refreshToken(tokenDto.getRefreshToken())
+                    .email("123@123")
+                    .build();
+            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
+            Mockito.when(jwtUtil.createAllToken(loginRequestDto.getEmail())).thenReturn(tokenDto);
+            Mockito.when(refreshTokenRepository.findByEmail("123@123")).thenReturn(Optional.of(refreshToken));
+            Mockito.when(refreshTokenRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
             //when
-            LoginResponseDto loginResponseDto = userService.Login(loginRequestDto);
+            String result = userService.Login(loginRequestDto, response);
+            System.out.println(tokenDto.getAccessToken());
+            System.out.println(tokenDto.getRefreshToken());
 
             //then
             assertThat(saveAdmin).isNotNull();
-            assertThat(loginResponseDto.getEmail()).isEqualTo(saveAdmin.getEmail());
-            assertThat(loginResponseDto.getUsername()).isEqualTo(saveAdmin.getUsername());
+            assertThat("로그인 성공").isEqualTo(result);
+
+            //???????????????
+            ArgumentCaptor<RefreshToken> refreshTokenCaptor = ArgumentCaptor.forClass(RefreshToken.class);
+            Mockito.verify(refreshTokenRepository).save(refreshTokenCaptor.capture());
+            RefreshToken updatedRefreshToken = refreshTokenCaptor.getValue();
+
+            assertThat(updatedRefreshToken).isNotNull();
+            assertThat(updatedRefreshToken.getEmail()).isEqualTo(refreshToken.getEmail());
+            assertThat(updatedRefreshToken.getRefreshToken()).isEqualTo(tokenDto.getRefreshToken());
 
         }
 
@@ -179,6 +266,7 @@ class UserServiceTest {
         @Test
         void fail1() {
             //given
+            HttpServletResponse response = mock(HttpServletResponse.class);
             String email = "123@123";
 
             LoginRequestDto loginRequestDto = LoginRequestDto.builder()
@@ -194,7 +282,7 @@ class UserServiceTest {
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
-                userService.Login(loginRequestDto);
+                userService.Login(loginRequestDto, response);
             });
 
             //then
@@ -206,6 +294,7 @@ class UserServiceTest {
         @Test
         void fail2() {
             //given
+            HttpServletResponse response = mock(HttpServletResponse.class);
             String email = "123@123";
             String password = "1234";
             LoginRequestDto loginRequestDto = LoginRequestDto.builder()
@@ -227,7 +316,7 @@ class UserServiceTest {
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
-                userService.Login(loginRequestDto);
+                userService.Login(loginRequestDto, response);
             });
 
             //then
@@ -235,6 +324,8 @@ class UserServiceTest {
             assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.NOT_PROPER_PASSWORD);
 
         }
+
+
 
         @DisplayName("관리자 회원가입 실패(중복된 이메일)")
         @Test
@@ -369,6 +460,28 @@ class UserServiceTest {
             });
             //then
             assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.NOT_PROPER_PASSWORD);
+        }
+
+        @DisplayName("사원 회원가입 실패(유효하지 않은 인증번호)")
+        @Test
+        void fail10() {
+            //given
+            UserSignupRequestDto requestDto = UserSignupRequestDto.builder()
+                    .email("123@123")
+                    .password("1234")
+                    .passwordCheck("1234")
+                    .userName("루피")
+                    .certification("123")
+                    .build();
+
+            when(companyRepository.findByCertification(requestDto.getCertification())).thenReturn(Optional.empty());
+
+            //when
+            UserException exception = assertThrows(UserException.class, () -> {
+                userService.signupUser(requestDto);
+            });
+            //then
+            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.INVALID_CERTIFICATION);
         }
 
         @DisplayName("회원가입 실패(유효하지 않은 인증번호)")

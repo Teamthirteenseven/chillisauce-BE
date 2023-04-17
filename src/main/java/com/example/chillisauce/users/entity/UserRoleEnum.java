@@ -3,7 +3,8 @@ package com.example.chillisauce.users.entity;
 public enum UserRoleEnum {
     USER(Authority.USER),  // 고객 권한
     ADMIN(Authority.ADMIN),  // 사업자 권한
-    MANAGER(Authority.MANAGER);  // 사업자 권한
+    MANAGER(Authority.MANAGER),
+    ;  // 사업자 권한
 
     private final String authority;
 
