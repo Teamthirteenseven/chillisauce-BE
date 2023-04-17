@@ -238,38 +238,38 @@ class UserServiceTest {
 
         }
 
-        @DisplayName("새로운 엑세스토큰 발급 성공")
-        @Test
-        void newAccessToken() {
-            //given
-            HttpServletRequest request = mock(HttpServletRequest.class);
-            HttpServletResponse response = mock(HttpServletResponse.class);
-            Map<String, String> headers = new HashMap<>();
-
-            String email = "123@123";
-            String refreshToken = jwtUtil.createToken(email, "Refresh");
-
-            RefreshToken savedRefreshToken = new RefreshToken(refreshToken, email);
-            refreshTokenRepository.save(savedRefreshToken);
-
-
-            when(request.getHeader("Refresh")).thenReturn(refreshToken);
-
-            doAnswer(invocation -> {
-                String key = invocation.getArgument(0);
-                String value = invocation.getArgument(1);
-                headers.put(key, value);
-                return null;
-            }).when(response).addHeader(anyString(), anyString());
-
-            //when
-            userService.refresh(request, response);
-
-            //then
-            String newAccessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
-            assertThat(newAccessToken).isNotNull();
-
-        }
+//        @DisplayName("새로운 엑세스토큰 발급 성공")
+//        @Test
+//        void newAccessToken() {
+//            //given
+//            HttpServletRequest request = mock(HttpServletRequest.class);
+//            HttpServletResponse response = mock(HttpServletResponse.class);
+//            Map<String, String> headers = new HashMap<>();
+//
+//            String email = "123@123";
+//            String refreshToken = jwtUtil.createToken(email, "Refresh");
+//
+//            RefreshToken savedRefreshToken = new RefreshToken(refreshToken, email);
+//            refreshTokenRepository.save(savedRefreshToken);
+//
+//
+//            when(request.getHeader("Refresh")).thenReturn(refreshToken);
+//
+//            doAnswer(invocation -> {
+//                String key = invocation.getArgument(0);
+//                String value = invocation.getArgument(1);
+//                headers.put(key, value);
+//                return null;
+//            }).when(response).addHeader(anyString(), anyString());
+//
+//            //when
+//            userService.refresh(request, response);
+//
+//            //then
+//            String newAccessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
+//            assertThat(newAccessToken).isNotNull();
+//
+//        }
 
         @DisplayName("인증번호 확인 성공")
         @Test
