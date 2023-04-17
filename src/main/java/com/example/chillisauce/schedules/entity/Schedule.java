@@ -35,18 +35,10 @@ public class Schedule {
     @Column(nullable = false)
     String comment;
 
-    public Schedule(ScheduleRequestDto requestDto, User user) {
-        this.user = user;
-        this.title = requestDto.getScTitle();
-        this.startTime = requestDto.getScStart();
-        this.endTime = requestDto.getScEnd();
-        this.comment = requestDto.getScComment();
-    }
-
-    public void update(ScheduleRequestDto requestDto) {
+    public void update(ScheduleRequestDto requestDto, LocalDateTime startTime, LocalDateTime endTime) {
         this.title= requestDto.getScTitle();
-        this.startTime = requestDto.getScStart();
-        this.endTime = requestDto.getScEnd();
         this.comment= requestDto.getScComment();
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }
