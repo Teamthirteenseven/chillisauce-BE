@@ -1,15 +1,15 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.spaces.entity.MultiBox;
 import com.example.chillisauce.spaces.repository.BoxRepository;
-import com.example.chillisauce.spaces.repository.MultiBoxRepository;
-import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.BoxResponseDto;
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
+import com.example.chillisauce.spaces.repository.MultiBoxRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
@@ -17,21 +17,17 @@ import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.util.Optional;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -39,270 +35,336 @@ class BoxServiceTest {
 
     @Mock
     private CompanyRepository companyRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private SpaceRepository spaceRepository;
-
     @Mock
     private BoxRepository boxRepository;
-
+    @Mock
+    private SpaceService spaceService;
     @Mock
     private MultiBoxRepository multiBoxRepository;
+    @Mock
+    private UserRepository userRepository;
     @InjectMocks
-    private static BoxService boxService;
-    private SpaceService spaceService;
-    private Companies companies;
-    private User user;
-    private UserDetailsImpl details;
-    private Space space;
-    private Box box;
+    private BoxService boxService;
 
-    @FunctionalInterface
-    interface TriConsumer<T, U, V> {
-        void accept(T t, U u, V v);
-    }
+
+    private Companies companies;
+
+    private UserDetailsImpl details;
+
+    private Box box;
+    private Space space;
+    private MultiBox multiBox;
+
 
     @BeforeEach
     void setup() {
-        spaceService = Mockito.mock(SpaceService.class);
-        boxService = new BoxService(boxRepository, companyRepository, spaceService, userRepository, multiBoxRepository);
-
-        companies = Companies.builder().build();
-        Mockito.lenient().when(companyRepository.findByCompanyName(Mockito.anyString())).thenReturn(Optional.of(companies));
-
-        user = User.builder()
+        companies = Companies.builder()
+                .build();
+        space = Space.builder()
+                .spaceName("testSpace")
+                .companies(companies)
+                .build();
+        User user = User.builder()
                 .role(UserRoleEnum.ADMIN)
+                .companies(companies)
                 .build();
-        Mockito.lenient().when(userRepository.save(Mockito.any(User.class))).thenReturn(new User());
-
         details = new UserDetailsImpl(user, null);
-
-        space = Space.builder().build();
-
-        Mockito.lenient().when(spaceRepository.save(Mockito.any(Space.class))).thenReturn(new Space());
-
-
         box = Box.builder()
+                .boxName("testBox")
+                .x("500")
+                .y("999")
                 .build();
-        Mockito.lenient().when(boxRepository.save(Mockito.any(Box.class))).thenReturn(box);
+        multiBox = MultiBox.builder().build();
     }
 
     @Nested
     @DisplayName("성공케이스")
     class SuccessCase {
         @Test
-        @DisplayName("Box 생성")
-        void createBox() {
-            Mockito.lenient().when(boxRepository.save(Mockito.any(Box.class))).thenReturn(box);
-            when(spaceService.findCompanyNameAndSpaceId(Mockito.anyString(), anyLong())).thenReturn(space);
-
+        void Box_생성() {
             //given
+            String companyName = "호랑이";
+            Long spaceId = 1L;
             BoxRequestDto boxRequestDto = new BoxRequestDto("이민재자리", "777", "777");
-            BoxResponseDto boxResponseDto = boxService.createBox("호랑이", 1L, boxRequestDto, details);
+            when(spaceService.findCompanyNameAndSpaceId(companyName, spaceId)).thenReturn(space);
+            when(boxRepository.save(any(Box.class))).thenReturn(box);
+
+
+            BoxResponseDto boxResponseDto = boxService.createBox(companyName, spaceId, boxRequestDto, details);
 
             //then
+            assertNotNull(boxResponseDto);
             assertEquals("이민재자리", boxResponseDto.getBoxName());
             assertEquals("777", boxResponseDto.getX());
             assertEquals("777", boxResponseDto.getY());
         }
 
-
-        @DisplayName("박스 개별 수정")
         @Test
-        void updateBoxTest() {
-            Box savedBox = boxRepository.save(box);
+        void Box_수정() {
+            //given
+            String companyName = "호랑이";
+            Long boxId = 1L;
 
-            when(boxRepository.findByIdAndSpaceCompanies(Mockito.eq(savedBox.getId()), Mockito.any(Companies.class)))
-                    .thenReturn(Optional.of(savedBox));
-
-
-            BoxRequestDto boxRequestDto = new BoxRequestDto("장혁진자리_수정", "888", "888");
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(boxRepository.findByIdAndSpaceCompanies(boxId, companies)).thenReturn(Optional.of(box));
+            BoxRequestDto boxRequestDto = new BoxRequestDto("testBox", "500", "999");
 
             //when
-            BoxResponseDto boxResponseDto = boxService.updateBox("호랑이", savedBox.getId(), boxRequestDto, details);
+            BoxResponseDto boxResponseDto = boxService.updateBox(companyName, boxId, boxRequestDto, details);
 
             //then
-            assertEquals("장혁진자리_수정", boxResponseDto.getBoxName());
-            assertEquals("888", boxResponseDto.getX());
-            assertEquals("888", boxResponseDto.getY());
+            assertNotNull(boxResponseDto);
+            assertEquals("testBox", boxResponseDto.getBoxName());
+            assertEquals("500", boxResponseDto.getX());
+            assertEquals("999", boxResponseDto.getY());
         }
 
-        @DisplayName("박스 삭제")
         @Test
-        void deleteBoxTest() {
-            Box savedBox = boxRepository.save(box);
+        void Box_삭제() {
+            //given
+            String companyName = "호랑이";
+            Long boxId = 1L;
 
-            when(boxRepository.findByIdAndSpaceCompanies(Mockito.eq(savedBox.getId()), Mockito.any(Companies.class)))
-                    .thenReturn(Optional.of(savedBox));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(boxRepository.findByIdAndSpaceCompanies(boxId, companies)).thenReturn(Optional.of(box));
+            doNothing().when(boxRepository).deleteById(boxId);
 
             //when
-            boxService.deleteBox("호랑이", savedBox.getId(), details);
-
+            BoxResponseDto boxResponseDto = boxService.deleteBox(companyName, boxId, details);
             //then
-            assertNull(boxRepository.findById(savedBox.getId()).orElse(null));
+            assertNotNull(boxResponseDto);
+            assertEquals("testBox", boxResponseDto.getBoxName());
+            assertEquals("500", boxResponseDto.getX());
+            assertEquals("999", boxResponseDto.getY());
         }
 
-        @DisplayName("사용자 Box 등록 및 Box 이동 테스트")
         @Test
-        void testMoveBoxWithUser() {
+        void Box_isPresent_true_유저_등록_이동() {
             // given
-            Long toBoxId = 2L;
-
-            Companies companies = Companies.builder()
-                    .companyName("test")
-                    .certification("A")
-                    .build();
-            Mockito.lenient().when(companyRepository.findByCompanyName(Mockito.anyString())).thenReturn(Optional.of(companies));
-
-            User user = User.builder()
-                    .id(1L)
-                    .email("test@test.com")
-                    .username("test")
-                    .password("test")
-                    .role(UserRoleEnum.USER)
-                    .companies(companies)
-                    .build();
-            Mockito.lenient().when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-
+            String companyName = "호랑이";
+            Long toBoxId = 1L;
             Box toBox = Box.builder()
                     .id(toBoxId)
                     .boxName("to box")
                     .x("2")
                     .y("2")
-                    .space(new Space())
+                    .space(space)
                     .user(null)
                     .build();
-
-            when(boxRepository.findByIdAndSpaceCompanies(Mockito.eq(toBox.getId()), Mockito.any(Companies.class)))
-                    .thenReturn(Optional.of(toBox));
+            details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
 
 
             BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
-
+            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
+            when(boxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(box));
+            when(multiBoxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(multiBox));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
             // when
-            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser("test", toBox.getId(), boxRequestDto, new UserDetailsImpl(user, user.getUsername()));
+            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
 
             // then
             assertEquals(boxResponseDto.getBoxName(), boxRequestDto.getBoxName());
             assertEquals(boxResponseDto.getX(), boxRequestDto.getX());
             assertEquals(boxResponseDto.getY(), boxRequestDto.getY());
-            assertEquals(user, toBox.getUser());
-            assertEquals(user.getUsername(), toBox.getUsername());
+            assertEquals(details.getUser(), toBox.getUser());
+            assertEquals(details.getUser().getUsername(), toBox.getUsername());
+        }
+
+        @Test
+        void multiBox_isPresent_true_유저_등록_이동() {
+            //given
+            String companyName = "호랑이";
+            Long toBoxId = 1L;
+            Box toBox = Box.builder()
+                    .id(toBoxId)
+                    .boxName("to box")
+                    .x("2")
+                    .y("2")
+                    .space(space)
+                    .user(null)
+                    .build();
+            details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
+            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
+            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
+            when(multiBoxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(multiBox));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
+
+            //when
+            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
+            //then
+            assertNotNull(boxResponseDto);
+            assertEquals(toBox.getBoxName(), boxResponseDto.getBoxName());
+            assertEquals(boxRequestDto.getX(), boxResponseDto.getX());
+            assertEquals(boxRequestDto.getY(), boxResponseDto.getY());
+            assertNull(multiBox.getUser());
+            assertNull(multiBox.getUsername());
+            assertEquals(details.getUser(), toBox.getUser());
+            assertEquals(details.getUser().getUsername(), toBox.getUsername());
+            verify(multiBoxRepository, times(1)).findFirstByUserId(details.getUser().getId());
+            verify(boxRepository, times(1)).findByIdAndSpaceCompanies(toBoxId, companies);
+        }
+
+        @Test
+        void 모든_조건_false_유저_등록_이동() {
+            //given
+            String companyName = "호랑이";
+            Long toBoxId = 1L;
+            Box toBox = Box.builder()
+                    .id(toBoxId)
+                    .boxName("to box")
+                    .x("2")
+                    .y("2")
+                    .space(space)
+                    .user(null)
+                    .build();
+            details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
+            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
+            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
+
+            //when
+            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
+            //then
+            assertNotNull(boxResponseDto);
+            assertEquals(toBox.getBoxName(), boxResponseDto.getBoxName());
+            assertEquals(boxRequestDto.getX(), boxResponseDto.getX());
+            assertEquals(boxRequestDto.getY(), boxResponseDto.getY());
+            assertEquals(details.getUser(), toBox.getUser());
+            assertEquals(details.getUser().getUsername(), toBox.getUsername());
+            verify(boxRepository, times(1)).findByIdAndSpaceCompanies(toBoxId, companies);
+            verify(boxRepository, times(1)).save(toBox);
         }
     }
+
     @Nested
-    @DisplayName("실패 케이스")
-    class FailCase {
-        @DisplayName("유저 확인")
-        @Test
-        void testMoveBoxWithUser() {
-            Long id = 1L;
-            User user = User.builder()
-                    .id(1L)
-                    .email("mouse@mouse")
-                    .username("test")
-                    .password("test")
-                    .role(UserRoleEnum.USER)
-                    .companies(companies)
-                    .build();
-            when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+    @DisplayName("Box 권한 없음 예외 케이스")
+    class NotPermissionExceptionCase {
+        // given
+        String companyName = "호랑이";
+        Long spaceId = 1L;
+        Long boxId = 1L;
+        UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
+        BoxRequestDto requestDto = new BoxRequestDto("BoxTest", "200", "300");
 
+        public static void NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
+            SpaceException exception = assertThrows(SpaceException.class, executable);
+            assertEquals(expectedErrorCode, exception.getErrorCode());
+        }
+
+        @Test
+        void Box_생성_권한_예외_테스트() {
             // when & then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                userRepository.findById(id).orElseThrow(() -> new SpaceException(SpaceErrorCode.USER_NOT_FOUND));
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
+                boxService.createBox(companyName, spaceId, requestDto, details);
             });
-
-            assertThat(exception.getErrorCode()).isEqualTo(SpaceErrorCode.USER_NOT_FOUND);
         }
-        @DisplayName("Box 사용자가 있을 시 에러 발생")
+
         @Test
-        void testToBoxupdateUser() {
-            //given
-            Companies companies = Companies.builder()
-                    .companyName("까마귀")
-                    .build();
-            User user = User.builder()
-                    .username("장혁진")
-                    .id(1L)
-                    .email("123@123")
-                    .password("1234")
-                    .role(UserRoleEnum.USER)
-                    .companies(companies)
-                    .build();
-
-            BoxRequestDto boxRequestDto = new BoxRequestDto("까마귀","777","888" );
-            UserDetailsImpl details = new UserDetailsImpl(user, user.getUsername());
-
-            Box fromBox = Box.builder()
-                    .id(1L)
-                    .boxName("장혁진 자리")
-                    .x("100")
-                    .y("200")
-                    .username("장혁진")
-                    .user(user)
-                    .space(space)
-                    .build();
-
-            Box toBox = Box.builder()
-                    .id(2L)
-                    .boxName("장혁진 자리 찜")
-                    .x("200")
-                    .y("300")
-                    .username("다른 유저")
-                    .user(User.builder().id(2L).build())
-                    .space(space)
-                    .build();
-            when(companyRepository.findByCompanyName(anyString())).thenReturn(Optional.of(companies));
-            when(boxRepository.findByIdAndSpaceCompanies(eq(2L),any(Companies.class))).thenReturn(Optional.of(toBox));
-            when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
-            when(boxRepository.findFirstByUserId(anyLong())).thenReturn(Optional.of(fromBox));
-            //When
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                boxService.moveBoxWithUser("까마귀", 2L,boxRequestDto, details);
+        void Box_수정_권한_예외_테스트() {
+            // when & then
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
+                boxService.updateBox(companyName, boxId, requestDto, details);
             });
-            //then
-            assertThat(exception.getErrorCode()).isEqualTo(SpaceErrorCode.BOX_ALREADY_IN_USER);
         }
 
+        @Test
+        void Box_삭제_권한_예외_테스트() {
+            // when & then
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
+                boxService.deleteBox(companyName, boxId, details);
+            });
+        }
+    }
 
+    @Nested
+    @DisplayName("Box 메서드 예외 케이스")
+    class MethodExceptionCase {
+        @Test
+        void 해당_회사_없음() {
+            //given
+            String companyName = "호랑이";
+            Long boxId = 1L;
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
 
-        @DisplayName("공용테스트 - 권한없음 메서드")
-        @ParameterizedTest
-        @MethodSource("provideTriConsumer")
-        void Commontest_NotHavePermission(TriConsumer<Long, BoxRequestDto, UserDetailsImpl> operation) {
-            // given
-            Companies companies = Companies.builder().build();
-            Mockito.lenient().when(companyRepository.findByCompanyName(Mockito.anyString())).thenReturn(Optional.of(companies));
+            //When,Then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                boxService.findCompanyNameAndBoxId(companyName, boxId);
+            });
+            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
+        }
 
-            User user = User.builder()
-                    .role(UserRoleEnum.USER)
+        @Test
+        void 해당_회사_아이디_없음() {
+            //given
+            String companyName = "testCompany";
+            Long boxId = 1L;
+            Companies companies = Companies.builder()
+                    .companyName("testCompany")
                     .build();
-            Mockito.lenient().when(userRepository.save(Mockito.any(User.class))).thenReturn(new User());
-            UserDetailsImpl details = new UserDetailsImpl(user, null);
-            Mockito.lenient().when(spaceRepository.save(Mockito.any(Space.class))).thenReturn(new Space());
-            BoxRequestDto boxRequestDto = new BoxRequestDto("이민재자리", "777", "777");
+
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(boxRepository.findByIdAndSpaceCompanies(boxId, companies)).thenReturn(Optional.empty());
+
+            //when,Then
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                boxService.findCompanyNameAndBoxId(companyName, boxId);
+            });
+            assertEquals(SpaceErrorCode.BOX_NOT_FOUND, exception.getErrorCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 이동 toBox NotNull")
+    class moveBoxWithUser_toBoxNotNull {
+        @Test
+        void 유저_등록_이동_toBox_NotNull() {
+            // given
+            String companyName = "호랑이";
+            Long toBoxId = 1L;
+            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
+            Box toBox = Box.builder()
+                    .id(toBoxId)
+                    .boxName("to box")
+                    .x("2")
+                    .y("2")
+                    .space(space)
+                    .user(User.builder().username("test").build())
+                    .build();
+            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
+            when(boxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(box));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
 
             // when, then
             SpaceException exception = assertThrows(SpaceException.class, () -> {
-                operation.accept(1L, boxRequestDto, details);
+                boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
             });
-            assertEquals(SpaceErrorCode.NOT_HAVE_PERMISSION, exception.getErrorCode());
+            assertEquals(exception.getErrorCode(), SpaceErrorCode.BOX_ALREADY_IN_USER);
+            verify(boxRepository, times(1)).findFirstByUserId(details.getUser().getId());
+            verify(boxRepository, times(1)).findByIdAndSpaceCompanies(toBoxId, companies);
         }
 
-        @DisplayName("권한 없음 통합 테스트")
-        private static Stream<TriConsumer<Long, BoxRequestDto, UserDetailsImpl>> provideTriConsumer() {
+        @Test
+        void 유저_찾기_예외(){
+            String companyName = "호랑이";
+            Long toBoxId = 1L;
+            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
 
-            TriConsumer<Long, BoxRequestDto, UserDetailsImpl> createBox = (spaceId, boxRequestDto, details) -> boxService.createBox("쥐", spaceId, boxRequestDto, details);
-            TriConsumer<Long, BoxRequestDto, UserDetailsImpl> updateBox = (spaceId, boxRequestDto, details) -> boxService.updateBox("쥐", spaceId, boxRequestDto, details);
-            TriConsumer<Long, BoxRequestDto, UserDetailsImpl> deleteBox = (spaceId, boxRequestDto, details) -> boxService.deleteBox("쥐", spaceId, details);
+            when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-            return Stream.of(createBox, updateBox, deleteBox);
+            SpaceException exception = assertThrows(SpaceException.class, () -> {
+                boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
+            });
+            assertEquals(exception.getErrorCode(), SpaceErrorCode.USER_NOT_FOUND);
         }
     }
-
-
-
 }
+
+
+
+
+
+

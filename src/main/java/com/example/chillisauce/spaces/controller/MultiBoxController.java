@@ -36,10 +36,5 @@ public class MultiBoxController {
         multiBoxService.deleteMultiBox(companyName, multiBoxId,details);
         return ResponseMessage.responseSuccess("MultiBox 삭제 완료","");
     }
-    //MultiBox 이동
-    @PatchMapping("/multibox/{companyName}/{fromMultiBoxId}/move/{toMultiBoxId}/user")
-    public ResponseEntity<ResponseMessage> moveMultiBoxWithUser(@PathVariable String companyName, @PathVariable Long fromMultiBoxId, @PathVariable Long toMultiBoxId, @RequestBody MultiBoxRequestDto multiBoxRequestDto, @AuthenticationPrincipal UserDetailsImpl details,@PathVariable Long fromBoxId) {
-        multiBoxService.moveMultiBoxWithUser(companyName, fromMultiBoxId, toMultiBoxId, multiBoxRequestDto, details, fromBoxId);
-        return ResponseMessage.responseSuccess("사용자 등록 및 이동 완료", "");
-    }
+
 }

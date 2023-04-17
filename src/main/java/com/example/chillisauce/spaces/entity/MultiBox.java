@@ -56,11 +56,4 @@ public class MultiBox {
         space.getMultiboxes().add(this);
     }
 
-    public void updateMultiBox(MultiBoxRequestDto multiBoxRequestDto, User user) {
-        this.multiBoxName = multiBoxRequestDto.getMultiBoxName();
-        this.x = multiBoxRequestDto.getX();
-        this.y = multiBoxRequestDto.getY();
-        this.user = user;
-        this.username = user.getUsername();
-    }
 }

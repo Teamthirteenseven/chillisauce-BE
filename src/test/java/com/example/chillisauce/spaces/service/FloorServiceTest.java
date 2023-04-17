@@ -8,7 +8,6 @@ import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
-import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
@@ -57,10 +56,6 @@ public class FloorServiceTest {
                 .build();
         companies = Companies.builder()
                 .companyName("testCompany")
-                .build();
-        Space space = Space.builder()
-                .spaceName("testSpace")
-                .companies(companies)
                 .build();
         User user = User.builder()
                 .role(UserRoleEnum.ADMIN)
@@ -136,7 +131,7 @@ public class FloorServiceTest {
             String companyName = "testFloor";
             Long floorId = 1L;
 
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(Companies.builder().build()));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
             when(floorRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(floor));
             FloorRequestDto floorRequestDto = new FloorRequestDto("플로워 수정");
 
@@ -166,15 +161,15 @@ public class FloorServiceTest {
     }
 
     @Nested
-    @DisplayName("권한 없음 예외 케이스")
-    class ExceptionCase {
+    @DisplayName("플로우 권한 없음 예외 케이스")
+    class NotPermissionExceptionCase {
         // given
         String companyName = "testCompany";
         Long floorId = 1L;
         UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
         FloorRequestDto requestDto = new FloorRequestDto("floorTest");
 
-        public static void assertSpaceException(SpaceErrorCode expectedErrorCode, Executable executable) {
+        public static void NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
             SpaceException exception = assertThrows(SpaceException.class, executable);
             assertEquals(expectedErrorCode, exception.getErrorCode());
         }
@@ -182,7 +177,7 @@ public class FloorServiceTest {
         @Test
         void Floor_생성_권한_예외_테스트() {
             // when & then
-            ExceptionCase.assertSpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
                 floorService.createFloor(companyName, requestDto, details);
             });
         }
@@ -190,7 +185,7 @@ public class FloorServiceTest {
         @Test
         void Floor_수정_권한_예외_테스트() {
             // when & then
-            ExceptionCase.assertSpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
                 floorService.updateFloor(companyName, floorId, requestDto, details);
             });
         }
@@ -198,7 +193,7 @@ public class FloorServiceTest {
         @Test
         void Floor_삭제_권한_예외_테스트() {
             // when & then
-            ExceptionCase.assertSpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
+            NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
                 floorService.deleteFloor(companyName, floorId, details);
             });
         }
@@ -206,7 +201,7 @@ public class FloorServiceTest {
 
     @Nested
     @DisplayName("해당 회사 권한 없음 예외 케이스")
-    class ExceptionCase2 {
+    class CompanyNotPermissionExceptionCase {
         // given
         String companyName = "missingCompany";
 
@@ -222,15 +217,14 @@ public class FloorServiceTest {
 
         UserDetailsImpl details = new UserDetailsImpl(user, null);
 
-        public static void NOT_HAVE_PERMISSION_COMPANIES_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
+        public static void COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
             SpaceException exception = assertThrows(SpaceException.class, executable);
             assertEquals(expectedErrorCode, exception.getErrorCode());
         }
-
         @Test
         void Floor_선택_조회_해당_회사_권한_없음() {
             // when & then
-            ExceptionCase2.NOT_HAVE_PERMISSION_COMPANIES_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
+            CompanyNotPermissionExceptionCase.COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
                 floorService.getFloorlist(companyName, floorId, details);
             });
         }
@@ -238,18 +232,17 @@ public class FloorServiceTest {
         @Test
         void Floor_전체_조회_해당_회사_권한_없음() {
             // when & then
-            ExceptionCase2.NOT_HAVE_PERMISSION_COMPANIES_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
+            CompanyNotPermissionExceptionCase.COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
                 floorService.getFloor(companyName, details);
             });
         }
     }
 
     @Nested
-    @DisplayName("CompanyName 예외 케이스")
-    class ExceptionCase3 {
+    @DisplayName("회사 이름 으로 찾을 수 없는 경우")
+    class findByCompanyName {
         // given
         String companyName = "testCompany";
-        Long floorId = 1L;
 
         FloorRequestDto requestDto = new FloorRequestDto("floorTest");
 
@@ -262,31 +255,24 @@ public class FloorServiceTest {
         @Test
         void Floor_생성_해당_회사_없음() {
             //when,then
-            ExceptionCase3.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
+            findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
                 floorService.createFloor(companyName,requestDto, details);
             });
         }
 
-        @Test
-        void Floor_선택_조회_해당_회사_없음() {
-            //when,then
-            ExceptionCase3.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
-                floorService.getFloorlist(companyName, floorId, details);
-            });
-        }
 
         @Test
         void Floor_전체_조회_해당_회사_없음() {
             //when,then
-            ExceptionCase3.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
+            findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
                 floorService.getFloor(companyName, details);
             });
         }
     }
 
     @Nested
-    @DisplayName("메서드 예외 케이스")
-    class ExceptionCase4 {
+    @DisplayName("회사 이름과 공간 ID로 층을 찾을 수 없는 경우")
+    class findCompanyNameAndFloorId {
         @Test
         void 해당_회사_없음() {
             //given
