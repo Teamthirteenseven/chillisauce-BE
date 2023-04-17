@@ -63,6 +63,21 @@ public class JwtUtil {
         return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) :request.getHeader(REFRESH_TOKEN);
     }
 
+//    public String getHeaderTokenAccess(HttpServletRequest request) {
+//        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); {
+//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+//                return bearerToken.substring(7);
+//        }
+//        return request.getHeader(AUTHORIZATION_HEADER);
+//    }
+//    public String getHeaderTokenRefresh(HttpServletRequest request) {
+//        String bearerToken = request.getHeader(REFRESH_TOKEN); {
+//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+//                return bearerToken.substring(7);
+//        }
+//        return request.getHeader(REFRESH_TOKEN);
+//    }
+
     // 토큰 생성
     public TokenDto createAllToken(String email) {
         return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
@@ -78,6 +93,7 @@ public class JwtUtil {
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(email)
+                        .claim("userId", user.getId())
                         .claim("role", user.getRole())
                         .claim("username", user.getUsername())
                         .claim("companyName", user.getCompanies().getCompanyName())
