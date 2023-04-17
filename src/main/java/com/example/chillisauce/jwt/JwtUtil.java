@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,8 @@ import java.util.Optional;
 public class JwtUtil {
     public static final String ACCESS_TOKEN = "Access_Token";   //헤더에 명시할 이름 기존 Authorization 에서 변경
     public static final String REFRESH_TOKEN = "Refresh_Token"; //엑세스토큰과 같이 리프레시토큰을 보내기 때문에 헤더에 같이 추가됨.
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer ";
 
     private final UserDetailsServiceImpl userDetailsService;       //스프링 시큐리티 의존성 주입
     private final RefreshTokenRepository refreshTokenRepository;
@@ -53,7 +56,11 @@ public class JwtUtil {
 
     // header 토큰 가져오기
     public String getHeaderToken(HttpServletRequest request, String type) {
-        return type.equals("Access") ? request.getHeader(ACCESS_TOKEN) :request.getHeader(REFRESH_TOKEN);
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); {
+            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+                return bearerToken.substring(7);
+        }
+        return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) :request.getHeader(REFRESH_TOKEN);
     }
 
     // 토큰 생성
@@ -68,7 +75,7 @@ public class JwtUtil {
         Date date = new Date();
         long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
 
-        return
+        return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(email)
                         .claim("role", user.getRole())
@@ -124,7 +131,7 @@ public class JwtUtil {
 
     //  토큰 헤더 설정
     public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-        response.setHeader(ACCESS_TOKEN, accessToken);  //리프레시 토큰의 헤더와 일관성을 위해 사용
+        response.setHeader(AUTHORIZATION_HEADER, accessToken);  //리프레시 토큰의 헤더와 일관성을 위해 사용
     }
 
     //토큰 만료시간 static변수 -> 메서드

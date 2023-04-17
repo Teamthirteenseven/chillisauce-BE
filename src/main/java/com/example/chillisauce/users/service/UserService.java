@@ -121,18 +121,22 @@ public class UserService {
             RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), loginRequestDto.getEmail());
             refreshTokenRepository.save(newToken);
         }
-        Cookie accessTokenCookie = new Cookie(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setMaxAge((int) jwtUtil.getAccessTime());
-        accessTokenCookie.setPath("/");
 
-        Cookie refreshTokenCookie = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge((int) jwtUtil.getRefreshTime());
-        refreshTokenCookie.setPath("/");
+//        Cookie accessTokenCookie = new Cookie(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setMaxAge((int) jwtUtil.getAccessTime());
+//        accessTokenCookie.setPath("/");
+//
+//        Cookie refreshTokenCookie = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+//        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setMaxAge((int) jwtUtil.getRefreshTime());
+//        refreshTokenCookie.setPath("/");
 
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+//        response.addCookie(accessTokenCookie);
+//        response.addCookie(refreshTokenCookie);
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, tokenDto.getAccessToken());
+        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
         return "로그인 성공";
     }
