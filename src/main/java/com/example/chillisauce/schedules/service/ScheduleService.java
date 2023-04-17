@@ -1,5 +1,8 @@
 package com.example.chillisauce.schedules.service;
 
+import com.example.chillisauce.reservations.dto.ReservationRequestDto;
+import com.example.chillisauce.reservations.exception.ReservationErrorCode;
+import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.schedules.dto.*;
 import com.example.chillisauce.schedules.entity.Schedule;
@@ -89,7 +92,24 @@ public class ScheduleService {
     public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
-        Schedule schedules = new Schedule(requestDto, user);
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ScheduleTime::getStart)
+                .sorted().toList();
+        LocalDateTime start = list.get(0);
+        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
+
+        // 시간이 겹치는 스케줄이 있는 경우 등록할 수 없음
+        scheduleRepository
+                .findFirstByStartTimeLessThanAndEndTimeGreaterThan(start, end)
+                .ifPresent(x -> {
+                    throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
+                });
+
+        Schedule schedules = Schedule.builder()
+                .title(requestDto.getScTitle())
+                .comment(requestDto.getScComment())
+                .startTime(start)
+                .endTime(end)
+                .build();
 
         Schedule saved = scheduleRepository.save(schedules);
 
@@ -105,20 +125,25 @@ public class ScheduleService {
         User user = userDetails.getUser();
 
         if(!user.getId().equals(schedule.getUser().getId())) {
-            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
+            throw new ScheduleException(ScheduleErrorCode.INVALID_USER_SCHEDULE_UPDATE);
         }
+
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ScheduleTime::getStart)
+                .sorted().toList();
+        LocalDateTime start = list.get(0);
+        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
         List<Schedule> duplicated = scheduleRepository
                 .findAllByIdNotAndStartTimeLessThanAndEndTimeGreaterThan(scheduleId,
-                        requestDto.getScStart(), requestDto.getScEnd());
+                        start, end);
 
         if(duplicated.size()!=0) {
-            throw new ScheduleException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
         }
 
-        schedule.update(requestDto);
+        schedule.update(requestDto, start, end);
 
-        return null;
+        return new ScheduleResponseDto(schedule);
     }
 
     public String deleteSchedule(Long scheduleId, UserDetailsImpl userDetails) {
@@ -128,7 +153,7 @@ public class ScheduleService {
         User user = userDetails.getUser();
 
         if(!user.getId().equals(schedule.getUser().getId())) {
-            throw new ScheduleException(ScheduleErrorCode.INVALID_USER_RESERVATION_DELETE);
+            throw new ScheduleException(ScheduleErrorCode.INVALID_USER_SCHEDULE_DELETE);
         }
 
         scheduleRepository.deleteById(schedule.getId());

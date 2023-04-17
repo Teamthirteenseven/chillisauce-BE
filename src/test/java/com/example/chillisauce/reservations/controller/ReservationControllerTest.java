@@ -2,12 +2,9 @@ package com.example.chillisauce.reservations.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.reservations.dto.*;
-import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationExceptionHandler;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -253,7 +250,7 @@ class ReservationControllerTest {
 
             // then
             result.andExpect(status().isBadRequest())
-                    .andDo(document("post-reservation",
+                    .andDo(document("post-reservation-empty-list",
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
@@ -262,7 +259,7 @@ class ReservationControllerTest {
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
-                                    fieldWithPath("data").type(JsonFieldType.STRING).description("빈 데이터")
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("데이터")
                             )
                     ));
         }

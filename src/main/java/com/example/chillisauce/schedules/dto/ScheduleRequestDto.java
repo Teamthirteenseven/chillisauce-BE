@@ -5,8 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -15,9 +16,9 @@ import java.time.LocalDateTime;
 public class ScheduleRequestDto {
     @NotNull
     String scTitle;
-    LocalDateTime scStart;
-    LocalDateTime scEnd;
+    @NotNull
     String scComment;
-
+    @NotEmpty
+    List<ScheduleTime> startList;
 }
 
