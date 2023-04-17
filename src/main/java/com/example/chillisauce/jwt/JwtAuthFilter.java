@@ -25,6 +25,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtUtil.getHeaderToken(request, "Access");
         String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
+
+//        String accessToken = jwtUtil.getHeaderTokenAccess(request);
+//        String refreshToken = jwtUtil.getHeaderTokenRefresh(request);
+
         if(accessToken != null) {
             if(!jwtUtil.validateToken(accessToken)){
                 jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
@@ -39,9 +43,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             //리프레시 토큰이 유효하고 DB와 비교했을 때 똑같다면
             if (isRefreshToken) {
                 //리프레시토큰으로 정보 가져오기
-                String joginemail = jwtUtil.getUserInfoFromToken(refreshToken);
+                String loginemail = jwtUtil.getUserInfoFromToken(refreshToken);
                 // 새로운 어세스 토큰 발급
-                String newAccessToken = jwtUtil.createToken(joginemail, "Access");
+                String newAccessToken = jwtUtil.createToken(loginemail, "Access");
                 // 헤더에 어세스 토큰 추가
                 jwtUtil.setHeaderAccessToken(response, newAccessToken);
                 // Security context에 인증 정보 넣기
