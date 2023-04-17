@@ -12,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 @Slf4j
@@ -67,7 +69,7 @@ public class ReservationController {
     public ResponseEntity<ResponseMessage> addReservation(
             @Parameter(description = "회의실 id 값", required = true, example = "3")
             @PathVariable Long meetingRoomId,
-            @RequestBody ReservationListRequestDto requestDto,
+            @RequestBody @Valid ReservationListRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage
                 .responseSuccess("예약 등록 성공", reservationService.addReservation(meetingRoomId, requestDto, userDetails));
@@ -82,7 +84,7 @@ public class ReservationController {
     public ResponseEntity<ResponseMessage> editReservation(
             @Parameter(description = "예약 id 값", required = true, example = "3")
             @PathVariable Long reservationId,
-            @RequestBody ReservationListRequestDto requestDto,
+            @RequestBody @Valid ReservationListRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage
                 .responseSuccess("예약 수정 성공", reservationService.editReservation(reservationId, requestDto, userDetails));

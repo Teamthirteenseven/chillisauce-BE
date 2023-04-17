@@ -29,6 +29,16 @@ public class ResponseMessage {
                 );
     }
 
+    public static ResponseEntity<ResponseMessage> responseError(String message, HttpStatus statusCode) {
+        return ResponseEntity
+                .status(statusCode)
+                .body(ResponseMessage.builder()
+                        .statusCode(statusCode.value())
+                        .message(message)
+                        .data("")
+                        .build()
+                );
+    }
 
     public static ResponseEntity<ResponseMessage> responseSuccess(String message, Object data) {
         return ResponseEntity
