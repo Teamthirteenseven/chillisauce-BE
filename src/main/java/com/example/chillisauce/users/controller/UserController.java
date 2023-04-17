@@ -31,7 +31,6 @@ import java.util.HashMap;
 public class UserController {
     private final UserService userService;
     private final EmailService emailService;
-    private final JwtUtil jwtUtil;
 
 
     /* 이메일 인증 */
