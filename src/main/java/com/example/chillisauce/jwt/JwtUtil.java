@@ -47,7 +47,6 @@ public class JwtUtil {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
 
-
     @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
@@ -56,12 +55,16 @@ public class JwtUtil {
 
     // header 토큰 가져오기
     public String getHeaderToken(HttpServletRequest request, String type) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); {
-            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
-                return bearerToken.substring(7);
-        }
-        return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) :request.getHeader(REFRESH_TOKEN);
+        return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) : request.getHeader(REFRESH_TOKEN);
     }
+
+//    public String getHeaderToken(HttpServletRequest request, String type) {
+//        String bearerToken = type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) :request.getHeader(REFRESH_TOKEN); {
+//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+//                return bearerToken.substring(7);
+//        }
+//        return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) :request.getHeader(REFRESH_TOKEN);
+//    }
 
 //    public String getHeaderTokenAccess(HttpServletRequest request) {
 //        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); {
@@ -82,6 +85,7 @@ public class JwtUtil {
     public TokenDto createAllToken(String email) {
         return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
     }
+
     public String createToken(String email, String type) {
         //토큰의 payload에 들어가는 유저정보가 많아서 유저의 정보를 간편하게 가져오기 위해 사용.
         User user = userRepository.findByEmail(email)
@@ -90,7 +94,7 @@ public class JwtUtil {
         Date date = new Date();
         long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
 
-        return BEARER_PREFIX +
+        return
                 Jwts.builder()
                         .setSubject(email)
                         .claim("userId", user.getId())
@@ -102,6 +106,7 @@ public class JwtUtil {
                         .signWith(key, signatureAlgorithm)
                         .compact();
     }
+
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
