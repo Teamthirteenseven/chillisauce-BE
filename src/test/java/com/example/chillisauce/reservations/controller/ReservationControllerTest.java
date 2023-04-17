@@ -1,9 +1,13 @@
 package com.example.chillisauce.reservations.controller;
 
+import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.reservations.dto.*;
+import com.example.chillisauce.reservations.exception.ReservationErrorCode;
+import com.example.chillisauce.reservations.exception.ReservationExceptionHandler;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,10 +16,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -37,6 +44,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
+@DisplayName("ReservationController 클래스")
 class ReservationControllerTest {
 
     @InjectMocks
@@ -47,31 +55,30 @@ class ReservationControllerTest {
 
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper;
-
     @BeforeEach
-    public void init(RestDocumentationContextProvider restDocumentation){
+    public void init(RestDocumentationContextProvider restDocumentation) {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(reservationController)
+                .setControllerAdvice(new ReservationExceptionHandler())
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
     }
 
     @Nested
-    @DisplayName("예약 컨트롤러 성공 케이스")
-    class ControllerSuccessCase {
+    @DisplayName("회사 전체 회의실 예약 내역 GET 요청 시")
+    class GetAllReservationTest {
+        // given
+        String companyName = "testCompany";
+        String url = "/reservations/" + companyName + "/all";
         @Test
         @WithMockUser
-        void 예약조회성공_회사_전체() throws Exception {
-            // given
-            String companyName = "testCompany";
-            String url = "/reservations/" +companyName+"/all";
+        void 전체_회의실_예약내역을_반환한다() throws Exception {
             ReservationListResponseDto all = getAllReservationResponse();
             when(reservationService.getAllReservations(eq(companyName), any())).thenReturn(all);
 
             // when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
-                            .header("Authorization", "Bearer Token")
+                    .header("Authorization", "Bearer Token")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON));
 
@@ -92,7 +99,6 @@ class ReservationControllerTest {
                                     fieldWithPath("data.reservationList[].end").type(JsonFieldType.STRING).description("예약 종료 시각")
                             )
                     ));
-
         }
 
         private ReservationListResponseDto getAllReservationResponse() {
@@ -119,8 +125,19 @@ class ReservationControllerTest {
         }
 
         @Test
+        @WithAnonymousUser
+        void 인증된_회원이_아니면_인증에러코드를_반환한다() {
+            String companyName = "testCompany";
+            String url = "/reservations/" + companyName + "/all";
+        }
+    }
+
+    @Nested
+    @DisplayName("예약 타임테이블 GET 요청 시")
+    class GetReservationTimeTableTest{
+        @Test
         @WithMockUser
-        void 예약조회성공_특정날짜_특정회의실 () throws Exception{
+        void 특정날짜_특정회의실의_예약테이블을_반환한다() throws Exception {
             // given
             String url = "/reservations/1";
             ReservationTimetableResponseDto timeTable = getReservationTimeTable();
@@ -150,7 +167,6 @@ class ReservationControllerTest {
                             )
                     ));
         }
-
         private ReservationTimetableResponseDto getReservationTimeTable() {
             Long mrId = 1L;
 
@@ -172,15 +188,23 @@ class ReservationControllerTest {
 
             return new ReservationTimetableResponseDto(mrId, List.of(timeOne, timeTwo, timeLast));
         }
+    }
 
+    @Nested
+    @DisplayName("예약 POST 요청 시")
+    class AddReservationTest {
         @Test
         @WithMockUser
-        void 예약등록성공() throws Exception {
+        void 예약을_등록한다() throws Exception {
             // given
             String url = "/reservations/1";
-            LocalDateTime start = LocalDateTime.of(2023, 4, 10, 12, 0);
-            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 12, 59);
-            ReservationResponseDto response = new ReservationResponseDto(start, end);
+            LocalDateTime startOne = LocalDateTime.of(2023, 4, 10, 13, 0);
+            LocalDateTime startTwo = LocalDateTime.of(2023, 4, 10, 14, 0);
+            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 14, 59);
+            ReservationRequestDto requestOne = new ReservationRequestDto(startOne);
+            ReservationRequestDto requestTwo = new ReservationRequestDto(startTwo);
+            ReservationListRequestDto requestBody = new ReservationListRequestDto(List.of(requestOne, requestTwo));
+            ReservationResponseDto response = new ReservationResponseDto(startOne, end);
             when(reservationService.addReservation(eq(1L), any(), any(UserDetailsImpl.class))).thenReturn(response);
 
             // when
@@ -188,8 +212,10 @@ class ReservationControllerTest {
                     .header("Authorization", "Bearer Token")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content("{\"start\":\"2023-04-10T12:00\", " +
-                            "\"end\":\"2023-04-10T12:59\"}"));
+                    .content("{\"startList\":[" +
+                            "{\"start\":\"2023-04-10T13:00\"}," +
+                            "{\"start\":\"2023-04-10T14:00\"}" +
+                            "]}"));
 
             // then
             result.andExpect(status().isOk())
@@ -197,8 +223,8 @@ class ReservationControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("start").type(JsonFieldType.STRING).description("시작시각"),
-                                    fieldWithPath("end").type(JsonFieldType.STRING).description("종료시각")
+                                    fieldWithPath("startList").type(JsonFieldType.ARRAY).description("시작시각목록"),
+                                    fieldWithPath("startList[].start").type(JsonFieldType.STRING).description("시작시각")
                             ),
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
@@ -212,12 +238,51 @@ class ReservationControllerTest {
 
         @Test
         @WithMockUser
-        void 예약수정성공() throws Exception{
+        void 예약_시간리스트가_비어있으면_예외를_반환한다() throws Exception {
             // given
             String url = "/reservations/1";
-            LocalDateTime start = LocalDateTime.of(2023, 4, 10, 12, 0);
-            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 12, 59);
-            ReservationResponseDto response = new ReservationResponseDto(start, end);
+            String message = "요청의 시각 목록이 비어있습니다.";
+            ResponseEntity<ResponseMessage> response = ResponseMessage.responseError(message, HttpStatus.BAD_REQUEST);
+
+            // when
+            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url)
+                    .header("Authorization", "Bearer Token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content("{\"startList\":[]}"));
+
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andDo(document("post-reservation",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("startList").type(JsonFieldType.ARRAY).description("시작시각목록")
+                            ),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("빈 데이터")
+                            )
+                    ));
+        }
+    }
+
+    @Nested
+    @DisplayName("예약 PATCH 요청 시")
+    class EditReservationTest {
+        @Test
+        @WithMockUser
+        void 예약을_수정한다() throws Exception {
+            // given
+            String url = "/reservations/1";
+            LocalDateTime startOne = LocalDateTime.of(2023, 4, 10, 13, 0);
+            LocalDateTime startTwo = LocalDateTime.of(2023, 4, 10, 14, 0);
+            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 14, 59);
+            ReservationRequestDto requestOne = new ReservationRequestDto(startOne);
+            ReservationRequestDto requestTwo = new ReservationRequestDto(startTwo);
+            ReservationListRequestDto requestBody = new ReservationListRequestDto(List.of(requestOne, requestTwo));
+            ReservationResponseDto response = new ReservationResponseDto(startOne, end);
             when(reservationService.editReservation(eq(1L), any(), any())).thenReturn(response);
 
             // when
@@ -225,7 +290,10 @@ class ReservationControllerTest {
                     .header("Authorization", "Bearer Token")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content("{\"start\":\"2023-04-10T12:00\", \"end\":\"2023-04-10T12:59\"}"));
+                    .content("{\"startList\":[" +
+                            "{\"start\":\"2023-04-10T13:00\"}," +
+                            "{\"start\":\"2023-04-10T14:00\"}" +
+                            "]}"));
 
             // then
             result.andExpect(status().isOk())
@@ -233,8 +301,8 @@ class ReservationControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("start").type(JsonFieldType.STRING).description("시작시각"),
-                                    fieldWithPath("end").type(JsonFieldType.STRING).description("종료시각")
+                                    fieldWithPath("startList").type(JsonFieldType.ARRAY).description("시작시각목록"),
+                                    fieldWithPath("startList[].start").type(JsonFieldType.STRING).description("시작시각")
                             ),
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
@@ -245,10 +313,14 @@ class ReservationControllerTest {
                             )
                     ));
         }
+    }
 
+    @Nested
+    @DisplayName("예약 DELETE 요청 시")
+    class DeleteReservationTest {
         @Test
         @WithMockUser
-        void 예약삭제성공() throws Exception{
+        void 예약을_삭제한다() throws Exception {
             // given
             String url = "/reservations/1";
             when(reservationService.deleteReservation(eq(1L), any())).thenReturn("");
@@ -271,11 +343,5 @@ class ReservationControllerTest {
                             )
                     ));
         }
-    }
-
-    @Nested
-    @DisplayName("예약 컨트롤러 실패 케이스")
-    class ControllerFailCase {
-
     }
 }

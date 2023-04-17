@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 @RestController
@@ -45,7 +46,7 @@ public class ScheduleController {
      */
     @PostMapping("/schedules")
     public ResponseEntity<ResponseMessage> addSchedule(
-            @RequestBody ScheduleRequestDto requestDto,
+            @RequestBody @Valid ScheduleRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage.responseSuccess("스케줄 등록 성공", scheduleService.addSchedule(requestDto, userDetails));
     }
