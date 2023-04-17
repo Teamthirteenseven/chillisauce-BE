@@ -31,9 +31,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -72,7 +73,7 @@ class ReservationServiceTest {
             UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
 
             // when
-            when(meetingRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(new Mr()))
+            when(meetingRoomRepository.findById(eq(1L))).thenReturn(Optional.of(new Mr()))
                     .thenThrow(ReservationException.class);
 
             ReservationResponseDto result = reservationService.addReservation(meetingRoomId, requestDto, userDetails);
@@ -134,14 +135,14 @@ class ReservationServiceTest {
 
             // then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ReservationErrorCode.DUPLICATED_TIME);
+            assertThat(exception.getMessage()).isNotNull();
+            assertThat(exception.getMessage()).isEqualTo("해당 시간대에 이미 등록된 예약이 있습니다.");
         }
 
         @Test
         void 예약등록_동시예약발생() throws InterruptedException {
             // given
-            Integer threadCount = 3;
+            int threadCount = 3;
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
             CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
