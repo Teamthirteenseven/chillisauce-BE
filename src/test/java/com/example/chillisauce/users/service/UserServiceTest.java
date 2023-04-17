@@ -238,38 +238,29 @@ class UserServiceTest {
 
         }
 
-//        @DisplayName("새로운 엑세스토큰 발급 성공")
-//        @Test
-//        void newAccessToken() {
-//            //given
-//            HttpServletRequest request = mock(HttpServletRequest.class);
-//            HttpServletResponse response = mock(HttpServletResponse.class);
-//            Map<String, String> headers = new HashMap<>();
+        @DisplayName("새로운 엑세스토큰 발급 성공")
+        @Test
+        void newAccessToken() {
+            //given
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            String refreshToken = "fakeRefresh";
+            String email = "123@123";
+            String newAccessToken = "fakeNewAccess";
 //
-//            String email = "123@123";
-//            String refreshToken = jwtUtil.createToken(email, "Refresh");
-//
-//            RefreshToken savedRefreshToken = new RefreshToken(refreshToken, email);
-//            refreshTokenRepository.save(savedRefreshToken);
-//
-//
-//            when(request.getHeader("Refresh")).thenReturn(refreshToken);
-//
-//            doAnswer(invocation -> {
-//                String key = invocation.getArgument(0);
-//                String value = invocation.getArgument(1);
-//                headers.put(key, value);
-//                return null;
-//            }).when(response).addHeader(anyString(), anyString());
-//
-//            //when
-//            userService.refresh(request, response);
-//
-//            //then
-//            String newAccessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
-//            assertThat(newAccessToken).isNotNull();
-//
-//        }
+            when(jwtUtil.getHeaderToken(request, "Refresh")).thenReturn(refreshToken);
+            when(jwtUtil.refreshTokenValidation(refreshToken)).thenReturn(true);
+            when(jwtUtil.getUserInfoFromToken(refreshToken)).thenReturn(email);
+            when(jwtUtil.createToken(email, "Access")).thenReturn(newAccessToken);
+
+            //when
+            userService.refresh(request, response);
+
+            //then
+            assertThat(newAccessToken).isNotNull();
+            verify(jwtUtil).setHeaderAccessToken(response, newAccessToken);
+
+        }
 
         @DisplayName("인증번호 확인 성공")
         @Test
@@ -320,7 +311,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.USER_NOT_FOUND);
+            assertThat(exception.getMessage()).isEqualTo("등록된 사용자가 없습니다");
         }
 
         @DisplayName("로그인 실패(비밀번호 오류)")
@@ -354,7 +345,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.NOT_PROPER_PASSWORD);
+            assertThat(exception.getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
 
         }
 
@@ -398,7 +389,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.DUPLICATE_EMAIL);
+            assertThat(exception.getMessage()).isEqualTo("중복된 이메일이 존재합니다");
         }
 
         @DisplayName("관리자 회원가입 실패(중복된 회사명)")
@@ -425,7 +416,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.DUPLICATE_COMPANY);
+            assertThat(exception.getMessage()).isEqualTo("중복된 회사명이 존재합니다");
         }
 
         @DisplayName("관리자 회원가입 실패(비밀번호 일치 오류)")
@@ -449,7 +440,7 @@ class UserServiceTest {
             });
 
             //then
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.NOT_PROPER_PASSWORD);
+            assertThat(exception.getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
         }
 
         @DisplayName("사원 회원가입 실패(중복된 이메일)")
@@ -472,7 +463,7 @@ class UserServiceTest {
             });
 
             //then
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.DUPLICATE_EMAIL);
+            assertThat(exception.getMessage()).isEqualTo("중복된 이메일이 존재합니다");
         }
 
         @DisplayName("사원 회원가입 실패(비밀번호 일치 오류)")
@@ -492,29 +483,7 @@ class UserServiceTest {
                 userService.signupUser(requestDto);
             });
             //then
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.NOT_PROPER_PASSWORD);
-        }
-
-        @DisplayName("사원 회원가입 실패(유효하지 않은 인증번호)")
-        @Test
-        void fail10() {
-            //given
-            UserSignupRequestDto requestDto = UserSignupRequestDto.builder()
-                    .email("123@123")
-                    .password("1234")
-                    .passwordCheck("1234")
-                    .userName("루피")
-                    .certification("123")
-                    .build();
-
-            when(companyRepository.findByCertification(requestDto.getCertification())).thenReturn(Optional.empty());
-
-            //when
-            UserException exception = assertThrows(UserException.class, () -> {
-                userService.signupUser(requestDto);
-            });
-            //then
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.INVALID_CERTIFICATION);
+            assertThat(exception.getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
         }
 
         @DisplayName("회원가입 실패(유효하지 않은 인증번호)")
@@ -531,7 +500,26 @@ class UserServiceTest {
             });
 
             //then
-            assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.INVALID_CERTIFICATION);
+            assertThat(exception.getMessage()).isEqualTo("인증번호가 유효하지 않습니다");
+        }
+
+        @DisplayName("새로운 엑세스토큰 발급 실패")
+        @Test
+        void fail11() {
+            //given
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            String refreshToken = "fakeRefresh";
+
+            when(jwtUtil.getHeaderToken(request, "Refresh")).thenReturn(refreshToken);
+            when(jwtUtil.refreshTokenValidation(refreshToken)).thenReturn(false);   //검증을 통과하지 못한 상황
+
+            //when
+            UserException exception = assertThrows(UserException.class,
+                    () -> userService.refresh(request, response));
+
+            //then
+            assertThat(exception.getMessage()).isEqualTo("리프레시 토큰이 유효하지 않습니다");
         }
 
     }

@@ -63,7 +63,7 @@ public class UserController {
 
     /* 로그인 */
     @PostMapping("/users/login")
-    public ResponseEntity<ResponseMessage> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<ResponseMessage> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
 
         return ResponseMessage.responseSuccess(userService.Login(loginRequestDto, response), "");
     }

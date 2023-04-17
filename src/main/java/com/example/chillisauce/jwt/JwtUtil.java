@@ -164,7 +164,8 @@ public class JwtUtil {
 
     //토큰 만료시간 static변수 -> 메서드
     public long getAccessTime() {
-        return 2 * 60 * 60 * 1000L; //2시간
+//        return 2 * 60 * 60 * 1000L; //2시간
+        return 10 * 60 * 1000L; //10분
     }
 
     public long getRefreshTime() {
