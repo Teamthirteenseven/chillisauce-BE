@@ -1,7 +1,13 @@
 package com.example.chillisauce.jwt;
 
 import com.example.chillisauce.security.UserDetailsServiceImpl;
-import com.example.chillisauce.users.entity.UserRoleEnum;
+import com.example.chillisauce.users.dto.TokenDto;
+import com.example.chillisauce.users.entity.RefreshToken;
+import com.example.chillisauce.users.entity.User;
+import com.example.chillisauce.users.exception.UserErrorCode;
+import com.example.chillisauce.users.exception.UserException;
+import com.example.chillisauce.users.repository.RefreshTokenRepository;
+import com.example.chillisauce.users.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -11,29 +17,32 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtUtil {
-    public static final String AUTHORIZATION_HEADER = "Authorization";     //http요청 응답 보낼 때, 헤더값 key에 해당.
-    public static final String AUTHORIZATION_KEY = "role";
-    private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 60 * 60 * 1000L;
+    public static final String ACCESS_TOKEN = "Access_Token";   //헤더에 명시할 이름 기존 Authorization 에서 변경
+    public static final String REFRESH_TOKEN = "Refresh_Token"; //엑세스토큰과 같이 리프레시토큰을 보내기 때문에 헤더에 같이 추가됨.
 
-    private final UserDetailsServiceImpl userDetailsService;       //스프링 시큐리티
+    private final UserDetailsServiceImpl userDetailsService;       //스프링 시큐리티 의존성 주입
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
 
-    @Value("${jwt.secret.key}")
+    @Value("${jwt.secret.key}") //절대 보여주지마...!
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
 
 
     @PostConstruct
@@ -42,32 +51,34 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // header 토큰을 가져오기
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
-        }
-        return null;
+    // header 토큰 가져오기
+    public String getHeaderToken(HttpServletRequest request, String type) {
+        return type.equals("Access") ? request.getHeader(ACCESS_TOKEN) :request.getHeader(REFRESH_TOKEN);
     }
 
     // 토큰 생성
-    public String createToken(String email, String username, Long id, UserRoleEnum role, String companyName) {
-        Date date = new Date();
+    public TokenDto createAllToken(String email) {
+        return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
+    }
+    public String createToken(String email, String type) {
+        //토큰의 payload에 들어가는 유저정보가 많아서 유저의 정보를 간편하게 가져오기 위해 사용.
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
-        return BEARER_PREFIX +
+        Date date = new Date();
+        long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
+
+        return
                 Jwts.builder()
                         .setSubject(email)
-                        .claim(AUTHORIZATION_KEY, role)
-                        .claim("id", id)
-                        .claim("username", username)
-                        .claim("companyName",companyName)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                        .claim("role", user.getRole())
+                        .claim("username", user.getUsername())
+                        .claim("companyName", user.getCompanies().getCompanyName())
+                        .setExpiration(new Date(date.getTime() + time))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
                         .compact();
     }
-
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
@@ -85,14 +96,43 @@ public class JwtUtil {
         return false;
     }
 
-    // 토큰에서 사용자 정보 가져오기          //시큐리티
-    public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    //리프레시 토큰 검증
+    public Boolean refreshTokenValidation(String token) {
+        //1차 토큰 검증
+        if (!validateToken(token)) return false;
+
+        //DB에 저장한 토큰 비교
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
+
+        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
+
     }
 
-    public Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    //토큰의 정보를 추출(.getSubject()의 사용으로 반환타입을 Claims가 아닌 String으로 사용)
+    @Transactional
+    public String getUserInfoFromToken(String token) {
+
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    //스프링 시큐리티 인증객체 생성
+    @Transactional
+    public Authentication createAuthentication(String email) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
+    //  토큰 헤더 설정
+    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
+        response.setHeader(ACCESS_TOKEN, accessToken);  //리프레시 토큰의 헤더와 일관성을 위해 사용
+    }
+
+    //토큰 만료시간 static변수 -> 메서드
+    public long getAccessTime() {
+        return 2 * 60 * 60 * 1000L; //2시간
+    }
+
+    public long getRefreshTime() {
+        return 60 * 60 * 24 * 7 * 1000L;    //7일
+    }
 }

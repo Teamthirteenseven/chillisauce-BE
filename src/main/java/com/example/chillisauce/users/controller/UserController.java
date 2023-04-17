@@ -9,11 +9,17 @@ import com.example.chillisauce.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -28,11 +34,13 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
 
+    /* 이메일 인증 */
     @PostMapping("/users/signup/email")
-    public String SendMail(@RequestBody SignupRequestDto request) throws Exception {
+    public String SendMail(@Valid @RequestBody SignupRequestDto request) throws Exception {
         return emailService.sendSimpleMessage(request.getEmail());
     }
 
+    /* 관리자 회원가입 */
     @PostMapping("/users/signup/admin")
     public ResponseEntity<ResponseMessage> signupAdmin(@Valid @RequestBody SignupRequestDto request) {
         /**
@@ -46,22 +54,29 @@ public class UserController {
         return ResponseMessage.responseSuccess("관리자 회원가입 성공", userService.signupAdmin(adminSignupRequestDto, companyRequestDto));
     }
 
+    /* 사원 회원가입 */
     @PostMapping("/users/signup/user")
-    public ResponseEntity<ResponseMessage> signupUser(@RequestBody UserSignupRequestDto userSignupRequestDto) {
+    public ResponseEntity<ResponseMessage> signupUser(@Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
 
         return ResponseMessage.responseSuccess(userService.signupUser(userSignupRequestDto), "");
     }
 
+    /* 로그인 */
     @PostMapping("/users/login")
     public ResponseEntity<ResponseMessage> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        LoginResponseDto user = userService.Login(loginRequestDto);
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getUsername(),
-                user.getId(), user.getRole(), user.getCompanies().getCompanyName()));
-        return ResponseMessage.responseSuccess("로그인 성공", "");
+
+        return ResponseMessage.responseSuccess(userService.Login(loginRequestDto, response), "");
     }
 
+    /* 토큰 재발급 */
+    @GetMapping("/users/refresh")
+    public void refresh(HttpServletRequest request, HttpServletResponse response) {
+        userService.refresh(request, response);
+    }
+
+    /* 인증번호 확인 */
     @PostMapping("/users/signup/match")
-    public ResponseEntity<ResponseMessage> checkCertificationMatch (@RequestBody HashMap<String, String> certification) {
-        return ResponseMessage.responseSuccess(userService.checkCertification(certification.get("certification")),"");
+    public ResponseEntity<ResponseMessage> checkCertificationMatch(@RequestBody HashMap<String, String> certification) {
+        return ResponseMessage.responseSuccess(userService.checkCertification(certification.get("certification")), "");
     }
 }

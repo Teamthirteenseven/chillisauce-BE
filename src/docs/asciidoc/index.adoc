@@ -128,3 +128,9 @@ operation::patch-updateSpace[]
 [[DELETE-Space]]
 === Space 삭제
 operation::delete-deleteSpace[]
+
+[[User-API]]
+== User API
+[[POST-Admin]]
+=== Admin 생성
+operation::post-signupAdmin[]
