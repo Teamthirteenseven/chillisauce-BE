@@ -55,6 +55,10 @@ public class JwtUtil {
 
     // header 토큰 가져오기
     public String getHeaderToken(HttpServletRequest request, String type) {
+        String bearerToken = type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) : request.getHeader(REFRESH_TOKEN);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+            return bearerToken.substring(7);
+
         return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) : request.getHeader(REFRESH_TOKEN);
     }
 
@@ -94,7 +98,7 @@ public class JwtUtil {
         Date date = new Date();
         long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
 
-        return
+        return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(email)
                         .claim("userId", user.getId())
@@ -129,10 +133,13 @@ public class JwtUtil {
         //1차 토큰 검증
         if (!validateToken(token)) return false;
 
+
         //DB에 저장한 토큰 비교
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
 
-        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
+        String checkedRefresh = refreshToken.get().getRefreshToken().substring(7);
+
+        return token.equals(checkedRefresh);
 
     }
 
