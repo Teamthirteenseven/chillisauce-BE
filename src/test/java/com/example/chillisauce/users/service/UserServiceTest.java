@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
@@ -127,61 +128,60 @@ class UserServiceTest {
 
         }
 
-//        @DisplayName("로그인")
-//        @Test
-//        void login() {
-//            List<Cookie> cookies = new ArrayList<>();
-//            HttpServletResponse response = mock(HttpServletResponse.class);
-//
-//            doAnswer(invocation -> {
-//                Cookie cookie = invocation.getArgument(0);
-//                cookies.add(cookie);
-//                return null;
-//            }).when(response).addCookie(any(Cookie.class));
-//
-//            //given
-//            User saveAdmin = User.builder()
-//                    .email("123@123")
-//                    .password(passwordEncoder.encode("1234qwer!"))
-//                    .username("루피")
-//                    .role(UserRoleEnum.ADMIN)
-//                    .companies(Companies.builder()
-//                            .companyName("원피스")
-//                            .certification("1234")
-//                            .build())
-//                    .build();
-//            LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-//                    .email("123@123")
-//                    .password("1234qwer!")
-//                    .build();
-//
-//            String fakeAccess = "fakeAccess";
-//            String fakeRefresh = "fakeRefresh";
-//
-//            TokenDto tokenDto = new TokenDto(fakeAccess, fakeRefresh);
-//
-//            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
-//            Mockito.when(jwtUtil.createAllToken(loginRequestDto.getEmail())).thenReturn(tokenDto);
-//            Mockito.when(refreshTokenRepository.findByEmail("123@123")).thenReturn(Optional.empty());
-//
-//
-//
-//            //when
-//            String result = userService.Login(loginRequestDto, response);
-//
-//            //then
-//            assertThat(saveAdmin).isNotNull();
-//            assertThat("로그인 성공").isEqualTo(result);
-//
-//            Optional<Cookie> accessTokenCookie = cookies.stream().filter(cookie -> JwtUtil.ACCESS_TOKEN.equals(cookie.getName())).findFirst();
-//            Optional<Cookie> refreshTokenCookie = cookies.stream().filter(cookie -> JwtUtil.REFRESH_TOKEN.equals(cookie.getName())).findFirst();
-//
-//            assertThat(accessTokenCookie).isPresent();
-//            assertThat(refreshTokenCookie).isPresent();
-//            assertThat(accessTokenCookie.get().getValue()).isNotEmpty();
-//            assertThat(refreshTokenCookie.get().getValue()).isNotEmpty();
-//
-//        }
+        @DisplayName("로그인")
+        @Test
+        void login() {
+            Map<String, String> headers = new HashMap<>();
+            HttpServletResponse response = mock(HttpServletResponse.class);
+
+            doAnswer(invocation -> {
+                String key = invocation.getArgument(0);
+                String value = invocation.getArgument(1);
+                headers.put(key, value);
+                return null;
+            }).when(response).addHeader(anyString(), anyString());
+
+            //given
+            User saveAdmin = User.builder()
+                    .email("123@123")
+                    .password(passwordEncoder.encode("1234qwer!"))
+                    .username("루피")
+                    .role(UserRoleEnum.ADMIN)
+                    .companies(Companies.builder()
+                            .companyName("원피스")
+                            .certification("1234")
+                            .build())
+                    .build();
+            LoginRequestDto loginRequestDto = LoginRequestDto.builder()
+                    .email("123@123")
+                    .password("1234qwer!")
+                    .build();
+
+            String fakeAccess = "fakeAccess";
+            String fakeRefresh = "fakeRefresh";
+
+            TokenDto tokenDto = new TokenDto(fakeAccess, fakeRefresh);
+
+            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
+            Mockito.when(jwtUtil.createAllToken(loginRequestDto.getEmail())).thenReturn(tokenDto);
+            Mockito.when(refreshTokenRepository.findByEmail("123@123")).thenReturn(Optional.empty());
+
+
+
+            //when
+            String result = userService.Login(loginRequestDto, response);
+
+            //then
+            assertThat(saveAdmin).isNotNull();
+            assertThat("로그인 성공").isEqualTo(result);
+
+            String accessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
+            String refreshToken = headers.get(JwtUtil.REFRESH_TOKEN);
+
+            assertThat(accessToken).isNotEmpty();
+            assertThat(refreshToken).isNotEmpty();
+
+        }
 
         @DisplayName("리프레시토큰 저장 성공")
         @Test
@@ -235,6 +235,39 @@ class UserServiceTest {
             assertThat(updatedRefreshToken).isNotNull();
             assertThat(updatedRefreshToken.getEmail()).isEqualTo(refreshToken.getEmail());
             assertThat(updatedRefreshToken.getRefreshToken()).isEqualTo(tokenDto.getRefreshToken());
+
+        }
+
+        @DisplayName("새로운 엑세스토큰 발급 성공")
+        @Test
+        void newAccessToken() {
+            //given
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            Map<String, String> headers = new HashMap<>();
+
+            String email = "123@123";
+            String refreshToken = jwtUtil.createToken(email, "Refresh");
+
+            RefreshToken savedRefreshToken = new RefreshToken(refreshToken, email);
+            refreshTokenRepository.save(savedRefreshToken);
+
+
+            when(request.getHeader("Refresh")).thenReturn(refreshToken);
+
+            doAnswer(invocation -> {
+                String key = invocation.getArgument(0);
+                String value = invocation.getArgument(1);
+                headers.put(key, value);
+                return null;
+            }).when(response).addHeader(anyString(), anyString());
+
+            //when
+            userService.refresh(request, response);
+
+            //then
+            String newAccessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
+            assertThat(newAccessToken).isNotNull();
 
         }
 
