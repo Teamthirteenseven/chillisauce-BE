@@ -19,7 +19,7 @@ public class RefreshToken {
     private Long id;
 
     @NotBlank
-    @Column(length = 500)
+    @Column(length = 2000)
     private String refreshToken;
 
     @NotBlank
