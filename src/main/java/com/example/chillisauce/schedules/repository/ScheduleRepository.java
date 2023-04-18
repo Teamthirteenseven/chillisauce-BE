@@ -16,14 +16,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findAllByUserId(Long userId);
 
     @Query("select s from Schedule s " +
-            "where s.user.id = :userId and s.startTime >= :startTime and s.startTime <= :endTime")
-    List<Schedule> findAllByUserIdAndStartTime(@Param("userId") Long userId,
+            "where s.user.id = :userId and s.startTime between :startTime and :endTime")
+    List<Schedule> findAllByUserIdAndStartTimeBetween(@Param("userId") Long userId,
                                                @Param("startTime") LocalDateTime startTime,
                                                @Param("endTime") LocalDateTime endTime);
 
     @Query("select s from Schedule s " +
             "where s.startTime < :endTime and s.endTime > :startTime")
-    Optional<Reservation> findFirstByStartTimeLessThanAndEndTimeGreaterThan(
+    Optional<Schedule> findFirstByStartTimeLessThanAndEndTimeGreaterThan(
             @Param("startTime") LocalDateTime start,
             @Param("endTime") LocalDateTime end);
 

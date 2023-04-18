@@ -30,10 +30,15 @@ public class Reservation {
     User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="meeting_room_id")
     Mr meetingRoom;
 
     public void update(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public void update(Mr meetingRoom){
+        this.meetingRoom=meetingRoom;
     }
 }
