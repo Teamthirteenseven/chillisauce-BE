@@ -73,7 +73,7 @@ class UserControllerTest {
                     .email("123@123")
                     .password("1234qwer!")
                     .passwordCheck("1234qwer!")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("뽀로로랜드")
                     .certification("1234")
                     .build();
@@ -113,7 +113,7 @@ class UserControllerTest {
                     .email("123@123")
                     .password("1234qwer!")
                     .passwordCheck("1234qwer!")
-                    .userName("루피")
+                    .username("루피")
                     .certification("1234")
                     .build();
 //            when(userService.signupUser(requestDto)).thenReturn(answer);    //Strict stubbing argument mismatch. Please check: 에러 발생 구문
@@ -140,7 +140,7 @@ class UserControllerTest {
                     .email("123@123")
                     .password("1234qwer!")
                     .passwordCheck("1234qwer!")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("뽀로로랜드")
                     .certification("1234")
                     .build();
@@ -227,7 +227,7 @@ class UserControllerTest {
                     .email("뽀로로")
                     .password("1234qwer!")
                     .passwordCheck("1234qwer!")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("뽀로로랜드")
                     .certification("1234")
                     .build();
@@ -252,7 +252,7 @@ class UserControllerTest {
                     .email("123@123")
                     .password("1234")
                     .passwordCheck("1234")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("뽀로로랜드")
                     .certification("1234")
                     .build();
@@ -277,7 +277,7 @@ class UserControllerTest {
                     .email("뽀로로")
                     .password("1234qwer!")
                     .passwordCheck("1234qwer!")
-                    .userName("루피")
+                    .username("루피")
                     .certification("1234")
                     .build();
 
@@ -301,7 +301,7 @@ class UserControllerTest {
                     .email("뽀로로@뽀로로랜드")
                     .password("1234")
                     .passwordCheck("1234")
-                    .userName("루피")
+                    .username("루피")
                     .certification("1234")
                     .build();
 

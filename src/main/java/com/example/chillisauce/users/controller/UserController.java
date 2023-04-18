@@ -35,8 +35,8 @@ public class UserController {
 
     /* 이메일 인증 */
     @PostMapping("/users/signup/email")
-    public String SendMail(@Valid @RequestBody SignupRequestDto request) throws Exception {
-        return emailService.sendSimpleMessage(request.getEmail());
+    public String SendMail(@Valid @RequestBody HashMap<String, String> email) throws Exception {
+        return emailService.sendSimpleMessage(email.get("email"));
     }
 
     /* 관리자 회원가입 */
