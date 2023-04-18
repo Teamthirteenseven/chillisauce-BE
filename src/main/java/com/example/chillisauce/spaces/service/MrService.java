@@ -1,5 +1,6 @@
 package com.example.chillisauce.spaces.service;
 
+import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.spaces.dto.MrResponseDto;
@@ -12,8 +13,11 @@ import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,8 @@ public class MrService {
     private final MrRepository mrRepository;
     private final CompanyRepository companyRepository;
     private final SpaceService spaceService;
+
+    private final ReservationService reservationService;
 
     //미팅룸 생성
     @Transactional
@@ -53,9 +59,11 @@ public class MrService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Mr mr = findCompanyNameAndMrId(companyName,mrId);
+        reservationService.deleteMeetingRoomInReservations(mrId, null);
         mrRepository.deleteById(mrId);
         return new MrResponseDto(mr);
     }
+
 
     //companyName find , MrId 두개 합쳐놓은 메서드
     public Mr findCompanyNameAndMrId(String companyName, Long mrId) {
@@ -66,6 +74,7 @@ public class MrService {
                 () -> new SpaceException(SpaceErrorCode.MR_NOT_FOUND)
         );
     }
+
 
 
 }

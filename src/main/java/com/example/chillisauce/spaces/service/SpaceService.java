@@ -1,13 +1,16 @@
 package com.example.chillisauce.spaces.service;
 
 
+import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.*;
 import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
+import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
@@ -30,8 +33,10 @@ import java.util.stream.Collectors;
 public class SpaceService {
     private final SpaceRepository spaceRepository;
     private final CompanyRepository companyRepository;
-
     private final FloorRepository floorRepository;
+
+    private final ReservationService reservationService;
+    private final MrRepository mrRepository;
 
 
     //플로우 안에 공간 생성
@@ -118,7 +123,6 @@ public class SpaceService {
             floor = floorRepository.findById(floorId).orElseThrow(
                     () -> new SpaceException(SpaceErrorCode.FLOOR_NOT_FOUND));
         }
-
         space.updateSpace(spaceRequestDto, floor);
         spaceRepository.save(space);
         return new SpaceResponseDto(space);
@@ -131,6 +135,11 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
+        List<Mr> mrList = space.getMrs();
+        for (Mr mr : mrList) {
+            reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
+        }
+        mrRepository.deleteAll(mrList);
         spaceRepository.deleteById(spaceId);
         return new SpaceResponseDto(space);
     }

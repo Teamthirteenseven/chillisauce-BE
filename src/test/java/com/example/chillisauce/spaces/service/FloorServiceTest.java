@@ -8,6 +8,7 @@ import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
+import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
@@ -43,6 +44,8 @@ public class FloorServiceTest {
     private FloorRepository floorRepository;
     @InjectMocks
     private FloorService floorService;
+    @Mock
+    private MrRepository mrRepository;
     private Floor floor;
 
     private Companies companies;
@@ -151,6 +154,7 @@ public class FloorServiceTest {
             when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(Companies.builder().build()));
             when(floorRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(floor));
             doNothing().when(floorRepository).deleteById(floorId);
+            doNothing().when(mrRepository).deleteAll();
             //when
             FloorResponseDto floorResponseDto = floorService.deleteFloor(companyName, floorId, details);
 

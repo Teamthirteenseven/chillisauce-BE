@@ -1,13 +1,18 @@
 package com.example.chillisauce.spaces.service;
 
+import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.FloorRequestDto;
 import com.example.chillisauce.spaces.dto.FloorResponseDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
+import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
@@ -25,6 +30,9 @@ import java.util.List;
 public class FloorService {
     private final CompanyRepository companyRepository;
     private final FloorRepository floorRepository;
+    private final ReservationService reservationService;
+    private final MrRepository mrRepository;
+    private final SpaceRepository spaceRepository;
     //Floor 생성
     @Transactional
     public FloorResponseDto createFloor(String companyName, FloorRequestDto floorRequestDto, UserDetailsImpl details) {
@@ -86,6 +94,11 @@ public class FloorService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = findCompanyNameAndFloorId(companyName, floorId);
+        for(Space space : floor.getSpaces()) {
+            for (Mr mr : space.getMrs())
+                reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
+        }
+        mrRepository.deleteAll();
         floorRepository.deleteById(floorId);
         return new FloorResponseDto(floor);
     }
