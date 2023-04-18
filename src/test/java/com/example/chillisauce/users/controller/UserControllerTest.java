@@ -2,11 +2,9 @@ package com.example.chillisauce.users.controller;
 
 import com.example.chillisauce.jwt.JwtUtil;
 import com.example.chillisauce.users.dto.*;
-import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.exception.UserExceptionHandler;
-import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.service.EmailServiceImpl;
 import com.example.chillisauce.users.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -28,16 +25,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentRequest;
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentResponse;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -51,18 +44,12 @@ class UserControllerTest {
 
     @InjectMocks
     private UserController userController;
-
     @Mock
     private UserService userService;
     @Mock
     private EmailServiceImpl emailService;
-    @Mock
-    private CompanyRepository companyRepository;
-
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
-    @Spy
-    HttpServletResponse response;
 
     @BeforeEach
     public void init(RestDocumentationContextProvider restDocumentation) {
