@@ -15,6 +15,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignupRequestDto {
+    @NotBlank
     @Email(message = "이메일 형식이 올바르지 않습니다.")
     private String email;
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,16}$",
