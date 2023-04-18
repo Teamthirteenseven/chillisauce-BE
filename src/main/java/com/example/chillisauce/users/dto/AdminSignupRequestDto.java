@@ -11,13 +11,13 @@ public class AdminSignupRequestDto {
     private final String email;
     private final String password;
     private final String passwordCheck;
-    private final String userName;
+    private final String username;
 
     public AdminSignupRequestDto(SignupRequestDto request) {
         this.email = request.getEmail();
         this.password = request.getPassword();
         this.passwordCheck = request.getPasswordCheck();
-        this.userName = request.getUserName();
+        this.username = request.getUsername();
     }
 
 }

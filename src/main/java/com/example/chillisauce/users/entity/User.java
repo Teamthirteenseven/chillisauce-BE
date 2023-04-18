@@ -42,7 +42,7 @@ public class User {
     public User(AdminSignupRequestDto adminSignupRequestDto, String password,  UserRoleEnum role, Companies companies) {
         this.email = adminSignupRequestDto.getEmail();
         this.password = password;   //패스워드인코더 사용
-        this.username = adminSignupRequestDto.getUserName();
+        this.username = adminSignupRequestDto.getUsername();
         this.role = role;
         this.companies = companies;
     }
@@ -50,7 +50,7 @@ public class User {
     public User(UserSignupRequestDto userSignupRequestDto, String password,  UserRoleEnum role, Companies companies) {
         this.email = userSignupRequestDto.getEmail();
         this.password = password;   //패스워드인코더 사용
-        this.username = userSignupRequestDto.getUserName();
+        this.username = userSignupRequestDto.getUsername();
         this.role = role;
         this.companies = companies;
     }

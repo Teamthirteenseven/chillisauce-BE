@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -22,7 +21,7 @@ public class UserSignupRequestDto {
             message = "비밀번호는 8 ~ 16자리 영문, 숫자, 특수문자를 조합하여 입력하세요.")
     private String password;
     private String passwordCheck;
-    private String userName;
+    private String username;
     private String certification;
 
 }

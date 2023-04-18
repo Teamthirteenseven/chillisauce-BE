@@ -58,7 +58,7 @@ class UserServiceTest {
                     .email("123@123")
                     .password("1234")
                     .passwordCheck("1234")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("원피스")
                     .certification("123")
                     .build();
@@ -75,7 +75,7 @@ class UserServiceTest {
             User saveAdmin = User.builder()
                     .email(signupRequestDto.getEmail())
                     .password(password)
-                    .username(signupRequestDto.getUserName())
+                    .username(signupRequestDto.getUsername())
                     .role(UserRoleEnum.ADMIN)
                     .companies(company)
                     .build();
@@ -110,7 +110,7 @@ class UserServiceTest {
                     .email("123@123")
                     .password("1234")
                     .passwordCheck("1234")
-                    .userName("루피")
+                    .username("루피")
                     .certification("123")
                     .build();
 
@@ -359,7 +359,7 @@ class UserServiceTest {
                     .email("123@124")
                     .password("1234")
                     .passwordCheck("1234")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("원피스")
                     .certification("123")
                     .build();
@@ -400,7 +400,7 @@ class UserServiceTest {
                     .email("123@124")
                     .password("1234")
                     .passwordCheck("1234")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("원피스")
                     .certification("123")
                     .build();
@@ -427,7 +427,7 @@ class UserServiceTest {
                     .email("123@124")
                     .password("1234")
                     .passwordCheck("5678")
-                    .userName("루피")
+                    .username("루피")
                     .companyName("원피스")
                     .certification("123")
                     .build();
@@ -451,7 +451,7 @@ class UserServiceTest {
                     .email("123@123")
                     .password("1234")
                     .passwordCheck("1234")
-                    .userName("루피")
+                    .username("루피")
                     .certification("123")
                     .build();
 
@@ -474,7 +474,7 @@ class UserServiceTest {
                     .email("123@123")
                     .password("1234")
                     .passwordCheck("5678")
-                    .userName("루피")
+                    .username("루피")
                     .certification("123")
                     .build();
 
