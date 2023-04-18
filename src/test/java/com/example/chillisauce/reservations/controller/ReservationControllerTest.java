@@ -137,7 +137,7 @@ class ReservationControllerTest {
         void 특정날짜_특정회의실의_예약테이블을_반환한다() throws Exception {
             // given
             String url = "/reservations/1";
-            ReservationTimetableResponseDto timeTable = getReservationTimeTable();
+            ReservationTimetableResponseDto timeTable = getReservationTimetable();
             when(reservationService.getReservationTimetable(any(), anyLong(), any())).thenReturn(timeTable);
 
             // when
@@ -164,7 +164,7 @@ class ReservationControllerTest {
                             )
                     ));
         }
-        private ReservationTimetableResponseDto getReservationTimeTable() {
+        private ReservationTimetableResponseDto getReservationTimetable() {
             Long mrId = 1L;
 
             ReservationTimeResponseDto timeOne = ReservationTimeResponseDto.builder().isCheckOut(false)
