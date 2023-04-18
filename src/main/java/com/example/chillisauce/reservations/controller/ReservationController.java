@@ -103,4 +103,13 @@ public class ReservationController {
         return ResponseMessage
                 .responseSuccess("예약 삭제 성공", reservationService.deleteReservation(reservationId, userDetails));
     }
+
+    @DeleteMapping("/reservations/meetingRoom/{meetingRoomId}")
+    public ResponseEntity<ResponseMessage> deleteMeetingRoomInReservations(
+            @Parameter(description = "회의실 id 값", required = true, example = "1")
+            @PathVariable Long meetingRoomId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseMessage.responseSuccess("회의실 전체 예약 삭제 성공",
+                reservationService.deleteMeetingRoomInReservations(meetingRoomId, userDetails));
+    }
 }

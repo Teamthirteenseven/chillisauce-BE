@@ -7,6 +7,9 @@ import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.service.FloorService;
 import com.example.chillisauce.spaces.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,7 +60,10 @@ public class SpaceControllerTest {
                 .standaloneSetup(spaceController)
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = new ObjectMapper()
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);;
 
     }
 
@@ -88,7 +94,8 @@ public class SpaceControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("spaceName").type(JsonFieldType.STRING).description("Space 이름")
+                                    fieldWithPath("spaceName").type(JsonFieldType.STRING).description("Space 이름"),
+                                    fieldWithPath("floorId").type(JsonFieldType.STRING).description("Floor 아이디").optional()
                             ),
 
                             responseFields(
@@ -108,6 +115,8 @@ public class SpaceControllerTest {
             String url = "/spaces/" + companyName + "/" + floorId;
 
             SpaceRequestDto spaceRequestDto = new SpaceRequestDto("Test 공간");
+            String jsonString = objectMapper.writeValueAsString(spaceRequestDto);
+            System.out.println(jsonString);
             SpaceResponseDto spaceResponseDto = new SpaceResponseDto(1L, "Test 공간");
             when(spaceService.createSpaceinfloor(eq(companyName), any(), any(), eq(floorId))).thenReturn(spaceResponseDto);
 
@@ -124,7 +133,8 @@ public class SpaceControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("spaceName").type(JsonFieldType.STRING).description("Space 이름")
+                                    fieldWithPath("spaceName").type(JsonFieldType.STRING).description("Space 이름"),
+                                    fieldWithPath("floorId").type(JsonFieldType.STRING).description("Floor 아이디").optional()
                             ),
 
                             responseFields(
@@ -234,7 +244,8 @@ public class SpaceControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("spaceName").type(JsonFieldType.STRING).description("Space 이름")
+                                    fieldWithPath("spaceName").type(JsonFieldType.STRING).description("Space 이름"),
+                                    fieldWithPath("floorId").type(JsonFieldType.STRING).description("Floor 아이디").optional()
                             ),
 
                             responseFields(

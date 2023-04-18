@@ -53,7 +53,7 @@ public class MultiBox {
 
     public void linkSpace(Space space) {
         this.space = space;
-        space.getMultiboxes().add(this);
+        space.getMultiBoxes().add(this);
     }
 
 }

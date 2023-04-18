@@ -2,12 +2,9 @@ package com.example.chillisauce.reservations.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.reservations.dto.*;
-import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationExceptionHandler;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -66,7 +63,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("회사 전체 회의실 예약 내역 GET 요청 시")
-    class GetAllReservationTest {
+    class GetAllReservationTestCase {
         // given
         String companyName = "testCompany";
         String url = "/reservations/" + companyName + "/all";
@@ -134,7 +131,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 타임테이블 GET 요청 시")
-    class GetReservationTimeTableTest{
+    class GetReservationTimeTableTestCase {
         @Test
         @WithMockUser
         void 특정날짜_특정회의실의_예약테이블을_반환한다() throws Exception {
@@ -192,7 +189,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 POST 요청 시")
-    class AddReservationTest {
+    class AddReservationTestCase {
         @Test
         @WithMockUser
         void 예약을_등록한다() throws Exception {
@@ -253,7 +250,7 @@ class ReservationControllerTest {
 
             // then
             result.andExpect(status().isBadRequest())
-                    .andDo(document("post-reservation",
+                    .andDo(document("post-reservation-empty-list",
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
@@ -262,7 +259,7 @@ class ReservationControllerTest {
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
-                                    fieldWithPath("data").type(JsonFieldType.STRING).description("빈 데이터")
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("데이터")
                             )
                     ));
         }
@@ -270,7 +267,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 PATCH 요청 시")
-    class EditReservationTest {
+    class EditReservationTestCase {
         @Test
         @WithMockUser
         void 예약을_수정한다() throws Exception {
@@ -317,7 +314,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 DELETE 요청 시")
-    class DeleteReservationTest {
+    class DeleteReservationTestCase {
         @Test
         @WithMockUser
         void 예약을_삭제한다() throws Exception {

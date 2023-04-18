@@ -1,5 +1,8 @@
 package com.example.chillisauce.schedules.service;
 
+import com.example.chillisauce.reservations.dto.ReservationRequestDto;
+import com.example.chillisauce.reservations.exception.ReservationErrorCode;
+import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.schedules.dto.*;
 import com.example.chillisauce.schedules.entity.Schedule;
@@ -9,6 +12,7 @@ import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
@@ -48,7 +53,7 @@ public class ScheduleService {
 
         // 해당 날짜에 해당하는 모든 스케줄 리스트
         List<Schedule> all = scheduleRepository
-                .findAllByUserIdAndStartTime(user.getId(), selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
+                .findAllByUserIdAndStartTimeBetween(user.getId(), selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
         //TODO: 예약 수 x timeSet entry 만큼 loop 돌기 때문에 성능이 좋지 않음
         List<ScheduleTimeResponseDto> timeList =
@@ -89,7 +94,26 @@ public class ScheduleService {
     public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
-        Schedule schedules = new Schedule(requestDto, user);
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ScheduleTime::getStart)
+                .sorted().toList();
+        LocalDateTime start = list.get(0);
+        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
+
+        // 시간이 겹치는 스케줄이 있는 경우 등록할 수 없음
+        List<Schedule> duplicated = scheduleRepository
+                .findFirstByUserIdAndStartTimeLessThanAndEndTimeGreaterThan(user.getId(), start, end);
+
+        if(duplicated.size()!=0){
+            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
+        }
+
+        Schedule schedules = Schedule.builder()
+                .user(user)
+                .title(requestDto.getScTitle())
+                .comment(requestDto.getScComment())
+                .startTime(start)
+                .endTime(end)
+                .build();
 
         Schedule saved = scheduleRepository.save(schedules);
 
@@ -105,20 +129,25 @@ public class ScheduleService {
         User user = userDetails.getUser();
 
         if(!user.getId().equals(schedule.getUser().getId())) {
-            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
+            throw new ScheduleException(ScheduleErrorCode.INVALID_USER_SCHEDULE_UPDATE);
         }
+
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ScheduleTime::getStart)
+                .sorted().toList();
+        LocalDateTime start = list.get(0);
+        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
         List<Schedule> duplicated = scheduleRepository
                 .findAllByIdNotAndStartTimeLessThanAndEndTimeGreaterThan(scheduleId,
-                        requestDto.getScStart(), requestDto.getScEnd());
+                        start, end);
 
         if(duplicated.size()!=0) {
-            throw new ScheduleException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
         }
 
-        schedule.update(requestDto);
+        schedule.update(requestDto, start, end);
 
-        return null;
+        return new ScheduleResponseDto(schedule);
     }
 
     public String deleteSchedule(Long scheduleId, UserDetailsImpl userDetails) {
@@ -128,7 +157,7 @@ public class ScheduleService {
         User user = userDetails.getUser();
 
         if(!user.getId().equals(schedule.getUser().getId())) {
-            throw new ScheduleException(ScheduleErrorCode.INVALID_USER_RESERVATION_DELETE);
+            throw new ScheduleException(ScheduleErrorCode.INVALID_USER_SCHEDULE_DELETE);
         }
 
         scheduleRepository.deleteById(schedule.getId());
