@@ -2,7 +2,6 @@ package com.example.chillisauce.spaces.entity;
 
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
-import com.example.chillisauce.users.entity.User;
 import lombok.*;
 
 
@@ -38,6 +37,8 @@ public class Mr {
 
     @OneToMany(mappedBy = "meetingRoom")
     List<Reservation> reservations;
+
+
     public Mr(MrRequestDto mrRequestDto) {
         this.mrName = mrRequestDto.getMrName();
         this.x = mrRequestDto.getX();

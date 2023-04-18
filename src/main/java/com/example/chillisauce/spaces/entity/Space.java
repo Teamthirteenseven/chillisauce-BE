@@ -28,8 +28,6 @@ public class Space {
     @NotEmpty
     private String spaceName;
 
-    //CascadeType.ALL은 모든 Cascade Type을 적용하는 것으로, 부모 엔티티의 변경사항이 자식 엔티티에도 전파되어 모든 변경사항을 함께 저장하고 관리하게 됩니다.
-    // 하지만 CascadeType.ALL은 필요 이상으로 많은 작업을 수행할 수 있기 때문에 주의해서 사용해야 합니다.
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Box> boxes = new ArrayList<>();
 
@@ -38,7 +36,7 @@ public class Space {
     private final List<Mr> mrs = new ArrayList<>();
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<MultiBox> multiboxes = new ArrayList<>();
+    private final List<MultiBox> multiBoxes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "companies_id", nullable = false)
@@ -77,12 +75,14 @@ public class Space {
     }
 
     public void addMultiBox(MultiBox multiBox) {
-        this.getMultiboxes().add(multiBox);
+        this.getMultiBoxes().add(multiBox);
         multiBox.linkSpace(this);
     }
 
 
-    public void updateSpace(SpaceRequestDto spaceRequestDto) {
+    public void updateSpace(SpaceRequestDto spaceRequestDto, Floor floor) {
         this.spaceName = spaceRequestDto.getSpaceName();
+        this.floor = floor;
     }
+
 }

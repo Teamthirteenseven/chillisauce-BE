@@ -32,7 +32,7 @@ public class SpaceResponseDto {
         this.spaceName = space.getSpaceName();
         this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
         this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
-        this.multiboxlist = space.getMultiboxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
+        this.multiboxlist = space.getMultiBoxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
     }
 
 
@@ -49,7 +49,7 @@ public class SpaceResponseDto {
         this.floorName = floorName;
         this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
         this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
-        this.multiboxlist = space.getMultiboxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
+        this.multiboxlist = space.getMultiBoxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
     }
 
     public SpaceResponseDto(Space space, Floor floor) {
@@ -59,7 +59,7 @@ public class SpaceResponseDto {
         this.floorName = floor.getFloorName();
         this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
         this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
-        this.multiboxlist = space.getMultiboxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
+        this.multiboxlist = space.getMultiBoxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
     }
 
 }

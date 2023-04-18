@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -109,7 +110,16 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
-        space.updateSpace(spaceRequestDto);
+        Optional<Long> floorIdOptional = spaceRequestDto.getFloorId();
+
+        Floor floor = null;
+        if (floorIdOptional.isPresent()) {
+            Long floorId = floorIdOptional.get();
+            floor = floorRepository.findById(floorId).orElseThrow(
+                    () -> new SpaceException(SpaceErrorCode.FLOOR_NOT_FOUND));
+        }
+
+        space.updateSpace(spaceRequestDto, floor);
         spaceRepository.save(space);
         return new SpaceResponseDto(space);
     }
