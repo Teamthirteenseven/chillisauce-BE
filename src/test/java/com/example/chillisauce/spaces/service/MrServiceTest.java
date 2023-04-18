@@ -1,5 +1,7 @@
 package com.example.chillisauce.spaces.service;
 
+import com.example.chillisauce.reservations.entity.Reservation;
+import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.spaces.dto.MrResponseDto;
@@ -39,6 +41,8 @@ public class MrServiceTest {
     private MrService mrService;
     @Mock
     private SpaceService spaceService;
+    @Mock
+    private ReservationService reservationService;
 
     private Companies companies;
 
@@ -46,6 +50,7 @@ public class MrServiceTest {
 
     private Space space;
     private Mr mr;
+    private Reservation reservation;
 
 
     @BeforeEach
@@ -66,6 +71,7 @@ public class MrServiceTest {
                 .x("200")
                 .y("300")
                 .build();
+
     }
 
     @Nested
@@ -124,6 +130,7 @@ public class MrServiceTest {
             doNothing().when(mrRepository).deleteById(mrId);
 
             //when
+            when(reservationService.deleteMeetingRoomInReservations(mrId, null)).thenReturn(String.valueOf(reservation));
             MrResponseDto mrResponseDto = mrService.deleteMr(companyName,mrId,details);
 
             //Then

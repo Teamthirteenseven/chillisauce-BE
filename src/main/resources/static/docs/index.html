@@ -520,8 +520,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }'</code></pre>
 </div>
 </div>
@@ -534,12 +537,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 64
+Content-Length: 108
 Host: localhost:8080
 
 {
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }</code></pre>
 </div>
 </div>
@@ -550,14 +556,14 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 145
+Content-Length: 152
 
 {
   "message" : "예약 등록 성공",
   "statusCode" : 200,
   "data" : {
-    "start" : "2023-04-10T12:00",
-    "end" : "2023-04-10T12:59"
+    "start" : "2023-04-10T13:00",
+    "end" : "2023-04-10T14:59"
   }
 }</code></pre>
 </div>
@@ -568,8 +574,11 @@ Content-Length: 145
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }' | http POST 'http://localhost:8080/reservations/1' \
     'Content-Type:application/json' \
     'Authorization:Bearer Token' \
@@ -582,8 +591,11 @@ Content-Length: 145
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }</code></pre>
 </div>
 </div>
@@ -605,14 +617,14 @@ Content-Length: 145
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>start</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">시작시각</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">시작시각목록</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>end</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startList[].start</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">종료시각</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">시작시각</p></td>
 </tr>
 </tbody>
 </table>
@@ -622,11 +634,11 @@ Content-Length: 145
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "�삁�빟 �벑濡� �꽦怨�",
+  "message" : "예약 등록 성공",
   "statusCode" : 200,
   "data" : {
-    "start" : "2023-04-10T12:00",
-    "end" : "2023-04-10T12:59"
+    "start" : "2023-04-10T13:00",
+    "end" : "2023-04-10T14:59"
   }
 }</code></pre>
 </div>
@@ -708,7 +720,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 424
+Content-Length: 442
 
 {
   "message" : "전체 예약 조회 성공",
@@ -756,19 +768,19 @@ Content-Length: 424
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "�쟾泥� �삁�빟 議고쉶 �꽦怨�",
+  "message" : "전체 예약 조회 성공",
   "statusCode" : 200,
   "data" : {
     "reservationList" : [ {
       "reservationId" : 1,
       "mrId" : 1,
-      "username" : "媛뺣갚�샇",
+      "username" : "강백호",
       "start" : "2023-04-11T15:00",
       "end" : "2023-04-11T15:59"
     }, {
       "reservationId" : 2,
       "mrId" : 3,
-      "username" : "�쑄���삊",
+      "username" : "윤대협",
       "start" : "2023-04-12T17:00",
       "end" : "2023-04-12T17:59"
     } ]
@@ -873,7 +885,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 424
+Content-Length: 442
 
 {
   "message" : "전체 예약 조회 성공",
@@ -921,19 +933,19 @@ Content-Length: 424
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "�쟾泥� �삁�빟 議고쉶 �꽦怨�",
+  "message" : "전체 예약 조회 성공",
   "statusCode" : 200,
   "data" : {
     "reservationList" : [ {
       "reservationId" : 1,
       "mrId" : 1,
-      "username" : "媛뺣갚�샇",
+      "username" : "강백호",
       "start" : "2023-04-11T15:00",
       "end" : "2023-04-11T15:59"
     }, {
       "reservationId" : 2,
       "mrId" : 3,
-      "username" : "�쑄���삊",
+      "username" : "윤대협",
       "start" : "2023-04-12T17:00",
       "end" : "2023-04-12T17:59"
     } ]
@@ -1018,8 +1030,11 @@ Content-Length: 424
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }'</code></pre>
 </div>
 </div>
@@ -1032,12 +1047,15 @@ Content-Length: 424
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 64
+Content-Length: 108
 Host: localhost:8080
 
 {
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }</code></pre>
 </div>
 </div>
@@ -1048,14 +1066,14 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 145
+Content-Length: 152
 
 {
   "message" : "예약 수정 성공",
   "statusCode" : 200,
   "data" : {
-    "start" : "2023-04-10T12:00",
-    "end" : "2023-04-10T12:59"
+    "start" : "2023-04-10T13:00",
+    "end" : "2023-04-10T14:59"
   }
 }</code></pre>
 </div>
@@ -1066,8 +1084,11 @@ Content-Length: 145
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }' | http PATCH 'http://localhost:8080/reservations/1' \
     'Content-Type:application/json' \
     'Authorization:Bearer Token' \
@@ -1080,8 +1101,11 @@ Content-Length: 145
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "start" : "2023-04-10T12:00",
-  "end" : "2023-04-10T12:59"
+  "startList" : [ {
+    "start" : "2023-04-10T13:00"
+  }, {
+    "start" : "2023-04-10T14:00"
+  } ]
 }</code></pre>
 </div>
 </div>
@@ -1103,14 +1127,14 @@ Content-Length: 145
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>start</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">시작시각</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">시작시각목록</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>end</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startList[].start</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">종료시각</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">시작시각</p></td>
 </tr>
 </tbody>
 </table>
@@ -1120,11 +1144,11 @@ Content-Length: 145
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "�삁�빟 �닔�젙 �꽦怨�",
+  "message" : "예약 수정 성공",
   "statusCode" : 200,
   "data" : {
-    "start" : "2023-04-10T12:00",
-    "end" : "2023-04-10T12:59"
+    "start" : "2023-04-10T13:00",
+    "end" : "2023-04-10T14:59"
   }
 }</code></pre>
 </div>
@@ -1206,7 +1230,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "예약 삭제 성공",
@@ -1240,7 +1264,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "�삁�빟 �궘�젣 �꽦怨�",
+  "message" : "예약 삭제 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -1313,7 +1337,7 @@ Content-Length: 77
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 70
+Content-Length: 74
 Host: localhost:8080
 
 {
@@ -1330,7 +1354,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "박스 생성 성공",
@@ -1360,7 +1384,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "boxName" : "Box �깮�꽦 �뀒�뒪�듃",
+  "boxName" : "Box 생성 테스트",
   "x" : "200",
   "y" : "300"
 }</code></pre>
@@ -1406,7 +1430,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "諛뺤뒪 �깮�꽦 �꽦怨�",
+  "message" : "박스 생성 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -1474,7 +1498,7 @@ Content-Length: 77
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 70
+Content-Length: 74
 Host: localhost:8080
 
 {
@@ -1491,7 +1515,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "박스 수정 성공",
@@ -1521,7 +1545,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "boxName" : "Box �닔�젙 �뀒�뒪�듃",
+  "boxName" : "Box 수정 테스트",
   "x" : "200",
   "y" : "300"
 }</code></pre>
@@ -1567,7 +1591,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "諛뺤뒪 �닔�젙 �꽦怨�",
+  "message" : "박스 수정 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -1640,7 +1664,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "박스 삭제 완료",
@@ -1674,7 +1698,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "諛뺤뒪 �궘�젣 �셿猷�",
+  "message" : "박스 삭제 완료",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -1745,7 +1769,7 @@ Content-Length: 77
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 44
+Content-Length: 46
 Host: localhost:8080
 
 {
@@ -1760,7 +1784,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 76
+Content-Length: 80
 
 {
   "message" : "Floor 생성 성공",
@@ -1788,7 +1812,7 @@ Content-Length: 76
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "floorName" : "Floor �깮�꽦 �뀒�뒪�듃"
+  "floorName" : "Floor 생성 테스트"
 }</code></pre>
 </div>
 </div>
@@ -1822,7 +1846,7 @@ Content-Length: 76
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "Floor �깮�꽦 �꽦怨�",
+  "message" : "Floor 생성 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -1888,7 +1912,7 @@ Content-Length: 76
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 44
+Content-Length: 46
 Host: localhost:8080
 
 {
@@ -1903,7 +1927,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 76
+Content-Length: 80
 
 {
   "message" : "Floor 수정 성공",
@@ -1931,7 +1955,7 @@ Content-Length: 76
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "floorName" : "Floor �깮�꽦 �뀒�뒪�듃"
+  "floorName" : "Floor 생성 테스트"
 }</code></pre>
 </div>
 </div>
@@ -1965,7 +1989,7 @@ Content-Length: 76
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "Floor �닔�젙 �꽦怨�",
+  "message" : "Floor 수정 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -2038,7 +2062,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 76
+Content-Length: 80
 
 {
   "message" : "Floor 삭제 성공",
@@ -2072,7 +2096,7 @@ Content-Length: 76
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "Floor �궘�젣 �꽦怨�",
+  "message" : "Floor 삭제 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -2138,7 +2162,7 @@ Content-Length: 76
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 44
+Content-Length: 46
 Host: localhost:8080
 
 {
@@ -2153,7 +2177,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 175
+Content-Length: 183
 
 {
   "message" : "해당 Floor 조회 성공",
@@ -2185,7 +2209,7 @@ Content-Length: 175
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "floorName" : "Floor �깮�꽦 �뀒�뒪�듃"
+  "floorName" : "Floor 생성 테스트"
 }</code></pre>
 </div>
 </div>
@@ -2219,11 +2243,11 @@ Content-Length: 175
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "�빐�떦 Floor 議고쉶 �꽦怨�",
+  "message" : "해당 Floor 조회 성공",
   "statusCode" : 200,
   "data" : [ {
     "floorId" : 1,
-    "floorName" : "Floor �깮�꽦 �뀒�뒪�듃",
+    "floorName" : "Floor 생성 테스트",
     "spaceList" : [ ]
   } ]
 }</code></pre>
@@ -2304,7 +2328,7 @@ Content-Length: 175
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 44
+Content-Length: 46
 Host: localhost:8080
 
 {
@@ -2319,7 +2343,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 168
+Content-Length: 176
 
 {
   "message" : "Floor 조회 성공",
@@ -2351,7 +2375,7 @@ Content-Length: 168
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "floorName" : "Floor �닔�젙 �뀒�뒪�듃"
+  "floorName" : "Floor 수정 테스트"
 }</code></pre>
 </div>
 </div>
@@ -2385,15 +2409,11 @@ Content-Length: 168
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "Floor 議고쉶 �꽦怨�",
+  "message" : "Floor 조회 성공",
   "statusCode" : 200,
   "data" : [ {
     "floorId" : 1,
-<<<<<<< Updated upstream
     "floorName" : "Floor 수정 테스트",
-=======
-    "floorName" : "Floor �깮�꽦 �뀒�뒪�듃",
->>>>>>> Stashed changes
     "spaceList" : [ ]
   } ]
 }</code></pre>
@@ -2481,7 +2501,7 @@ Content-Length: 168
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 68
+Content-Length: 72
 Host: localhost:8080
 
 {
@@ -2498,7 +2518,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 80
+Content-Length: 84
 
 {
   "message" : "미팅룸 생성 성공",
@@ -2528,7 +2548,7 @@ Content-Length: 80
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "mrName" : "Mr �뀒�뒪�듃 �깮�꽦",
+  "mrName" : "Mr 테스트 생성",
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -2574,7 +2594,7 @@ Content-Length: 80
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "誘명똿猷� �깮�꽦 �꽦怨�",
+  "message" : "미팅룸 생성 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -2642,7 +2662,7 @@ Content-Length: 80
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 62
+Content-Length: 66
 Host: localhost:8080
 
 {
@@ -2659,7 +2679,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 80
+Content-Length: 84
 
 {
   "message" : "미팅룸 수정 성공",
@@ -2689,11 +2709,7 @@ Content-Length: 80
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-<<<<<<< Updated upstream
   "mrName" : "Mr 수정 OK?",
-=======
-  "mrName" : "Mr �뀒�뒪�듃 �깮�꽦",
->>>>>>> Stashed changes
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -2739,7 +2755,7 @@ Content-Length: 80
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "誘명똿猷� �닔�젙 �꽦怨�",
+  "message" : "미팅룸 수정 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -2812,7 +2828,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 80
+Content-Length: 84
 
 {
   "message" : "미팅룸 삭제 완료",
@@ -2846,7 +2862,7 @@ Content-Length: 80
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "誘명똿猷� �궘�젣 �셿猷�",
+  "message" : "미팅룸 삭제 완료",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -2919,7 +2935,7 @@ Content-Length: 80
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 80
+Content-Length: 84
 Host: localhost:8080
 
 {
@@ -2936,7 +2952,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 79
+Content-Length: 83
 
 {
   "message" : "MultiBox 생성 성공",
@@ -2966,7 +2982,7 @@ Content-Length: 79
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "multiBoxName" : "MultiBox �깮�꽦 �뀒�뒪�듃",
+  "multiBoxName" : "MultiBox 생성 테스트",
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3012,7 +3028,7 @@ Content-Length: 79
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "MultiBox �깮�꽦 �꽦怨�",
+  "message" : "MultiBox 생성 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -3080,7 +3096,7 @@ Content-Length: 79
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 76
+Content-Length: 80
 Host: localhost:8080
 
 {
@@ -3097,7 +3113,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 79
+Content-Length: 83
 
 {
   "message" : "MultiBox 수정 성공",
@@ -3127,11 +3143,7 @@ Content-Length: 79
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-<<<<<<< Updated upstream
   "multiBoxName" : "MultiBox 수정 OK???",
-=======
-  "multiBoxName" : "MultiBox �깮�꽦 �뀒�뒪�듃",
->>>>>>> Stashed changes
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3177,7 +3189,7 @@ Content-Length: 79
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "MultiBox �닔�젙 �꽦怨�",
+  "message" : "MultiBox 수정 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -3250,7 +3262,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 79
+Content-Length: 83
 
 {
   "message" : "MultiBox 삭제 완료",
@@ -3284,7 +3296,7 @@ Content-Length: 79
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "MultiBox �궘�젣 �셿猷�",
+  "message" : "MultiBox 삭제 완료",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -3342,7 +3354,8 @@ Content-Length: 79
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "spaceName" : "Test 공간"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }'</code></pre>
 </div>
 </div>
@@ -3355,11 +3368,12 @@ Content-Length: 79
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 33
+Content-Length: 56
 Host: localhost:8080
 
 {
-  "spaceName" : "Test 공간"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }</code></pre>
 </div>
 </div>
@@ -3370,7 +3384,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "공간 생성 성공",
@@ -3385,7 +3399,8 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "spaceName" : "Test 공간"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }' | http POST 'http://localhost:8080/spaces/testCompany' \
     'Content-Type:application/json' \
     'Authorization:Bearer Token' \
@@ -3398,7 +3413,8 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "spaceName" : "Test 怨듦컙"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }</code></pre>
 </div>
 </div>
@@ -3424,6 +3440,11 @@ Content-Length: 77
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Space 이름</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>floorId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Floor 아이디</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3432,7 +3453,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "怨듦컙 �깮�꽦 �꽦怨�",
+  "message" : "공간 생성 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -3485,7 +3506,8 @@ Content-Length: 77
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "spaceName" : "Test 공간"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }'</code></pre>
 </div>
 </div>
@@ -3498,11 +3520,12 @@ Content-Length: 77
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 33
+Content-Length: 56
 Host: localhost:8080
 
 {
-  "spaceName" : "Test 공간"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }</code></pre>
 </div>
 </div>
@@ -3513,7 +3536,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "공간 생성 성공",
@@ -3528,7 +3551,8 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "spaceName" : "Test 공간"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }' | http POST 'http://localhost:8080/spaces/testCompany/1' \
     'Content-Type:application/json' \
     'Authorization:Bearer Token' \
@@ -3541,7 +3565,8 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "spaceName" : "Test 怨듦컙"
+  "spaceName" : "Test 공간",
+  "floorId" : null
 }</code></pre>
 </div>
 </div>
@@ -3567,6 +3592,11 @@ Content-Length: 77
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Space 이름</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>floorId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Floor 아이디</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3575,7 +3605,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "怨듦컙 �깮�꽦 �꽦怨�",
+  "message" : "공간 생성 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -3648,7 +3678,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 248
+Content-Length: 260
 
 {
   "message" : "공간 조회 성공",
@@ -3686,21 +3716,21 @@ Content-Length: 248
 </div>
 </div>
 <div class="sect3">
+<h4 id="GET-Space_request_fields"><a class="link" href="#GET-Space_request_fields">Request fields</a></h4>
+
+</div>
+<div class="sect3">
 <h4 id="GET-Space_response_body"><a class="link" href="#GET-Space_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "怨듦컙 議고쉶 �꽦怨�",
+  "message" : "공간 조회 성공",
   "statusCode" : 200,
   "data" : [ {
     "spaceId" : 1,
-<<<<<<< Updated upstream
     "spaceName" : "Test 공간",
     "floorId" : null,
     "floorName" : null,
-=======
-    "spaceName" : "Test 怨듦컙",
->>>>>>> Stashed changes
     "boxlist" : [ ],
     "mrlist" : [ ],
     "multiboxlist" : [ ]
@@ -3810,7 +3840,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 248
+Content-Length: 260
 
 {
   "message" : "공간 조회 성공",
@@ -3852,17 +3882,13 @@ Content-Length: 248
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "怨듦컙 議고쉶 �꽦怨�",
+  "message" : "공간 조회 성공",
   "statusCode" : 200,
   "data" : [ {
     "spaceId" : 1,
-<<<<<<< Updated upstream
     "spaceName" : "Test 공간",
     "floorId" : null,
     "floorName" : null,
-=======
-    "spaceName" : "Test 怨듦컙",
->>>>>>> Stashed changes
     "boxlist" : [ ],
     "mrlist" : [ ],
     "multiboxlist" : [ ]
@@ -3952,7 +3978,8 @@ Content-Length: 248
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "spaceName" : "수정 성공했나요?"
+  "spaceName" : "수정 성공했나요?",
+  "floorId" : null
 }'</code></pre>
 </div>
 </div>
@@ -3965,11 +3992,12 @@ Content-Length: 248
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 45
+Content-Length: 68
 Host: localhost:8080
 
 {
-  "spaceName" : "수정 성공했나요?"
+  "spaceName" : "수정 성공했나요?",
+  "floorId" : null
 }</code></pre>
 </div>
 </div>
@@ -3980,7 +4008,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "공간 수정 성공",
@@ -3995,7 +4023,8 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "spaceName" : "수정 성공했나요?"
+  "spaceName" : "수정 성공했나요?",
+  "floorId" : null
 }' | http PATCH 'http://localhost:8080/spaces/testCompany/1' \
     'Content-Type:application/json' \
     'Authorization:Bearer Token' \
@@ -4008,11 +4037,8 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-<<<<<<< Updated upstream
-  "spaceName" : "수정 성공했나요?"
-=======
-  "spaceName" : "Test 怨듦컙"
->>>>>>> Stashed changes
+  "spaceName" : "수정 성공했나요?",
+  "floorId" : null
 }</code></pre>
 </div>
 </div>
@@ -4038,6 +4064,11 @@ Content-Length: 77
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Space 이름</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>floorId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Floor 아이디</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4046,7 +4077,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "怨듦컙 �닔�젙 �꽦怨�",
+  "message" : "공간 수정 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -4119,7 +4150,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 81
 
 {
   "message" : "공간 삭제 성공",
@@ -4153,7 +4184,7 @@ Content-Length: 77
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "怨듦컙 �궘�젣 �꽦怨�",
+  "message" : "공간 삭제 성공",
   "statusCode" : 200,
   "data" : ""
 }</code></pre>
@@ -4211,9 +4242,9 @@ Content-Length: 77
     -H 'Accept: application/json' \
     -d '{
   "email" : "123@123",
-  "password" : "1234",
-  "passwordCheck" : "1234",
-  "userName" : "루피",
+  "password" : "1234qwer!",
+  "passwordCheck" : "1234qwer!",
+  "username" : "루피",
   "companyName" : "뽀로로랜드",
   "certification" : "1234"
 }'</code></pre>
@@ -4227,14 +4258,14 @@ Content-Length: 77
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/signup/admin HTTP/1.1
 Content-Type: application/json
 Accept: application/json
-Content-Length: 173
+Content-Length: 183
 Host: localhost:8080
 
 {
   "email" : "123@123",
-  "password" : "1234",
-  "passwordCheck" : "1234",
-  "userName" : "루피",
+  "password" : "1234qwer!",
+  "passwordCheck" : "1234qwer!",
+  "username" : "루피",
   "companyName" : "뽀로로랜드",
   "certification" : "1234"
 }</code></pre>
@@ -4265,9 +4296,9 @@ Content-Length: 124
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
   "email" : "123@123",
-  "password" : "1234",
-  "passwordCheck" : "1234",
-  "userName" : "루피",
+  "password" : "1234qwer!",
+  "passwordCheck" : "1234qwer!",
+  "username" : "루피",
   "companyName" : "뽀로로랜드",
   "certification" : "1234"
 }' | http POST 'http://localhost:8080/users/signup/admin' \
@@ -4282,10 +4313,10 @@ Content-Length: 124
 <div class="content">
 <pre class="highlight nowrap"><code>{
   "email" : "123@123",
-  "password" : "1234",
-  "passwordCheck" : "1234",
-  "userName" : "猷⑦뵾",
-  "companyName" : "戮�濡쒕줈�옖�뱶",
+  "password" : "1234qwer!",
+  "passwordCheck" : "1234qwer!",
+  "username" : "루피",
+  "companyName" : "뽀로로랜드",
   "certification" : "1234"
 }</code></pre>
 </div>
@@ -4296,7 +4327,7 @@ Content-Length: 124
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "message" : "愿�由ъ옄 �쉶�썝媛��엯 �꽦怨�",
+  "message" : "관리자 회원가입 성공",
   "statusCode" : 200,
   "data" : {
     "certification" : "1234"
@@ -4351,11 +4382,7 @@ Content-Length: 124
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-<<<<<<< Updated upstream
-Last updated 2023-04-13 13:16:16 +0900
-=======
-Last updated 2023-04-13 23:22:00 +0900
->>>>>>> Stashed changes
+Last updated 2023-04-17 14:04:29 +0900
 </div>
 </div>
 </body>
