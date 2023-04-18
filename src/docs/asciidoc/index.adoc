@@ -34,6 +34,10 @@ operation::patch-reservation[]
 === 예약 삭제
 operation::delete-reservation[]
 
+[[GET-All-Schedules]]
+=== 전체 스케줄 조회
+operation::get-all-schedules[]
+
 [[Box-API]]
 == Box API
 
