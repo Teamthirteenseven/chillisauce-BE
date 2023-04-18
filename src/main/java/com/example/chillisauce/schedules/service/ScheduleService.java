@@ -49,14 +49,12 @@ public class ScheduleService {
     }
 
     public ScheduleTimetableResponseDto getDaySchedules(LocalDate selDate, UserDetailsImpl userDetails) {
-        log.info("selDate={}",selDate);
         User user = userDetails.getUser();
 
         // 해당 날짜에 해당하는 모든 스케줄 리스트
         List<Schedule> all = scheduleRepository
                 .findAllByUserIdAndStartTimeBetween(user.getId(), selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
-        log.info("all={}",all);
         //TODO: 예약 수 x timeSet entry 만큼 loop 돌기 때문에 성능이 좋지 않음
         List<ScheduleTimeResponseDto> timeList =
                 timeSet.stream().map(
@@ -102,11 +100,12 @@ public class ScheduleService {
         LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
         // 시간이 겹치는 스케줄이 있는 경우 등록할 수 없음
-        scheduleRepository
-                .findFirstByStartTimeLessThanAndEndTimeGreaterThan(start, end)
-                .ifPresent(x -> {
-                    throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
-                });
+        List<Schedule> duplicated = scheduleRepository
+                .findFirstByUserIdAndStartTimeLessThanAndEndTimeGreaterThan(user.getId(), start, end);
+
+        if(duplicated.size()!=0){
+            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
+        }
 
         Schedule schedules = Schedule.builder()
                 .user(user)

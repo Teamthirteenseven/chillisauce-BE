@@ -48,7 +48,7 @@ class ReservationServiceTest {
     ReservationService reservationService;
     @Nested
     @DisplayName("getAllReservations 메서드는")
-    class GetAllReservationsCase {
+    class GetAllReservationsTestCase {
         @Test
         void 회사_전체_예약내역을_조회한다(){
 
@@ -57,7 +57,7 @@ class ReservationServiceTest {
 
     @Nested
     @DisplayName("getReservationTimetable 메서드는")
-    class GetReservationTimetableCase {
+    class GetReservationTimetableTestCase {
         @Test
         void 특정_회의실_특정_날짜의_예약타임테이블을_조회한다(){
 
@@ -66,7 +66,7 @@ class ReservationServiceTest {
 
     @Nested
     @DisplayName("addReservation 메서드는")
-    class AddReservationCase{
+    class AddReservationTestCase{
         // given
         Long meetingRoomId = 1L;
         User user = User.builder()
@@ -183,7 +183,7 @@ class ReservationServiceTest {
 
     @Nested
     @DisplayName("editReservation 메서드는")
-    class EditReservationCase{
+    class EditReservationTestCase{
         // given
         User user = User.builder()
                 .id(1L)
@@ -229,7 +229,7 @@ class ReservationServiceTest {
 
     @Nested
     @DisplayName("deleteReservation 메서드는")
-    class DeleteReservationCase{
+    class DeleteReservationTestCase{
         // given
         User user = User.builder()
                 .id(1L)

@@ -63,7 +63,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("회사 전체 회의실 예약 내역 GET 요청 시")
-    class GetAllReservationTest {
+    class GetAllReservationTestCase {
         // given
         String companyName = "testCompany";
         String url = "/reservations/" + companyName + "/all";
@@ -131,7 +131,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 타임테이블 GET 요청 시")
-    class GetReservationTimeTableTest{
+    class GetReservationTimeTableTestCase {
         @Test
         @WithMockUser
         void 특정날짜_특정회의실의_예약테이블을_반환한다() throws Exception {
@@ -189,7 +189,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 POST 요청 시")
-    class AddReservationTest {
+    class AddReservationTestCase {
         @Test
         @WithMockUser
         void 예약을_등록한다() throws Exception {
@@ -267,7 +267,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 PATCH 요청 시")
-    class EditReservationTest {
+    class EditReservationTestCase {
         @Test
         @WithMockUser
         void 예약을_수정한다() throws Exception {
@@ -314,7 +314,7 @@ class ReservationControllerTest {
 
     @Nested
     @DisplayName("예약 DELETE 요청 시")
-    class DeleteReservationTest {
+    class DeleteReservationTestCase {
         @Test
         @WithMockUser
         void 예약을_삭제한다() throws Exception {
