@@ -2,6 +2,7 @@ package com.example.chillisauce.schedules.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import java.time.LocalTime;
 @Slf4j
 @Getter
 @NoArgsConstructor
+@Builder
 @Schema(description = "스케줄 타임테이블 시각 단위 응답 DTO")
 public class ScheduleTimeResponseDto {
     @Schema(description = "해당 시각 예약 여부")
