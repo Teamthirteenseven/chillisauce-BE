@@ -22,8 +22,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
                                                @Param("endTime") LocalDateTime endTime);
 
     @Query("select s from Schedule s " +
-            "where s.startTime < :endTime and s.endTime > :startTime")
-    Optional<Schedule> findFirstByStartTimeLessThanAndEndTimeGreaterThan(
+            "where s.user.id= :userId and s.startTime < :endTime and s.endTime > :startTime")
+    List<Schedule> findFirstByUserIdAndStartTimeLessThanAndEndTimeGreaterThan(
+            @Param("userId") Long userId,
             @Param("startTime") LocalDateTime start,
             @Param("endTime") LocalDateTime end);
 
