@@ -16,12 +16,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class ReservationRepositoryTest {
-
     @Autowired
     private ReservationRepository reservationRepository;
 

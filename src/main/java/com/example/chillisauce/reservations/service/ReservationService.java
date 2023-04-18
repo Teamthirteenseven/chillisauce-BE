@@ -121,11 +121,6 @@ public class ReservationService {
         LocalDateTime start = list.get(0);
         LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
-        //TODO: validateTime 에서 오늘 날짜 이전 것은 등록하지 못하게 수정(?)
-        if (!validateTime(start, end)) {
-            throw new ReservationException(ReservationErrorCode.NOT_PROPER_TIME);
-        }
-
         // 시간이 겹치는 예약은 할 수 없음
         reservationRepository
                 .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
@@ -143,14 +138,6 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
         return new ReservationResponseDto(reservation);
-    }
-
-    /**
-     * 시간 유효성 검사
-     * start 시각이 end 시각보다 작아야 한다.
-     */
-    private boolean validateTime(LocalDateTime start, LocalDateTime end) {
-        return !start.isAfter(end);
     }
 
     /**
@@ -203,6 +190,16 @@ public class ReservationService {
 
         reservationRepository.deleteById(reservation.getId());
 
-        return "";
+        return "success";
+    }
+
+    @Transactional
+    public String deleteMeetingRoomInReservations(Long meetingRoomId, UserDetailsImpl userDetails) {
+        List<Reservation> all = reservationRepository.findAllByMeetingRoomId(meetingRoomId);
+        for (Reservation reservation : all) {
+            reservation.update(null);
+        }
+
+        return null;
     }
 }

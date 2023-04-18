@@ -12,6 +12,7 @@ import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
@@ -47,12 +49,14 @@ public class ScheduleService {
     }
 
     public ScheduleTimetableResponseDto getDaySchedules(LocalDate selDate, UserDetailsImpl userDetails) {
+        log.info("selDate={}",selDate);
         User user = userDetails.getUser();
 
         // 해당 날짜에 해당하는 모든 스케줄 리스트
         List<Schedule> all = scheduleRepository
-                .findAllByUserIdAndStartTime(user.getId(), selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
+                .findAllByUserIdAndStartTimeBetween(user.getId(), selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
+        log.info("all={}",all);
         //TODO: 예약 수 x timeSet entry 만큼 loop 돌기 때문에 성능이 좋지 않음
         List<ScheduleTimeResponseDto> timeList =
                 timeSet.stream().map(
@@ -101,10 +105,11 @@ public class ScheduleService {
         scheduleRepository
                 .findFirstByStartTimeLessThanAndEndTimeGreaterThan(start, end)
                 .ifPresent(x -> {
-                    throw new ReservationException(ReservationErrorCode.DUPLICATED_TIME);
+                    throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
                 });
 
         Schedule schedules = Schedule.builder()
+                .user(user)
                 .title(requestDto.getScTitle())
                 .comment(requestDto.getScComment())
                 .startTime(start)
