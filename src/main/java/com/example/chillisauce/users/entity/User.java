@@ -55,5 +55,9 @@ public class User {
         this.companies = companies;
     }
 
+    //업데이트 부분은 나중에 추가될 수 있음
+    public void update(UserRoleEnum role) {
+        this.role = role;
+    }
 
 }
