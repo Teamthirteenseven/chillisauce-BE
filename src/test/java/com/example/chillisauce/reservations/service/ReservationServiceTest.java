@@ -5,6 +5,7 @@ import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
+import com.example.chillisauce.reservations.vo.ReservationTimetable;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.entity.Mr;
@@ -33,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -67,22 +69,22 @@ class ReservationServiceTest {
                 .id(1L)
                 .meetingRoom(meetingRoom)
                 .user(userOne)
-                .startTime(LocalDateTime.of(2023,4,11,15,0))
-                .endTime(LocalDateTime.of(2023,4,11,15,59))
+                .startTime(LocalDateTime.of(2023, 4, 11, 15, 0))
+                .endTime(LocalDateTime.of(2023, 4, 11, 15, 59))
                 .build();
 
         Reservation reservationTwo = Reservation.builder()
                 .id(2L)
                 .meetingRoom(meetingRoom)
                 .user(userTwo)
-                .startTime(LocalDateTime.of(2023,4,11,17,0))
-                .endTime(LocalDateTime.of(2023,4,11,17,59))
+                .startTime(LocalDateTime.of(2023, 4, 11, 17, 0))
+                .endTime(LocalDateTime.of(2023, 4, 11, 17, 59))
                 .build();
 
         @Test
-        void 회사_전체_예약내역을_조회한다(){
+        void 회사_전체_예약내역을_조회한다() {
             // given
-            String companyName="testCompany";
+            String companyName = "testCompany";
             when(companyRepository.findByCompanyName(eq(companyName)))
                     .thenReturn(Optional.of(Companies.builder().build()));
             when(reservationRepository.findAll()).thenReturn(List.of(reservationOne, reservationTwo));
@@ -105,24 +107,49 @@ class ReservationServiceTest {
         LocalDate selDate = LocalDate.of(2023, 4, 13);
         Mr meetingRoom = Mr.builder().id(1L).build();
         User user = User.builder()
-                .username("user")
+                .username("testUser")
                 .build();
-        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getUsername());
-        @Test
-        void 특정_회의실_특정_날짜의_예약타임테이블을_조회한다(){
-            // given
-//            when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
-//
-//            // when
-//           ReservationTimetableResponseDto result = reservationService
-//                   .getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
+        Reservation reservationOne = Reservation.builder()
+                .id(1L)
+                .meetingRoom(meetingRoom)
+                .user(user)
+                .startTime(LocalDateTime.of(2023, 4, 13, 15, 0))
+                .endTime(LocalDateTime.of(2023, 4, 13, 15, 59))
+                .build();
 
+        Reservation reservationTwo = Reservation.builder()
+                .id(2L)
+                .meetingRoom(meetingRoom)
+                .user(user)
+                .startTime(LocalDateTime.of(2023, 4, 13, 17, 0))
+                .endTime(LocalDateTime.of(2023, 4, 13, 17, 59))
+                .build();
+
+        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getUsername());
+
+        @Test
+        void 특정_회의실_특정_날짜의_예약타임테이블을_조회한다() {
+            // given
+            when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
+            when(reservationRepository.findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
+                    selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX))).thenReturn(List.of(reservationOne, reservationTwo));
+
+            // when
+            ReservationTimetableResponseDto result = reservationService
+                    .getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
+
+            // then
+            assertThat(result.getTimeList())
+                    .isNotEmpty()
+                    .hasSize(ReservationTimetable.CLOSE_HOUR - ReservationTimetable.OPEN_HOUR + 1)
+                    .filteredOn(x -> x.getIsCheckOut().equals(true))
+                    .isNotEmpty();
         }
     }
 
     @Nested
     @DisplayName("addReservation 메서드는")
-    class AddReservationTestCase{
+    class AddReservationTestCase {
         // given
         Long meetingRoomId = 1L;
         User user = User.builder()
@@ -143,7 +170,7 @@ class ReservationServiceTest {
         ReservationRequestDto unitDto = new ReservationRequestDto(start);
         List<ReservationRequestDto> list = List.of(unitDto);
         ReservationListRequestDto requestDto = new ReservationListRequestDto(list);
-        
+
         @Test
         void 예약을_등록한다() {
             // when
@@ -221,12 +248,12 @@ class ReservationServiceTest {
             //TODO: 동시성 이슈 해결 후 수정 필요
             assertThat(resultList.size()).isPositive();
         }
-        
+
         @Test
         void 해당_회의실이_없으면_예외가_발생한다() {
             // given
             when(meetingRoomRepository.findById(eq(meetingRoomId))).thenReturn(Optional.empty());
-            
+
             // when
             ReservationException exception = assertThrows(ReservationException.class,
                     () -> reservationService.addReservation(meetingRoomId, requestDto, userDetails));
@@ -239,7 +266,7 @@ class ReservationServiceTest {
 
     @Nested
     @DisplayName("editReservation 메서드는")
-    class EditReservationTestCase{
+    class EditReservationTestCase {
         // given
         User user = User.builder()
                 .id(1L)
@@ -254,8 +281,8 @@ class ReservationServiceTest {
                 .id(meetingRoomId)
                 .build();
         Long reservationId = 1L;
-        LocalDateTime targetStartTime = LocalDateTime.of(2023,4,8,11,0);
-        LocalDateTime targetEndTime = LocalDateTime.of(2023,4,8,13,59);
+        LocalDateTime targetStartTime = LocalDateTime.of(2023, 4, 8, 11, 0);
+        LocalDateTime targetEndTime = LocalDateTime.of(2023, 4, 8, 13, 59);
         Reservation target = Reservation.builder()
                 .id(reservationId)
                 .user(user)
@@ -269,6 +296,7 @@ class ReservationServiceTest {
         ReservationRequestDto unitDto = new ReservationRequestDto(editStart);
         List<ReservationRequestDto> list = List.of(unitDto);
         ReservationListRequestDto requestDto = new ReservationListRequestDto(list);
+
         @Test
         void 예약을_수정한다() {
             // when
@@ -285,7 +313,7 @@ class ReservationServiceTest {
 
     @Nested
     @DisplayName("deleteReservation 메서드는")
-    class DeleteReservationTestCase{
+    class DeleteReservationTestCase {
         // given
         User user = User.builder()
                 .id(1L)
@@ -305,6 +333,7 @@ class ReservationServiceTest {
                 .user(user)
                 .meetingRoom(meetingRoom)
                 .build();
+
         @Test
         void 예약을_삭제한다() {
             // when
