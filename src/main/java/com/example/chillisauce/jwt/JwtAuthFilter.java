@@ -26,6 +26,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.getHeaderToken(request, "Access");
         String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
 
+//        String checkedRefreshEmail = jwtUtil.getUserInfoFromToken(refreshToken);
+        Long checkedExpired = jwtUtil.getRefreshTime();
+
+//        log.info("리프레시토큰 이메일 ={}", checkedRefreshEmail);
+        log.info("리프레시토큰의 만료시간 ={}", checkedExpired);
+        log.info("리프레시토큰 있어요@@@@={}", refreshToken);
 //        String accessToken = jwtUtil.getHeaderTokenAccess(request);
 //        String refreshToken = jwtUtil.getHeaderTokenRefresh(request);
 
@@ -40,6 +46,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         else if (refreshToken != null) {
             //리프레시토큰 검증 && 리프레시토큰 DB에서 존재유무 확인
             boolean isRefreshToken = jwtUtil.refreshTokenValidation(refreshToken);
+            log.info("검증결과? true, false ={}",isRefreshToken);
+            log.info("검증 통과 리프레시={}", refreshToken);
             //리프레시 토큰이 유효하고 DB와 비교했을 때 똑같다면
             if (isRefreshToken) {
                 //리프레시토큰으로 정보 가져오기
@@ -50,8 +58,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 헤더에 어세스 토큰 추가
                 jwtUtil.setHeaderAccessToken(response, newAccessToken);
 
-                log.info("loginemail={}",loginemail);
-                log.info("Token={}",newAccessToken);
+                log.info("loginEmail={}",loginemail);
+                log.info("새로운엑세스토큰={}",newAccessToken);
                 // Security context에 인증 정보 넣기
                 setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken));
             }
