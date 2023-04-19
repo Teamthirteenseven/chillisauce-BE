@@ -1,8 +1,6 @@
 package com.example.chillisauce.reservations.service;
 
-import com.example.chillisauce.reservations.dto.ReservationListRequestDto;
-import com.example.chillisauce.reservations.dto.ReservationRequestDto;
-import com.example.chillisauce.reservations.dto.ReservationResponseDto;
+import com.example.chillisauce.reservations.dto.*;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
@@ -10,8 +8,10 @@ import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
+import com.example.chillisauce.users.repository.CompanyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,9 +26,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,20 +48,74 @@ class ReservationServiceTest {
     MrRepository meetingRoomRepository;
     @InjectMocks
     ReservationService reservationService;
+
+    @Mock
+    private CompanyRepository companyRepository;
+
     @Nested
     @DisplayName("getAllReservations 메서드는")
     class GetAllReservationsTestCase {
+        // given
+        int size = 2;
+        Mr meetingRoom = Mr.builder()
+                .id(1L)
+                .build();
+        User userOne = User.builder().username("testUser1").build();
+        User userTwo = User.builder().username("testUser2").build();
+        UserDetailsImpl userDetails = new UserDetailsImpl(new User(), "user");
+        Reservation reservationOne = Reservation.builder()
+                .id(1L)
+                .meetingRoom(meetingRoom)
+                .user(userOne)
+                .startTime(LocalDateTime.of(2023,4,11,15,0))
+                .endTime(LocalDateTime.of(2023,4,11,15,59))
+                .build();
+
+        Reservation reservationTwo = Reservation.builder()
+                .id(2L)
+                .meetingRoom(meetingRoom)
+                .user(userTwo)
+                .startTime(LocalDateTime.of(2023,4,11,17,0))
+                .endTime(LocalDateTime.of(2023,4,11,17,59))
+                .build();
+
         @Test
         void 회사_전체_예약내역을_조회한다(){
+            // given
+            String companyName="testCompany";
+            when(companyRepository.findByCompanyName(eq(companyName)))
+                    .thenReturn(Optional.of(Companies.builder().build()));
+            when(reservationRepository.findAll()).thenReturn(List.of(reservationOne, reservationTwo));
 
+            // when
+            ReservationListResponseDto result = reservationService
+                    .getAllReservations(companyName, userDetails);
+
+            // then
+            assertThat(result.getReservationList().size()).isEqualTo(size);
+            assertThat(result.getReservationList()).extracting("reservationId", Long.class)
+                    .contains(1L, 2L);
         }
     }
 
     @Nested
     @DisplayName("getReservationTimetable 메서드는")
     class GetReservationTimetableTestCase {
+        // given
+        LocalDate selDate = LocalDate.of(2023, 4, 13);
+        Mr meetingRoom = Mr.builder().id(1L).build();
+        User user = User.builder()
+                .username("user")
+                .build();
+        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getUsername());
         @Test
         void 특정_회의실_특정_날짜의_예약타임테이블을_조회한다(){
+            // given
+//            when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
+//
+//            // when
+//           ReservationTimetableResponseDto result = reservationService
+//                   .getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
 
         }
     }
