@@ -153,5 +153,22 @@ operation::delete-deleteSpace[]
 [[User-API]]
 == User API
 [[POST-Admin]]
-=== Admin 생성
+=== 관리자 회원 가입
 operation::post-signupAdmin[]
+
+[[POST-User]]
+=== 사원 회원 가입
+operation::post-signupUser[]
+
+[[POST-Email]]
+=== Email 발송
+operation::post-signup-email[]
+
+[[GET-certification]]
+=== 인증번호 확인
+operation::post-users-signup-match[]
+
+[[POST-login]]
+=== login
+operation::post-users-login[]
+

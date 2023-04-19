@@ -35,8 +35,8 @@ public class UserController {
 
     /* 이메일 인증 */
     @PostMapping("/users/signup/email")
-    public String SendMail(@Valid @RequestBody HashMap<String, String> email) throws Exception {
-        return emailService.sendSimpleMessage(email.get("email"));
+    public ResponseEntity<ResponseMessage> SendMail(@Valid @RequestBody HashMap<String, String> email) throws Exception {
+        return ResponseMessage.responseSuccess("이메일을 발송하였습니다", emailService.sendSimpleMessage(email.get("email")));
     }
 
     /* 관리자 회원가입 */
