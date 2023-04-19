@@ -33,7 +33,7 @@ public class AdminService {
         return new UserListResponseDto(allList.stream().map(UserDetailResponseDto::new).toList());
     }
 
-    /* 사원 목록 전체 조회 */
+    /* 사원 선택 조회 */
     @Transactional(readOnly = true)
     public UserDetailResponseDto getUsers(Long userId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();

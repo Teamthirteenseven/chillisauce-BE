@@ -95,11 +95,19 @@ class UserControllerTest {
                     .andDo(document("post-signupAdmin",
                             getDocumentRequest(),
                             getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
+                                    fieldWithPath("password").type(JsonFieldType.STRING).description("password"),
+                                    fieldWithPath("passwordCheck").type(JsonFieldType.STRING).description("passwordCheck"),
+                                    fieldWithPath("username").type(JsonFieldType.STRING).description("username"),
+                                    fieldWithPath("companyName").type(JsonFieldType.STRING).description("companyName"),
+                                    fieldWithPath("certification").type(JsonFieldType.STRING).description("certification")
+                            ),
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
-                                    fieldWithPath("data.certification").type(JsonFieldType.STRING).description("인증번호")
+                                    fieldWithPath("data.certification").type(JsonFieldType.STRING).description("랜덤난수인증번호")
                             )
                     ));
         }
@@ -118,7 +126,7 @@ class UserControllerTest {
                     .build();
 //            when(userService.signupUser(requestDto)).thenReturn(answer);    //Strict stubbing argument mismatch. Please check: 에러 발생 구문
             when(userService.signupUser(any())).thenReturn(answer);    // 수정
-            //에러가 발생하는 이유 : 사진 참조
+            //에러가 발생하는 이유 : 노션 사진 참조
 
             //when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders
@@ -128,7 +136,22 @@ class UserControllerTest {
                     .content(objectMapper.writeValueAsString(requestDto)));
 
             //then
-            result.andExpect(status().isOk());
+            result.andExpect(status().isOk())
+                    .andDo(document("post-signupUser",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
+                                    fieldWithPath("password").type(JsonFieldType.STRING).description("password"),
+                                    fieldWithPath("passwordCheck").type(JsonFieldType.STRING).description("passwordCheck"),
+                                    fieldWithPath("username").type(JsonFieldType.STRING).description("username"),
+                                    fieldWithPath("certification").type(JsonFieldType.STRING).description("certification")
+                            ),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("결과값")
+                            )));
         }
 
         @DisplayName("이메일 전송")
@@ -136,14 +159,8 @@ class UserControllerTest {
         void success3() throws Exception {
             //given
             String certificationKey = "1234";
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .email("123@123")
-                    .password("1234qwer!")
-                    .passwordCheck("1234qwer!")
-                    .username("루피")
-                    .companyName("뽀로로랜드")
-                    .certification("1234")
-                    .build();
+            HashMap<String, String> email = new HashMap<>();
+            email.put("email", "1234@5678");
             when(emailService.sendSimpleMessage(any())).thenReturn("certification : " + certificationKey);
 
             //when
@@ -151,10 +168,21 @@ class UserControllerTest {
                     .post("/users/signup/email")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(signupRequestDto)));
+                    .content(objectMapper.writeValueAsString(email)));
 
             //then
-            result.andExpect(status().isOk());
+            result.andExpect(status().isOk())
+                    .andDo(document("post-signup-email",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("email")
+                            ),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("결과값")
+                            )));
         }
 
         @DisplayName("로그인")
@@ -175,7 +203,19 @@ class UserControllerTest {
                     .content(objectMapper.writeValueAsString(loginRequestDto)));
 
             //then
-            result.andExpect(status().isOk());
+            result.andExpect(status().isOk())
+                    .andDo(document("post-users-login",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
+                                    fieldWithPath("password").type(JsonFieldType.STRING).description("password")
+                            ),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("결과값")
+                            )));
         }
 
         @DisplayName("인증번호 확인")
@@ -196,7 +236,18 @@ class UserControllerTest {
 
             //then
             result.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("인증번호가 확인 되었습니다."));
+                    .andExpect(jsonPath("$.message").value("인증번호가 확인 되었습니다."))
+                    .andDo(document("post-users-signup-match",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("certification").type(JsonFieldType.STRING).description("certification")
+                            ),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("결과값")
+                            )));
         }
 
         @DisplayName("엑세스 토큰 재발급")
@@ -210,7 +261,10 @@ class UserControllerTest {
                     .get("/users/refresh")
                     .header(JwtUtil.AUTHORIZATION_HEADER, refreshToken));
 
-            result.andExpect(status().isOk());
+            result.andExpect(status().isOk())
+                    .andDo(document("get-users-refresh",
+                            getDocumentRequest(),
+                            getDocumentResponse()));
         }
     }
 
