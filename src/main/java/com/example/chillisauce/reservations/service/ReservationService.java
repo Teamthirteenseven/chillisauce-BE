@@ -45,7 +45,13 @@ public class ReservationService {
 
         List<Reservation> all = reservationRepository.findAll();
 
-        return new ReservationListResponseDto(all.stream().map(ReservationDetailResponseDto::new).toList());
+        return new ReservationListResponseDto(all.stream().map(x -> {
+            Mr meetingRoom = x.getMeetingRoom();
+            User user = x.getUser();
+            Long mrId = meetingRoom == null ? 0 : meetingRoom.getId();
+            String username = user == null ? "탈퇴한 유저" : user.getUsername();
+            return new ReservationDetailResponseDto(x, mrId, username);
+        }).toList());
     }
 
     /**
@@ -68,15 +74,15 @@ public class ReservationService {
         //TODO : 당일 예약 수 x timeSet entry 만큼 loop - 성능 개선 필요
         List<ReservationTimeResponseDto> timeList =
                 ReservationTimetable.TIME_SET.stream().map(
-                        x -> {
-                            LocalTime startTime = LocalTime.of(x.getStart().getHour(), x.getStart().getMinute());
-                            LocalTime endTime = LocalTime.of(x.getEnd().getHour(), x.getEnd().getMinute());
-                            LocalDateTime startDateTime = LocalDateTime.of(selDate, startTime);
-                            return new ReservationTimeResponseDto(isOccupied(startDateTime, all), startTime, endTime);
-                        })
+                                x -> {
+                                    LocalTime startTime = LocalTime.of(x.getStart().getHour(), x.getStart().getMinute());
+                                    LocalTime endTime = LocalTime.of(x.getEnd().getHour(), x.getEnd().getMinute());
+                                    LocalDateTime startDateTime = LocalDateTime.of(selDate, startTime);
+                                    return new ReservationTimeResponseDto(isOccupied(startDateTime, all), startTime, endTime);
+                                })
                         // 07시부터 22시까지 정렬하기 위한 Comparator 구현
-                        .sorted(((o1, o2) -> o1.getStart().isAfter(o2.getStart())?1:
-                        o1.getStart().isBefore(o2.getStart())?-1:0))
+                        .sorted(((o1, o2) -> o1.getStart().isAfter(o2.getStart()) ? 1 :
+                                o1.getStart().isBefore(o2.getStart()) ? -1 : 0))
                         .toList();
 
         return new ReservationTimetableResponseDto(meetingRoom.getId(), timeList);
@@ -109,7 +115,7 @@ public class ReservationService {
         List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationRequestDto::getStart)
                 .sorted().toList();
         LocalDateTime start = list.get(0);
-        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
+        LocalDateTime end = list.get(list.size() - 1).plusMinutes(59);
 
         // 시간이 겹치는 예약은 할 수 없음
         reservationRepository
@@ -148,7 +154,7 @@ public class ReservationService {
         List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationRequestDto::getStart)
                 .sorted().toList();
         LocalDateTime start = list.get(0);
-        LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
+        LocalDateTime end = list.get(list.size() - 1).plusMinutes(59);
 
         // 수정요청에 해당하는 시각에 예약이 없는지 검증
         // 수정 대상 예약은 제외하고 검증해야함
