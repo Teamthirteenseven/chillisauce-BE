@@ -39,32 +39,31 @@ public class RedisConfig {
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());//java 8의 날짜/시간 지원모듈
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); //날짜가 ISO-8601 형식의 문자열로 직렬화
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        Jackson2JsonRedisSerializer<List<FloorResponseDto>> floorListSerializer = new Jackson2JsonRedisSerializer<> //객체를 직렬화
+        Jackson2JsonRedisSerializer<List<FloorResponseDto>> floorSerializer = new Jackson2JsonRedisSerializer<>
                 (objectMapper.getTypeFactory().constructCollectionType(List.class, FloorResponseDto.class));
-        floorListSerializer.setObjectMapper(objectMapper);
+        floorSerializer.setObjectMapper(objectMapper);
 
-        Jackson2JsonRedisSerializer<List<SpaceResponseDto>> spaceListSerializer = new Jackson2JsonRedisSerializer<>
+        Jackson2JsonRedisSerializer<List<SpaceResponseDto>> spaceSerializer = new Jackson2JsonRedisSerializer<>
                 (objectMapper.getTypeFactory().constructCollectionType(List.class, SpaceResponseDto.class));
-        spaceListSerializer.setObjectMapper(objectMapper);
+        spaceSerializer.setObjectMapper(objectMapper);
 
         RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory);
-        //RedisCacheManagerBuilder를 생성합니다. 이때, 인자로 전달된 redisConnectionFactory를 사용하여 Redis와의 연결을 설정합니다.
 
         builder.withCacheConfiguration("FloorResponseDtoList",
                 RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofHours(1))//TTL(Time To Live)을 1시간으로 설정
+                        .entryTtl(Duration.ofHours(1))
                         .disableCachingNullValues()
-                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(floorListSerializer))
+                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(floorSerializer))
         );
 
         builder.withCacheConfiguration("SpaceResponseDtoList",
                 RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofHours(1))
+                        .entryTtl(Duration.ofHours(60))
                         .disableCachingNullValues()
-                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(spaceListSerializer))
+                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(spaceSerializer))
         );
 
 
