@@ -62,29 +62,6 @@ public class JwtUtil {
         return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) : request.getHeader(REFRESH_TOKEN);
     }
 
-//    public String getHeaderToken(HttpServletRequest request, String type) {
-//        String bearerToken = type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) :request.getHeader(REFRESH_TOKEN); {
-//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
-//                return bearerToken.substring(7);
-//        }
-//        return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) :request.getHeader(REFRESH_TOKEN);
-//    }
-
-//    public String getHeaderTokenAccess(HttpServletRequest request) {
-//        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); {
-//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
-//                return bearerToken.substring(7);
-//        }
-//        return request.getHeader(AUTHORIZATION_HEADER);
-//    }
-//    public String getHeaderTokenRefresh(HttpServletRequest request) {
-//        String bearerToken = request.getHeader(REFRESH_TOKEN); {
-//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
-//                return bearerToken.substring(7);
-//        }
-//        return request.getHeader(REFRESH_TOKEN);
-//    }
-
     // 토큰 생성
     public TokenDto createAllToken(String email) {
         return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
@@ -164,9 +141,7 @@ public class JwtUtil {
 
     //토큰 만료시간 static변수 -> 메서드
     public long getAccessTime() {
-//        return 2 * 60 * 60 * 1000L; //2시간
-//        return 60 * 60 * 1000L; //1시간
-        return 5 * 60 * 1000L; //1분
+        return 2 * 60 * 60 * 1000L; //2시간
     }
 
     public long getRefreshTime() {
