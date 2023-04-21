@@ -13,6 +13,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+    @Query("select r from Reservation r " +
+            "left join fetch r.user " +
+            "left join fetch r.meetingRoom " +
+            "where r.user.id=:userId")
+    List<Reservation> findAllByUserId(@Param("userId") Long userId);
+
+    @Query("select r from Reservation r " +
+            "left join fetch r.user " +
+            "left join fetch r.meetingRoom")
+    List<Reservation> findAll();
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select r from Reservation r " +
@@ -28,12 +38,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("meetingRoomId") Long meetingRoomId,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime);
-
-    @Query("select r from Reservation r join fetch r.user where r.user.id =:userId")
-    List<Reservation> findAllByUserId(@Param("userId") Long userId);
-
-    @Query("select r from Reservation r join fetch r.user join fetch r.meetingRoom")
-    List<Reservation> findAll();
 
     @Query("select r from Reservation r " +
             "where r.meetingRoom.id = :mrId and r.id != :reservationId " +

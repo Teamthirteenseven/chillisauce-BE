@@ -1,6 +1,7 @@
 package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import com.example.chillisauce.users.dto.UserListResponseDto;
 import com.example.chillisauce.users.entity.User;
@@ -81,6 +82,39 @@ class AdminServiceTest {
 
         }
 
+        @DisplayName("사원 권한 수정")
+        @Test
+        void success3() {
+            //given
+            User admin = User.builder()
+                    .id(1L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
+                    .role(UserRoleEnum.MANAGER)
+                    .build();
+
+            User user = User.builder()
+                    .id(2L)
+                    .role(UserRoleEnum.USER)
+                    .username("손흥민")
+                    .build();
+
+            //when
+            when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+            when(userRepository.save(any())).thenReturn(user);
+            UserDetailResponseDto result = adminService.editUser(2L, details, requestDto);
+
+            //then
+            assertThat(result).isNotNull();
+            assertThat(result.getRole()).isEqualTo(UserRoleEnum.MANAGER);
+            assertThat(user.getRole()).isEqualTo(UserRoleEnum.MANAGER);
+
+        }
+
     }
 
     @Nested
@@ -155,6 +189,108 @@ class AdminServiceTest {
         @DisplayName("사원 목록 조회 실패(사원 목록 없음)")
         @Test
         void fail4() {
+            //given
+            User admin = User.builder()
+                    .id(1L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            List<User> allUsers = List.of(
+                    User.builder().id(1L).email("123@123").build(),
+                    User.builder().id(1L).email("123@123").build(),
+                    User.builder().id(1L).email("123@123").build());
+            when(userRepository.findAll()).thenReturn(Collections.emptyList());
+            //when
+            UserListResponseDto result = adminService.getAllUsers(details);
+            //then
+            assertThat(result).isNotNull();
+            assertThat(result.getUserList().size()).isEqualTo(0);
+        }
+
+        @DisplayName("사원 권한 수정 실패(관리자 권한 없음)")
+        @Test
+        void fail5() {
+            //given
+            User admin = User.builder()
+                    .id(1L)
+                    .role(UserRoleEnum.USER)
+                    .username("뽀로로")
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
+                    .role(UserRoleEnum.MANAGER)
+                    .build();
+            //when
+            UserException exception = assertThrows(UserException.class, () -> {
+                adminService.editUser(2L, details, requestDto);
+            });
+
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
+        }
+
+        @DisplayName("사원 권한 수정 실패(등록된 사원 없음)")
+        @Test
+        void fail6() {
+            //given
+            User admin = User.builder()
+                    .id(1L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+            when(userRepository.findById(2L)).thenReturn(Optional.empty());
+
+            RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
+                    .role(UserRoleEnum.MANAGER)
+                    .build();
+
+            //when
+            UserException exception = assertThrows(UserException.class, () -> {
+                adminService.editUser(2L, details, requestDto);
+            });
+
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getMessage()).isEqualTo("등록된 사용자가 없습니다");
+
+        }
+
+        @DisplayName("사원 권한 수정 실패(관리자 권한으로 수정 불가)")
+        @Test
+        void fail7() {
+            //given
+            User admin = User.builder()
+                    .id(1L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
+                    .role(UserRoleEnum.ADMIN)
+                    .build();
+
+            User user = User.builder()
+                    .id(2L)
+                    .role(UserRoleEnum.USER)
+                    .username("손흥민")
+                    .build();
+
+            //when
+            when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+
+            UserException exception = assertThrows(UserException.class, () -> {
+                adminService.editUser(2L, details, requestDto);
+            });
+
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getMessage()).isEqualTo("관리자 권한으로 수정할 수 없습니다.");
 
         }
     }

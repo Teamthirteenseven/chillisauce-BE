@@ -30,4 +30,12 @@ public class ReservationDetailResponseDto {
         this.start=reservation.getStartTime();
         this.end=reservation.getEndTime();
     }
+
+    public ReservationDetailResponseDto(Reservation reservation, Long mrId, String username) {
+        this.reservationId= reservation.getId();
+        this.mrId=mrId;
+        this.username=username;
+        this.start=reservation.getStartTime();
+        this.end=reservation.getEndTime();
+    }
 }

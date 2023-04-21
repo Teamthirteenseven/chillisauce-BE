@@ -6,7 +6,6 @@ on:
       - main
     types: [closed]
 
-# 본인이 설정한 값을 여기서 채워넣습니다.
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
   AWS_DEFAULT_REGION: ap-northeast-2
@@ -50,9 +49,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # (3) Gradle build (Test 제외)
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      # (3) Gradle clean build
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: clean build
 
