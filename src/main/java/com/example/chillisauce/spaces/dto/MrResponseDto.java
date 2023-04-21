@@ -10,18 +10,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MrResponseDto {
     private final Long mrId;
-    private final String mrName;
-
-    private final String username;
-
+    private final String locationName;
     private String x;
 
     private String y;
 
     public MrResponseDto(Mr mr) {
         this.mrId = mr.getId();
-        this.mrName = mr.getMrName();
-        this.username = mr.getUsername();
+        this.locationName = mr.getLocationName();
         this.x = mr.getX();
         this.y = mr.getY();
     }

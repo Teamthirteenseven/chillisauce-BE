@@ -6,17 +6,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MrRequestDto {
-
-
-
-    private String mrName;
+    private String locationName;
     private String x;
     private String y;
 
-    public MrRequestDto(String mrName, String x, String y) {
-        this.mrName = mrName;
-        this.x = x;
-        this.y = y;
+    public MrRequestDto(LocationDto locationDto) {
+        this.locationName = locationDto.getLocationName();
+        this.x = locationDto.getX();
+        this.y = locationDto.getY();
     }
 
 }

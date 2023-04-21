@@ -8,18 +8,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoxRequestDto {
 
-
-    private String boxName;
-
+    private String locationName;
     private String x;
-
     private String y;
 
-    public BoxRequestDto(String boxName, String x, String y) {
-        this.boxName = boxName;
-        this.x = x;
-        this.y = y;
-    }
 
+    public BoxRequestDto(LocationDto locationDto) {
+        this.locationName = locationDto.getLocationName();
+        this.x = locationDto.getX();
+        this.y = locationDto.getY();
+    }
 
 }

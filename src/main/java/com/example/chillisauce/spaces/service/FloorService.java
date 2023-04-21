@@ -6,6 +6,7 @@ import com.example.chillisauce.spaces.dto.FloorRequestDto;
 import com.example.chillisauce.spaces.dto.FloorResponseDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Location;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
@@ -89,14 +90,23 @@ public class FloorService {
 
     //floor 삭제
     @Transactional
-    public FloorResponseDto deleteFloor (String companyName, Long floorId, UserDetailsImpl details) {
+    public FloorResponseDto deleteFloor(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = findCompanyNameAndFloorId(companyName, floorId);
-        for(Space space : floor.getSpaces()) {
-            for (Mr mr : space.getMrs())
-                reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
+        List<Mr> mrlist = new ArrayList<>();
+        for (Space space : floor.getSpaces()) {
+            List<Location> allLocations = space.getLocations();
+
+            for (Location location : allLocations) {
+                if (location instanceof Mr) {
+                    mrlist.add((Mr) location);
+                }
+            }
+        }
+        for (Mr mr : mrlist) {
+            reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
         }
         mrRepository.deleteAll();
         floorRepository.deleteById(floorId);

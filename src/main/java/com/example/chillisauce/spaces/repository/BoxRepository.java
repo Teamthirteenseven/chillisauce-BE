@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface BoxRepository extends JpaRepository<Box, Long> {
     Optional<Box> findByIdAndSpaceCompanies(Long boxId, Companies companies);
-    Optional<Box> findFirstByUserId (Long userId);
+
 }

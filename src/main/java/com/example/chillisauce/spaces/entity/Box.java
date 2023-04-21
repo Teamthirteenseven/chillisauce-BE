@@ -1,68 +1,32 @@
 package com.example.chillisauce.spaces.entity;
 
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
-import com.example.chillisauce.users.entity.User;
 import lombok.*;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 @NoArgsConstructor
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-public class Box {
+public class Box extends Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "box_id")
     private Long id;
-    @Column(nullable = false)
-    @NotEmpty
-    private String boxName;
-    @Column(nullable = false)
-    @NotEmpty
-    private String x;
-    @Column(nullable = false)
-    @NotEmpty
-    private String y;
 
-    private String username;
-
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "space_id")
-    private Space space;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    public User user;
 
     public Box(BoxRequestDto boxRequestDto) {
-        this.boxName = boxRequestDto.getBoxName();
-        this.x = boxRequestDto.getX();
-        this.y = boxRequestDto.getY();
+        super(boxRequestDto.getLocationName(), boxRequestDto.getX(), boxRequestDto.getY());
+
     }
 
     public void updateBox(BoxRequestDto boxRequestDto) {
-        this.boxName = boxRequestDto.getBoxName();
-        this.x = boxRequestDto.getX();
-        this.y = boxRequestDto.getY();
+        this.setLocationName(boxRequestDto.getLocationName());
+        this.setX(boxRequestDto.getX());
+        this.setY(boxRequestDto.getY()); //이렇게 사용하면 객체지향프로그래밍 캡슐화원칙에 어긋날수도있다. @AllArgsConstructor , @Data 타입을 사용해 setter를 자동생성
     }
 
-    public void linkSpace(Space space) {
-        this.space = space;
-        space.getBoxes().add(this);
-    }
-
-    public void updateBox(BoxRequestDto boxRequestDto, User user) {
-        this.boxName = boxRequestDto.getBoxName();
-        this.x = boxRequestDto.getX();
-        this.y = boxRequestDto.getY();
-        this.user = user;
-        this.username = user.getUsername();
-    }
 }
+
