@@ -94,7 +94,7 @@ public class MrServiceTest {
 
             //then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getLocationName());
+            assertEquals("MrTest",mrResponseDto.getMrName());
             assertEquals("200",mrResponseDto.getX());
             assertEquals("300",mrResponseDto.getY());
 
@@ -115,7 +115,7 @@ public class MrServiceTest {
 
             //Then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getLocationName());
+            assertEquals("MrTest",mrResponseDto.getMrName());
             assertEquals("200",mrResponseDto.getX());
             assertEquals("300",mrResponseDto.getY());
         }
@@ -136,7 +136,7 @@ public class MrServiceTest {
 
             //Then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getLocationName());
+            assertEquals("MrTest",mrResponseDto.getMrName());
             assertEquals("200",mrResponseDto.getX());
             assertEquals("300",mrResponseDto.getY());
         }

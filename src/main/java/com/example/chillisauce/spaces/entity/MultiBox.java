@@ -18,7 +18,7 @@ public class MultiBox extends Location {
     private Long id;
 
     public MultiBox(MultiBoxRequestDto multiBoxRequestDto) {
-        super(multiBoxRequestDto.getLocationName(), multiBoxRequestDto.getX(), multiBoxRequestDto.getY());
+        super(multiBoxRequestDto.getMultiBoxName(), multiBoxRequestDto.getX(), multiBoxRequestDto.getY());
     }
 
     @Builder
@@ -28,7 +28,7 @@ public class MultiBox extends Location {
 
 
     public void updateMultiBox(MultiBoxRequestDto multiBoxRequestDto) {
-        this.setLocationName(multiBoxRequestDto.getLocationName());
+        this.setLocationName(multiBoxRequestDto.getMultiBoxName());
         this.setX(multiBoxRequestDto.getX());
         this.setY(multiBoxRequestDto.getY());
 

@@ -4,10 +4,7 @@ package com.example.chillisauce.spaces.service;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.*;
-import com.example.chillisauce.spaces.entity.Floor;
-import com.example.chillisauce.spaces.entity.Location;
-import com.example.chillisauce.spaces.entity.Mr;
-import com.example.chillisauce.spaces.entity.Space;
+import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
@@ -75,6 +72,7 @@ public class SpaceService {
 
     //전체 공간 조회
     @Transactional
+//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -103,9 +101,10 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
+
         SpaceResponseDto responseDto;
         if (space.getFloor() != null) {
-            responseDto = new SpaceResponseDto(space, space.getFloor().getId(), space.getFloor().getFloorName());
+            responseDto = new SpaceResponseDto(space, space.getFloor());
         } else {
             responseDto = new SpaceResponseDto(space, null, null);
         }
