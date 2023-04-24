@@ -17,7 +17,7 @@ public class Box extends Location {
 
 
     public Box(BoxRequestDto boxRequestDto) {
-        super(boxRequestDto.getLocationName(), boxRequestDto.getX(), boxRequestDto.getY());
+        super(boxRequestDto.getBoxName(), boxRequestDto.getX(), boxRequestDto.getY());
     }
 
     @Builder
@@ -27,7 +27,7 @@ public class Box extends Location {
 
 
     public void updateBox(BoxRequestDto boxRequestDto) {
-        this.setLocationName(boxRequestDto.getLocationName());
+        this.setLocationName(boxRequestDto.getBoxName());
         this.setX(boxRequestDto.getX());
         this.setY(boxRequestDto.getY());
     }

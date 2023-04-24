@@ -85,7 +85,7 @@ public class BoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("박스 이름"),
+                                    fieldWithPath("boxName").type(JsonFieldType.STRING).description("박스 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("박스 X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("박스 Y 좌표")
 
@@ -124,7 +124,7 @@ public class BoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("박스 이름"),
+                                    fieldWithPath("boxName").type(JsonFieldType.STRING).description("박스 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("박스 X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("박스 Y 좌표")
 

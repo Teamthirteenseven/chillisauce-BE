@@ -96,7 +96,7 @@ public class MultiBoxServiceTest {
 
             //then
             assertNotNull(multiBoxResponseDto);
-            assertEquals("MultiBoxTest", multiBoxResponseDto.getLocationName());
+            assertEquals("MultiBoxTest", multiBoxResponseDto.getMultiBoxName());
             assertEquals("777", multiBoxResponseDto.getX());
             assertEquals("888", multiBoxResponseDto.getY());
 
@@ -115,7 +115,7 @@ public class MultiBoxServiceTest {
 
             //Then
             assertNotNull(multiBoxResponseDto);
-            assertEquals("MultiBoxTest",multiBoxResponseDto.getLocationName());
+            assertEquals("MultiBoxTest",multiBoxResponseDto.getMultiBoxName());
             assertEquals("777",multiBoxResponseDto.getX());
             assertEquals("888",multiBoxResponseDto.getY());
         }
@@ -135,7 +135,7 @@ public class MultiBoxServiceTest {
 
             //Then
             assertNotNull(multiBoxResponseDto);
-            assertEquals("MultiBoxTest",multiBoxResponseDto.getLocationName());
+            assertEquals("MultiBoxTest",multiBoxResponseDto.getMultiBoxName());
             assertEquals("777",multiBoxResponseDto.getX());
             assertEquals("888",multiBoxResponseDto.getY());
         }

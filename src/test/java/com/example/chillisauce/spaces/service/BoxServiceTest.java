@@ -94,7 +94,7 @@ class BoxServiceTest {
 
             //then
             assertNotNull(boxResponseDto);
-            assertEquals("이민재자리", boxResponseDto.getLocationName());
+            assertEquals("이민재자리", boxResponseDto.getBoxName());
             assertEquals("777", boxResponseDto.getX());
             assertEquals("777", boxResponseDto.getY());
         }
@@ -114,7 +114,7 @@ class BoxServiceTest {
 
             //then
             assertNotNull(boxResponseDto);
-            assertEquals("testBox", boxResponseDto.getLocationName());
+            assertEquals("testBox", boxResponseDto.getBoxName());
             assertEquals("500", boxResponseDto.getX());
             assertEquals("999", boxResponseDto.getY());
         }
@@ -133,7 +133,7 @@ class BoxServiceTest {
             BoxResponseDto boxResponseDto = boxService.deleteBox(companyName, boxId, details);
             //then
             assertNotNull(boxResponseDto);
-            assertEquals("testBox", boxResponseDto.getLocationName());
+            assertEquals("testBox", boxResponseDto.getBoxName());
             assertEquals("500", boxResponseDto.getX());
             assertEquals("999", boxResponseDto.getY());
         }
