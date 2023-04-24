@@ -49,7 +49,7 @@ public class FloorService {
     }
     //Floor 선택 조회
     @Transactional
-    @Cacheable(cacheNames = "FloorResponseDtoList", key = "#companyName")
+    @Cacheable(cacheNames = "FloorResponseDtoList", key ="#companyName + '_' + #floorId")
     public List<FloorResponseDto> getFloorlist(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
