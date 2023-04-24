@@ -25,15 +25,14 @@ public class TestUserInjector {
 
     // 관리자 가입 시 해당 회사에 5명의 테스트 유저 가입시키기
     public void injectUsers(String companyName) throws UserException {
-        log.info("inject Called");
         Companies company = companyRepository.findByCompanyName(companyName)
                 .orElseThrow(() -> new UserException(UserErrorCode.COMPANY_NOT_FOUND));
 
-        List<String> userInformationList = List.of("홍길동 test1@test.com",
-                "채소연 test2@test.com",
-                "김철수 test3@test.com",
-                "윤대협 test4@test.com",
-                "성춘향 test5@test.com");
+        List<String> userInformationList = List.of("홍길동 test1@test" + company.getId() + ".com",
+                "채소연 test2@test" + company.getId() + ".com",
+                "김철수 test3@test" + company.getId() + ".com",
+                "윤대협 test4@test" + company.getId() + ".com",
+                "성춘향 test5@test" + company.getId() + ".com");
         List<User> userList = userInformationList.stream().map(x -> {
                     String[] str = x.split(" ");
                     return User.builder()
