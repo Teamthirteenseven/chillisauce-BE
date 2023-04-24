@@ -29,14 +29,7 @@ public class Space {
     private String spaceName;
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Box> boxes = new ArrayList<>();
-
-
-    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Mr> mrs = new ArrayList<>();
-
-    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<MultiBox> multiBoxes = new ArrayList<>();
+    private final List<Location> locations = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "companies_id", nullable = false)
@@ -64,18 +57,18 @@ public class Space {
     }
 
 
-    public void addBox(Box box) {
-        this.boxes.add(box);
+    public void addLocation(Box box) {
+        this.locations.add(box);
         box.linkSpace(this);
     }
 
-    public void addMr(Mr mr) {
-        this.mrs.add(mr);
+    public void addLocation(Mr mr) {
+        this.locations.add(mr);
         mr.linkSpace(this);
     }
 
-    public void addMultiBox(MultiBox multiBox) {
-        this.getMultiBoxes().add(multiBox);
+    public void addLocation(MultiBox multiBox) {
+        this.locations.add(multiBox);
         multiBox.linkSpace(this);
     }
 

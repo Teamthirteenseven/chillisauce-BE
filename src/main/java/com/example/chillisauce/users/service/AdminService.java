@@ -1,6 +1,7 @@
 package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import com.example.chillisauce.users.dto.UserListResponseDto;
 import com.example.chillisauce.users.entity.User;
@@ -12,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -47,16 +50,22 @@ public class AdminService {
     }
 
     /* 사원 권한 수정 */
-//    @Transactional
-//    public UserDetailResponseDto editUser(Long userId, UserDetailsImpl userDetails, String role) {
-//        User user = userDetails.getUser();
-//        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
-//            throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
-//        }
-//        User getUser = userRepository.findById(userId).orElseThrow(
-//                () -> new UserException(UserErrorCode.USER_NOT_FOUND));
-//        getUser.update(role);
-//        userRepository.save(getUser);
-//        return new UserDetailResponseDto(getUser);
-//    }
+    @Transactional
+    public UserDetailResponseDto editUser(Long userId, UserDetailsImpl userDetails, RoleDeptUpdateRequestDto requestDto) {
+        User user = userDetails.getUser();
+        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
+        }
+        User getUser = userRepository.findById(userId).orElseThrow(
+                () -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        if (requestDto.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new UserException(UserErrorCode.UNABLE_MODIFY_PERMISSION_FOR_ADMIN);
+        }
+
+        getUser.update(requestDto);
+        userRepository.save(getUser);
+        return new UserDetailResponseDto(getUser);
+    }
+
 }

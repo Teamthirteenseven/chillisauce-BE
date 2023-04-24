@@ -2,6 +2,7 @@ package com.example.chillisauce.users.entity;
 
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.users.dto.AdminSignupRequestDto;
+import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserSignupRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,8 +57,9 @@ public class User {
     }
 
     //업데이트 부분은 나중에 추가될 수 있음
-    public void update(UserRoleEnum role) {
-        this.role = role;
+    public void update(RoleDeptUpdateRequestDto requestDto) {
+        this.role = requestDto.getRole();
+//        this.dept = requestDto.getDept(); //부서명 컬럼에 대한 확장성을 대비
     }
 
 }
