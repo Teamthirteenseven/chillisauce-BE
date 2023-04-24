@@ -118,9 +118,9 @@ public class BoxService {
             }
 
             return new BoxResponseDto(toBox);
+        }
     }
 
-}
     //companyName find , BoxId 두개 합쳐놓은 메서드
     public Box findCompanyNameAndBoxId(String companyName, Long boxId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
@@ -132,3 +132,4 @@ public class BoxService {
     }
 
 }
+

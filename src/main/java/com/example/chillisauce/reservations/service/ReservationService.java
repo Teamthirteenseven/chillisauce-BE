@@ -5,6 +5,7 @@ import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
+import com.example.chillisauce.reservations.vo.ReservationTimetable;
 import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.Mr;
@@ -34,22 +35,6 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final MrRepository meetingRoomRepository;
     private final CompanyRepository companyRepository;
-    // 예약 가능 첫 시각 : 오전 7시, 마지막 시각 : 22시
-    private static final Integer OPEN_HOUR = 7;
-    private static final Integer CLOSE_HOUR = 22;
-    private final Set<TimeUnit> timeSet;
-
-    /**
-     * timeSet 초기화
-     */
-    @PostConstruct
-    public void initializeTimeSet() {
-        IntStream.range(OPEN_HOUR, CLOSE_HOUR + 1).forEach(x -> {
-            LocalTime start = LocalTime.of(x, 0);
-            LocalTime end = LocalTime.of(x, 59);
-            timeSet.add(new TimeUnit(start, end));
-        });
-    }
 
     /**
      * 회사 전체 예약 조회
@@ -80,15 +65,20 @@ public class ReservationService {
                 .findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
                         selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
-        //TODO: 예약 수 x timeSet entry 만큼 loop 돌기 때문에 성능이 좋지 않음
+        //TODO : 당일 예약 수 x timeSet entry 만큼 loop - 성능 개선 필요
         List<ReservationTimeResponseDto> timeList =
-                timeSet.stream().map(
+                ReservationTimetable.TIME_SET.stream().map(
                         x -> {
                             LocalTime startTime = LocalTime.of(x.getStart().getHour(), x.getStart().getMinute());
                             LocalTime endTime = LocalTime.of(x.getEnd().getHour(), x.getEnd().getMinute());
                             LocalDateTime startDateTime = LocalDateTime.of(selDate, startTime);
                             return new ReservationTimeResponseDto(isOccupied(startDateTime, all), startTime, endTime);
-                        }).toList();
+                        })
+                        // 07시부터 22시까지 정렬하기 위한 Comparator 구현
+                        .sorted(((o1, o2) -> o1.getStart().isAfter(o2.getStart())?1:
+                        o1.getStart().isBefore(o2.getStart())?-1:0))
+                        .toList();
+
         return new ReservationTimetableResponseDto(meetingRoom.getId(), timeList);
     }
 
