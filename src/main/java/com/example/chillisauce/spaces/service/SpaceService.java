@@ -5,6 +5,7 @@ import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.*;
 import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Location;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -136,7 +139,14 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
-        List<Mr> mrList = space.getMrs();
+        List<Location> allLocations = space.getLocations();
+        List<Mr> mrList = new ArrayList<>();
+
+        for (Location location : allLocations) {
+            if (location instanceof Mr) {
+                mrList.add((Mr) location);
+            }
+        }
         for (Mr mr : mrList) {
             reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
         }

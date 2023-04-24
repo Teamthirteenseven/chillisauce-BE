@@ -9,16 +9,16 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class BoxResponseDto {
-    private final Long boxId;
-    private final String boxName;
-    private final String username;
+    private Long boxId;
+    private final String locationName;
     private String x;
     private String y;
 
+
+
     public BoxResponseDto(Box box) {
         this.boxId = box.getId();
-        this.boxName = box.getBoxName();
-        this.username = box.getUsername();
+        this.locationName = box.getLocationName();
         this.x = box.getX();
         this.y = box.getY();
     }

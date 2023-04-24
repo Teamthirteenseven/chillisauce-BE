@@ -85,12 +85,12 @@ operation::patch-updateFloor[]
 === floor 삭제
 operation::delete-deleteFloor[]
 
-[[GET-Floor]]
+[[GET-Floorlist]]
 === floor 선택 조회
 operation::get-getFloorlist[]
 
 [[GET-Floor]]
-=== floor 전체 조회
+=== Floor 전체 조회
 operation::get-getFloor[]
 
 [[Mr-API]]
@@ -130,7 +130,7 @@ operation::delete-deleteMultiBox[]
 === Space 생성
 operation::post-createSpace[]
 
-[[POST-Space]]
+[[POST-Spaceinfloor]]
 === Space Floor 생성
 operation::post-createSpaceinfloor[]
 
@@ -138,8 +138,8 @@ operation::post-createSpaceinfloor[]
 === Space 전체 조회
 operation::get-allSpacelist[]
 
-[[GET-Space]]
-=== Spcae 선택 조회
+[[GET-Spacelist]]
+=== Space 선택 조회
 operation::get-getSpacelist[]
 
 [[PATCH-Space]]

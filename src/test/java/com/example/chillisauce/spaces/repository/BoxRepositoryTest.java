@@ -1,6 +1,7 @@
 package com.example.chillisauce.spaces.repository;
 
 import com.example.chillisauce.spaces.entity.Box;
+import com.example.chillisauce.spaces.entity.Location;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,9 +26,8 @@ class BoxRepositoryTest {
         @Test
         void addBox() {
             //given
-            Box box = Box.builder()
-                    .boxName("테스트")
-                    .id(1L)
+            Box box = (Box) Box.builder()
+                    .locationName("테스트")
                     .x("900")
                     .y("800").build();
 
@@ -35,8 +35,7 @@ class BoxRepositoryTest {
             Box saveBox = boxRepository.save(box);
 
             //then
-            Assertions.assertThat(saveBox.getBoxName()).isEqualTo(box.getBoxName());
-            Assertions.assertThat(saveBox.getId()).isEqualTo(box.getId());
+            Assertions.assertThat(saveBox.getLocationName()).isEqualTo(box.getLocationName());
             Assertions.assertThat(saveBox.getX()).isEqualTo(box.getX());
             Assertions.assertThat(saveBox.getY()).isEqualTo(box.getY());
 
@@ -54,7 +53,7 @@ class BoxRepositoryTest {
             void fail2() {
                 // given
                 final Box box = Box.builder()
-                        .boxName(null)
+                        .locationName(null)
                         .x(null)
                         .y(null)
                         .build();
@@ -68,7 +67,7 @@ class BoxRepositoryTest {
             void fail3() {
                 // given
                 final Box box = Box.builder()
-                        .boxName("")
+                        .locationName("")
                         .x("")
                         .y("")
                         .build();

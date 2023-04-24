@@ -69,7 +69,7 @@ public class MultiBoxControllerTest {
             String url = "/multibox/" + companyName + "/" + spaceId;
 
             MultiBoxRequestDto multiBoxRequestDto = new MultiBoxRequestDto("MultiBox 생성 테스트", "555", "444");
-            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", null, "200", "300");
+            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300");
             when(multiBoxService.createMultiBox(eq(companyName), eq(spaceId), any(), any())).thenReturn(multiBoxResponseDto);
 
 
@@ -87,7 +87,7 @@ public class MultiBoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("multiBoxName").type(JsonFieldType.STRING).description("MultiBox 이름"),
+                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("MultiBox 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("MultiBox X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("MultiBox Y 좌표")
 
@@ -110,7 +110,7 @@ public class MultiBoxControllerTest {
             Long multiboxId = 1L;
             String url = "/multibox/" + companyName + "/" + multiboxId;
             MultiBoxRequestDto multiBoxRequestDto = new MultiBoxRequestDto("MultiBox 수정 OK???", "555", "444");
-            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 수정 OK???", null, "200", "300");
+            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 수정 OK???", "200", "300");
             when(multiBoxService.updateMultiBox(eq(companyName), eq(multiboxId), any(), any())).thenReturn(multiBoxResponseDto);
 
             //when
@@ -126,7 +126,7 @@ public class MultiBoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("multiBoxName").type(JsonFieldType.STRING).description("MultiBox 이름"),
+                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("MultiBox 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("MultiBox X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("MultiBox Y 좌표")
 
@@ -148,7 +148,7 @@ public class MultiBoxControllerTest {
             String companyName = "testCompany";
             Long multiboxId = 1L;
             String url = "/multibox/" + companyName + "/" + multiboxId;
-            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", null, "200", "300");
+            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300");
             when(multiBoxService.deleteMultiBox(eq(companyName), eq(multiboxId), any())).thenReturn(multiBoxResponseDto);
 
             //when
