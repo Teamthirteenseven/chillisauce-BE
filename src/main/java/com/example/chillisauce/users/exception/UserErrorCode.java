@@ -19,7 +19,9 @@ public enum UserErrorCode implements ErrorStatusMessage {
     NOT_PROPER_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_PROPER_CERTIFICATION(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
     NOT_PROPER_EMAIL(BAD_REQUEST, "이메일 형식이 맞지 않습니다."),
+
     NOT_HAVE_PERMISSION(BAD_REQUEST, "권한이 없습니다."),
+    UNABLE_MODIFY_PERMISSION_FOR_ADMIN(BAD_REQUEST, "관리자 권한으로 수정할 수 없습니다."),
     NOT_AUTHOR(BAD_REQUEST, "작성자만 삭제/수정할 수 있습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
