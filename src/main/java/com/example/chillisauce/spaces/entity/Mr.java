@@ -23,7 +23,7 @@ public class Mr extends Location{
 
 
     public Mr(MrRequestDto mrRequestDto) {
-        super(mrRequestDto.getLocationName(), mrRequestDto.getX(), mrRequestDto.getY());
+        super(mrRequestDto.getMrName(), mrRequestDto.getX(), mrRequestDto.getY());
     }
 
 
@@ -37,7 +37,7 @@ public class Mr extends Location{
 
 
     public void updateMr(MrRequestDto mrRequestDto) {
-        this.setLocationName(mrRequestDto.getLocationName());
+        this.setLocationName(mrRequestDto.getMrName());
         this.setX(mrRequestDto.getX());
         this.setY(mrRequestDto.getY());
     }

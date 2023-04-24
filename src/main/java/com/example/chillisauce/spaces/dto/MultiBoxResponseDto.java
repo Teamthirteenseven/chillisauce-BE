@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MultiBoxResponseDto {
     private Long multiBoxId;
-    private String locationName;
+    private String multiBoxName;
     private String x;
     private String y;
     public MultiBoxResponseDto(MultiBox multiBox) {
         this.multiBoxId = multiBox.getId();
-        this.locationName = multiBox.getLocationName();
+        this.multiBoxName = multiBox.getLocationName();
         this.x = multiBox.getX();
         this.y = multiBox.getY();
     }
