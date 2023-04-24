@@ -34,7 +34,7 @@ public class FloorService {
     private final FloorRepository floorRepository;
     private final ReservationService reservationService;
     private final MrRepository mrRepository;
-    private final SpaceRepository spaceRepository;
+
     //Floor 생성
     @Transactional
     public FloorResponseDto createFloor(String companyName, FloorRequestDto floorRequestDto, UserDetailsImpl details) {
@@ -49,7 +49,7 @@ public class FloorService {
     }
     //Floor 선택 조회
     @Transactional
-    @Cacheable(cacheNames = "FloorResponseDtoList", key ="#companyName + '_' + #floorId")
+//    @Cacheable(cacheNames = "FloorResponseDtoList", key ="#companyName + '_' + #floorId")
     public List<FloorResponseDto> getFloorlist(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -63,7 +63,7 @@ public class FloorService {
 
     //Floor 전체 조회
     @Transactional
-    @Cacheable(cacheNames = "FloorResponseDtoList", key = "#companyName")
+//    @Cacheable(cacheNames = "FloorResponseDtoList", key = "#companyName")
     public List<FloorResponseDto> getFloor (String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);

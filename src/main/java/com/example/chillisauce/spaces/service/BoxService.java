@@ -7,20 +7,13 @@ import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.BoxRepository;
-import com.example.chillisauce.spaces.repository.LocationRepository;
-import com.example.chillisauce.spaces.repository.MultiBoxRepository;
-import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.entity.Companies;
-import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
-import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 
 @Service
