@@ -18,6 +18,7 @@ import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +115,7 @@ public class SpaceService {
 
     //공간 개별 수정
     @Transactional
+    @CacheEvict(cacheNames = "SpaceResponseDtoList", allEntries = true)
     public SpaceResponseDto updateSpace(String companyName, Long spaceId, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
@@ -134,6 +136,7 @@ public class SpaceService {
 
     //공간 삭제
     @Transactional
+    @CacheEvict(cacheNames = "SpaceResponseDtoList", allEntries = true)
     public SpaceResponseDto deleteSpace(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);

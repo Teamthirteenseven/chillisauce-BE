@@ -54,14 +54,14 @@ public class RedisConfig {
 
         builder.withCacheConfiguration("FloorResponseDtoList",
                 RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofHours(1))
+                        .entryTtl(Duration.ofMinutes(1))
                         .disableCachingNullValues()
                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(floorSerializer))
         );
 
         builder.withCacheConfiguration("SpaceResponseDtoList",
                 RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofHours(60))
+                        .entryTtl(Duration.ofMinutes(1))
                         .disableCachingNullValues()
                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(spaceSerializer))
         );
