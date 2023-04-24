@@ -12,47 +12,34 @@ import java.util.List;
 @Getter
 @Entity
 @RequiredArgsConstructor
-@Builder
 @AllArgsConstructor
-public class Mr {
+public class Mr extends Location{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    @NotEmpty
-    private String mrName;
-    @Column(nullable = false)
-    @NotEmpty
-    private String x;
-    @Column(nullable = false)
-    @NotEmpty
-    private String y;
-
-    private String username;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "space_id")
-    private Space space;
 
     @OneToMany(mappedBy = "meetingRoom")
     List<Reservation> reservations;
 
 
     public Mr(MrRequestDto mrRequestDto) {
-        this.mrName = mrRequestDto.getMrName();
-        this.x = mrRequestDto.getX();
-        this.y = mrRequestDto.getY();
-        this.username = getUsername();
+        super(mrRequestDto.getLocationName(), mrRequestDto.getX(), mrRequestDto.getY());
     }
 
+
+    @Builder
+    public Mr(Long id, String locationName, String x, String y, List<Reservation> reservation) {
+        super(locationName, x, y);
+        this.id= id;
+        this.reservations = reservation;
+    }
+
+
+
     public void updateMr(MrRequestDto mrRequestDto) {
-        this.mrName = mrRequestDto.getMrName();
-        this.x = mrRequestDto.getX();
-        this.y = mrRequestDto.getY();
+        this.setLocationName(mrRequestDto.getLocationName());
+        this.setX(mrRequestDto.getX());
+        this.setY(mrRequestDto.getY());
     }
-    public void linkSpace(Space space) {
-        this.space = space;
-        space.getMrs().add(this);
-    }
+
 }

@@ -26,9 +26,8 @@ public class MultiBoxRepositoryTest {
         @Test
         void addmultiBox() {
             //given
-            MultiBox multiBox = MultiBox.builder()
-                    .multiBoxName("테스트")
-                    .id(1L)
+            MultiBox multiBox = (MultiBox) MultiBox.builder()
+                    .locationName("테스트")
                     .x("900")
                     .y("800").build();
 
@@ -36,8 +35,7 @@ public class MultiBoxRepositoryTest {
             MultiBox saveBox = multiBoxRepository.save(multiBox);
 
             //then
-            Assertions.assertThat(saveBox.getMultiBoxName()).isEqualTo(multiBox.getMultiBoxName());
-            Assertions.assertThat(saveBox.getId()).isEqualTo(multiBox.getId());
+            Assertions.assertThat(saveBox.getLocationName()).isEqualTo(multiBox.getLocationName());
             Assertions.assertThat(saveBox.getX()).isEqualTo(multiBox.getX());
             Assertions.assertThat(saveBox.getY()).isEqualTo(multiBox.getY());
 
@@ -54,8 +52,8 @@ public class MultiBoxRepositoryTest {
             @Test
             void fail1() {
                 // given
-                final MultiBox multiBox = MultiBox.builder()
-                        .multiBoxName(null)
+                final MultiBox multiBox = (MultiBox) MultiBox.builder()
+                        .locationName(null)
                         .x(null)
                         .y(null)
                         .build();
@@ -68,8 +66,8 @@ public class MultiBoxRepositoryTest {
             @Test
             void fail2() {
                 // given
-                final MultiBox multiBox = MultiBox.builder()
-                        .multiBoxName("")
+                final MultiBox multiBox = (MultiBox) MultiBox.builder()
+                        .locationName("")
                         .x("")
                         .y("")
                         .build();

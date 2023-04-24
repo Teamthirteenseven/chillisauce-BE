@@ -67,7 +67,7 @@ public class BoxControllerTest {
             String url = "/boxes/" + companyName + "/" + spaceId;
 
             BoxRequestDto boxRequestDto = new BoxRequestDto("Box 생성 테스트", "200", "300");
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 생성 테스트", null, "200", "300");
+            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 생성 테스트", "200", "300");
             when(boxService.createBox(eq(companyName), eq(spaceId), any(), any())).thenReturn(boxResponseDto);
 
 
@@ -85,7 +85,7 @@ public class BoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("boxName").type(JsonFieldType.STRING).description("박스 이름"),
+                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("박스 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("박스 X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("박스 Y 좌표")
 
@@ -108,7 +108,7 @@ public class BoxControllerTest {
             Long boxId = 1L;
             String url = "/boxes/" + companyName + "/" + boxId;
             BoxRequestDto boxRequestDto = new BoxRequestDto("Box 수정 테스트", "200", "300");
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 테스트", null, "200", "300");
+            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 테스트", "200", "300");
             when(boxService.updateBox(eq(companyName), eq(boxId), any(), any())).thenReturn(boxResponseDto);
 
             //when
@@ -124,7 +124,7 @@ public class BoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("boxName").type(JsonFieldType.STRING).description("박스 이름"),
+                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("박스 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("박스 X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("박스 Y 좌표")
 
@@ -146,7 +146,7 @@ public class BoxControllerTest {
             String companyName = "testCompany";
             Long boxId = 1L;
             String url = "/boxes/" + companyName + "/" + boxId;
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 삭제 테스트", null, "200", "300");
+            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 삭제 테스트", "200", "300");
             when(boxService.deleteBox(eq(companyName), eq(boxId), any())).thenReturn(boxResponseDto);
 
             //when
@@ -160,46 +160,6 @@ public class BoxControllerTest {
                     .andDo(document("delete-deleteBox",
                             getDocumentRequest(),
                             getDocumentResponse(),
-                            responseFields(
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
-                                    fieldWithPath("data").type(JsonFieldType.STRING).description("")
-
-                            )
-                    ));
-        }
-
-        @Test
-        @WithMockUser
-        void Box_사용자_등록_및_BOX_이동_성공() throws Exception {
-            //given
-            String companyName = "testCompany";
-            Long formBoxId = 1L;
-            Long toBoxId = 2L;
-            String url = "/boxes/" + companyName + "/" + toBoxId + "/move" ;
-            BoxRequestDto boxRequestDto = new BoxRequestDto("Box 수정 테스트", "200", "300");
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 OK???", null, "200", "300");
-            when(boxService.moveBoxWithUser(eq(companyName), eq(toBoxId), any(), any())).thenReturn(boxResponseDto);
-
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.patch(url)
-                    .header("Authorization", "Bearer Token")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(boxRequestDto)));
-
-            //then
-            result.andExpect(status().isOk())
-                    .andDo(document("patch-moveBoxWithUser",
-                            getDocumentRequest(),
-                            getDocumentResponse(),
-                            requestFields(
-                                    fieldWithPath("boxName").type(JsonFieldType.STRING).description("박스 이름"),
-                                    fieldWithPath("x").type(JsonFieldType.STRING).description("박스 X 좌표"),
-                                    fieldWithPath("y").type(JsonFieldType.STRING).description("박스 Y 좌표")
-
-                            ),
-
                             responseFields(
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),

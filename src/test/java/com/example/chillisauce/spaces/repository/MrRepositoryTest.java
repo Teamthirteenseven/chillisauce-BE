@@ -25,8 +25,8 @@ class MrRepositoryTest {
         @Test
         void addMr() {
             //given
-            Mr mr = Mr.builder()
-                    .mrName("테스트")
+            Mr mr = (Mr) Mr.builder()
+                    .locationName("테스트")
                     .x("900")
                     .y("800").build();
 
@@ -34,7 +34,7 @@ class MrRepositoryTest {
             Mr saveMr = mrRepository.save(mr);
 
             //then
-            Assertions.assertThat(saveMr.getMrName()).isEqualTo(mr.getMrName());
+            Assertions.assertThat(saveMr.getLocationName()).isEqualTo(mr.getLocationName());
             Assertions.assertThat(saveMr.getX()).isEqualTo(mr.getX());
             Assertions.assertThat(saveMr.getY()).isEqualTo(mr.getY());
 
@@ -51,8 +51,8 @@ class MrRepositoryTest {
             @Test
             void fail2() {
                 // given
-                final Mr mr = Mr.builder()
-                        .mrName(null)
+                final Mr mr = (Mr) Mr.builder()
+                        .locationName(null)
                         .x(null)
                         .y(null)
                         .build();
@@ -65,8 +65,8 @@ class MrRepositoryTest {
             @Test
             void fail3() {
                 // given
-                final Mr mr = Mr.builder()
-                        .mrName("")
+                final Mr mr = (Mr) Mr.builder()
+                        .locationName("")
                         .x("")
                         .y("")
                         .build();

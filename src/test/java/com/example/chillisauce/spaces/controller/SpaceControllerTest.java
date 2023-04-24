@@ -175,9 +175,7 @@ public class SpaceControllerTest {
                                     fieldWithPath("data[].spaceName").type(JsonFieldType.STRING).description("Space 이름"),
                                     fieldWithPath("data[].floorId").type(JsonFieldType.NULL).description("Floor id"),
                                     fieldWithPath("data[].floorName").type(JsonFieldType.NULL).description("Floor name"),
-                                    fieldWithPath("data[].boxlist[]").type(JsonFieldType.ARRAY).description("BoxList"),
-                                    fieldWithPath("data[].mrlist[]").type(JsonFieldType.ARRAY).description("MrList"),
-                                    fieldWithPath("data[].multiboxlist[]").type(JsonFieldType.ARRAY).description("MultiBoxList")
+                                    fieldWithPath("data[].locationList[]").type(JsonFieldType.ARRAY).description("LocationList")
                             )
                     ));
 
@@ -213,9 +211,7 @@ public class SpaceControllerTest {
                                     fieldWithPath("data[].spaceName").type(JsonFieldType.STRING).description("Space 이름"),
                                     fieldWithPath("data[].floorId").type(JsonFieldType.NULL).description("Floor id"),
                                     fieldWithPath("data[].floorName").type(JsonFieldType.NULL).description("Floor name"),
-                                    fieldWithPath("data[].boxlist[]").type(JsonFieldType.ARRAY).description("BoxList"),
-                                    fieldWithPath("data[].mrlist[]").type(JsonFieldType.ARRAY).description("MrList"),
-                                    fieldWithPath("data[].multiboxlist[]").type(JsonFieldType.ARRAY).description("MultiBoxList")
+                                    fieldWithPath("data[].locationList[]").type(JsonFieldType.ARRAY).description("LocationList")
                             )
                     ));
         }
