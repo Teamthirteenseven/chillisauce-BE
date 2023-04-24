@@ -72,10 +72,7 @@ public class SpaceService {
 
     //전체 공간 조회
     @Transactional
-<<<<<<< Updated upstream
-=======
 //    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
->>>>>>> Stashed changes
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
