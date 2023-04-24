@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BoxResponseDto {
     private Long boxId;
-    private final String locationName;
+    private final String boxName;
     private String x;
     private String y;
 
@@ -18,7 +18,7 @@ public class BoxResponseDto {
 
     public BoxResponseDto(Box box) {
         this.boxId = box.getId();
-        this.locationName = box.getLocationName();
+        this.boxName = box.getLocationName();
         this.x = box.getX();
         this.y = box.getY();
     }

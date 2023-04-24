@@ -8,20 +8,20 @@ import lombok.NoArgsConstructor;
 public class MultiBoxRequestDto {
 
 
-    private String locationName;
+    private String multiBoxName;
 
     private String x;
 
     private String y;
 
     public MultiBoxRequestDto(LocationDto locationDto) {
-        this.locationName = locationDto.getLocationName();
+        this.multiBoxName = locationDto.getLocationName();
         this.x = locationDto.getX();
         this.y = locationDto.getY();
     }
 
     public MultiBoxRequestDto(String locationName, String x, String y) {
-        this.locationName = locationName;
+        this.multiBoxName = locationName;
         this.x = x;
         this.y = y;
     }

@@ -15,20 +15,19 @@ import java.util.stream.Collectors;
 public class SpaceResponseDto {
 
     private Long spaceId;
-
     private String spaceName;
-
     private Long floorId;
     private String floorName;
-    private List<LocationDto> locationList = new ArrayList<>();
 
+    private List<BoxResponseDto> boxList = new ArrayList<>();
+    private List<MrResponseDto> mrList = new ArrayList<>();
+    private List<MultiBoxResponseDto> multiBoxList = new ArrayList<>();
 
     public SpaceResponseDto(Space space) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
-        this.locationList = space.getLocations().stream().map(LocationDto::new).collect(Collectors.toList());
-    }
 
+    }
 
 
     public SpaceResponseDto(Long id, String spaceName) {
@@ -41,8 +40,9 @@ public class SpaceResponseDto {
         this.spaceName = space.getSpaceName();
         this.floorId = floorId;
         this.floorName = floorName;
-        this.locationList = space.getLocations().stream().map(LocationDto::new).collect(Collectors.toList());
-
+        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> new BoxResponseDto((Box) x)).toList();
+        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
+        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> new MultiBoxResponseDto((MultiBox) x)).toList();
     }
 
     public SpaceResponseDto(Space space, Floor floor) {
@@ -50,8 +50,20 @@ public class SpaceResponseDto {
         this.spaceName = space.getSpaceName();
         this.floorId = floor.getId();
         this.floorName = floor.getFloorName();
-        this.locationList = space.getLocations().stream().map(LocationDto::new).collect(Collectors.toList());
+        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> new BoxResponseDto((Box) x)).toList();
+        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
+        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> new MultiBoxResponseDto((MultiBox) x)).toList();
+    }
 
+    public SpaceResponseDto(Space space, Floor floor, List<BoxResponseDto> boxList,
+                            List<MrResponseDto> mrList, List<MultiBoxResponseDto> multiBoxList) {
+        this.spaceId = space.getId();
+        this.spaceName = space.getSpaceName();
+        this.floorId = floor.getId();
+        this.floorName = floor.getFloorName();
+        this.boxList = boxList;
+        this.mrList = mrList;
+        this.multiBoxList = multiBoxList;
     }
 
 }

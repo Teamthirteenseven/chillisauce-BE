@@ -84,7 +84,7 @@ public class MrControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("Mr 이름"),
+                                    fieldWithPath("mrName").type(JsonFieldType.STRING).description("Mr 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("Mr X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("Mr Y 좌표")
 
@@ -122,7 +122,7 @@ public class MrControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("Mr 이름"),
+                                    fieldWithPath("mrName").type(JsonFieldType.STRING).description("Mr 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("Mr X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("Mr Y 좌표")
 
