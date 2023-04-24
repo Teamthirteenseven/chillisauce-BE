@@ -37,7 +37,7 @@ public class MrService {
         Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
         Mr mr = new Mr(mrRequestDto);
         mrRepository.save(mr);
-        space.addMr(mr);//mr.setSpace(space); 기존 set addMr 메서드로 교체, space 에 mr 연결
+        space.addLocation(mr);//mr.setSpace(space); 기존 set addMr 메서드로 교체, space 에 mr 연결
         return new MrResponseDto(mr);
     }
 

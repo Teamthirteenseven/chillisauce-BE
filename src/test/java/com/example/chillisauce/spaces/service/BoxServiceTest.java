@@ -70,7 +70,7 @@ class BoxServiceTest {
                 .build();
         details = new UserDetailsImpl(user, null);
         box = Box.builder()
-                .boxName("testBox")
+                .locationName("testBox")
                 .x("500")
                 .y("999")
                 .build();
@@ -94,7 +94,7 @@ class BoxServiceTest {
 
             //then
             assertNotNull(boxResponseDto);
-            assertEquals("이민재자리", boxResponseDto.getBoxName());
+            assertEquals("이민재자리", boxResponseDto.getLocationName());
             assertEquals("777", boxResponseDto.getX());
             assertEquals("777", boxResponseDto.getY());
         }
@@ -114,7 +114,7 @@ class BoxServiceTest {
 
             //then
             assertNotNull(boxResponseDto);
-            assertEquals("testBox", boxResponseDto.getBoxName());
+            assertEquals("testBox", boxResponseDto.getLocationName());
             assertEquals("500", boxResponseDto.getX());
             assertEquals("999", boxResponseDto.getY());
         }
@@ -133,111 +133,12 @@ class BoxServiceTest {
             BoxResponseDto boxResponseDto = boxService.deleteBox(companyName, boxId, details);
             //then
             assertNotNull(boxResponseDto);
-            assertEquals("testBox", boxResponseDto.getBoxName());
+            assertEquals("testBox", boxResponseDto.getLocationName());
             assertEquals("500", boxResponseDto.getX());
             assertEquals("999", boxResponseDto.getY());
         }
 
-        @Test
-        void Box_isPresent_true_유저_등록_이동() {
-            // given
-            String companyName = "호랑이";
-            Long toBoxId = 1L;
-            Box toBox = Box.builder()
-                    .id(toBoxId)
-                    .boxName("to box")
-                    .x("2")
-                    .y("2")
-                    .space(space)
-                    .user(null)
-                    .build();
-            details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
 
-
-            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
-            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
-            when(boxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(box));
-            when(multiBoxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(multiBox));
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
-            // when
-            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
-
-            // then
-            assertEquals(boxResponseDto.getBoxName(), boxRequestDto.getBoxName());
-            assertEquals(boxResponseDto.getX(), boxRequestDto.getX());
-            assertEquals(boxResponseDto.getY(), boxRequestDto.getY());
-            assertEquals(details.getUser(), toBox.getUser());
-            assertEquals(details.getUser().getUsername(), toBox.getUsername());
-        }
-
-        @Test
-        void multiBox_isPresent_true_유저_등록_이동() {
-            //given
-            String companyName = "호랑이";
-            Long toBoxId = 1L;
-            Box toBox = Box.builder()
-                    .id(toBoxId)
-                    .boxName("to box")
-                    .x("2")
-                    .y("2")
-                    .space(space)
-                    .user(null)
-                    .build();
-            details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
-            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
-            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
-            when(multiBoxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(multiBox));
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
-
-            //when
-            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
-            //then
-            assertNotNull(boxResponseDto);
-            assertEquals(toBox.getBoxName(), boxResponseDto.getBoxName());
-            assertEquals(boxRequestDto.getX(), boxResponseDto.getX());
-            assertEquals(boxRequestDto.getY(), boxResponseDto.getY());
-            assertNull(multiBox.getUser());
-            assertNull(multiBox.getUsername());
-            assertEquals(details.getUser(), toBox.getUser());
-            assertEquals(details.getUser().getUsername(), toBox.getUsername());
-            verify(multiBoxRepository, times(1)).findFirstByUserId(details.getUser().getId());
-            verify(boxRepository, times(1)).findByIdAndSpaceCompanies(toBoxId, companies);
-        }
-
-        @Test
-        void 모든_조건_false_유저_등록_이동() {
-            //given
-            String companyName = "호랑이";
-            Long toBoxId = 1L;
-            Box toBox = Box.builder()
-                    .id(toBoxId)
-                    .boxName("to box")
-                    .x("2")
-                    .y("2")
-                    .space(space)
-                    .user(null)
-                    .build();
-            details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
-            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
-            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
-
-            //when
-            BoxResponseDto boxResponseDto = boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
-            //then
-            assertNotNull(boxResponseDto);
-            assertEquals(toBox.getBoxName(), boxResponseDto.getBoxName());
-            assertEquals(boxRequestDto.getX(), boxResponseDto.getX());
-            assertEquals(boxRequestDto.getY(), boxResponseDto.getY());
-            assertEquals(details.getUser(), toBox.getUser());
-            assertEquals(details.getUser().getUsername(), toBox.getUsername());
-            verify(boxRepository, times(1)).findByIdAndSpaceCompanies(toBoxId, companies);
-            verify(boxRepository, times(1)).save(toBox);
-        }
-    }
 
     @Nested
     @DisplayName("Box 권한 없음 예외 케이스")
@@ -279,86 +180,41 @@ class BoxServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("Box 메서드 예외 케이스")
-    class MethodExceptionCase {
-        @Test
-        void 해당_회사_없음() {
-            //given
-            String companyName = "호랑이";
-            Long boxId = 1L;
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
+        @Nested
+        @DisplayName("Box 메서드 예외 케이스")
+        class MethodExceptionCase {
+            @Test
+            void 해당_회사_없음() {
+                //given
+                String companyName = "호랑이";
+                Long boxId = 1L;
+                when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
 
-            //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                boxService.findCompanyNameAndBoxId(companyName, boxId);
-            });
-            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
-        }
+                //When,Then
+                SpaceException exception = assertThrows(SpaceException.class, () -> {
+                    boxService.findCompanyNameAndBoxId(companyName, boxId);
+                });
+                assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
+            }
 
-        @Test
-        void 해당_회사_아이디_없음() {
-            //given
-            String companyName = "testCompany";
-            Long boxId = 1L;
-            Companies companies = Companies.builder()
-                    .companyName("testCompany")
-                    .build();
+            @Test
+            void 해당_회사_아이디_없음() {
+                //given
+                String companyName = "testCompany";
+                Long boxId = 1L;
+                Companies companies = Companies.builder()
+                        .companyName("testCompany")
+                        .build();
 
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(boxRepository.findByIdAndSpaceCompanies(boxId, companies)).thenReturn(Optional.empty());
+                when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+                when(boxRepository.findByIdAndSpaceCompanies(boxId, companies)).thenReturn(Optional.empty());
 
-            //when,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                boxService.findCompanyNameAndBoxId(companyName, boxId);
-            });
-            assertEquals(SpaceErrorCode.BOX_NOT_FOUND, exception.getErrorCode());
-        }
-    }
-
-    @Nested
-    @DisplayName("유저 이동 toBox NotNull")
-    class moveBoxWithUser_toBoxNotNull {
-        @Test
-        void 유저_등록_이동_toBox_NotNull() {
-            // given
-            String companyName = "호랑이";
-            Long toBoxId = 1L;
-            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
-            Box toBox = Box.builder()
-                    .id(toBoxId)
-                    .boxName("to box")
-                    .x("2")
-                    .y("2")
-                    .space(space)
-                    .user(User.builder().username("test").build())
-                    .build();
-            when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
-            when(boxRepository.findFirstByUserId(details.getUser().getId())).thenReturn(Optional.of(box));
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(boxRepository.findByIdAndSpaceCompanies(toBoxId, companies)).thenReturn(Optional.of(toBox));
-
-            // when, then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
-            });
-            assertEquals(exception.getErrorCode(), SpaceErrorCode.BOX_ALREADY_IN_USER);
-            verify(boxRepository, times(1)).findFirstByUserId(details.getUser().getId());
-            verify(boxRepository, times(1)).findByIdAndSpaceCompanies(toBoxId, companies);
-        }
-
-        @Test
-        void 유저_찾기_예외(){
-            String companyName = "호랑이";
-            Long toBoxId = 1L;
-            BoxRequestDto boxRequestDto = new BoxRequestDto("박스", "3", "3");
-
-            when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                boxService.moveBoxWithUser(companyName, toBoxId, boxRequestDto, details);
-            });
-            assertEquals(exception.getErrorCode(), SpaceErrorCode.USER_NOT_FOUND);
+                //when,Then
+                SpaceException exception = assertThrows(SpaceException.class, () -> {
+                    boxService.findCompanyNameAndBoxId(companyName, boxId);
+                });
+                assertEquals(SpaceErrorCode.BOX_NOT_FOUND, exception.getErrorCode());
+            }
         }
     }
 }

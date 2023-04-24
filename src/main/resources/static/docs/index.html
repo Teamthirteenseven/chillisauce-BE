@@ -477,8 +477,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#POST-Floor">floor 생성</a></li>
 <li><a href="#PATCH-Floor">floor 수정</a></li>
 <li><a href="#DELETE-Floor">floor 삭제</a></li>
-<li><a href="#GET-Floor">floor 선택 조회</a></li>
-<li><a href="#GET-Floor">floor 전체 조회</a></li>
+<li><a href="#GET-Floorlist">floor 선택 조회</a></li>
+<li><a href="#GET-Floor">Floor 전체 조회</a></li>
 </ul>
 </li>
 <li><a href="#Mr-API">Mr API</a>
@@ -498,9 +498,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Space-API">Space API</a>
 <ul class="sectlevel2">
 <li><a href="#POST-Space">Space 생성</a></li>
-<li><a href="#POST-Space">Space Floor 생성</a></li>
+<li><a href="#POST-Spaceinfloor">Space Floor 생성</a></li>
 <li><a href="#GET-Space">Space 전체 조회</a></li>
-<li><a href="#GET-Space">Spcae 선택 조회</a></li>
+<li><a href="#GET-Spacelist">Space 선택 조회</a></li>
 <li><a href="#PATCH-Space">Space 수정</a></li>
 <li><a href="#DELETE-Space">Space 삭제</a></li>
 </ul>
@@ -2097,7 +2097,7 @@ Content-Length: 266
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "boxName" : "Box 생성 테스트",
+  "locationName" : "Box 생성 테스트",
   "x" : "200",
   "y" : "300"
 }'</code></pre>
@@ -2116,7 +2116,7 @@ Content-Length: 74
 Host: localhost:8080
 
 {
-  "boxName" : "Box 생성 테스트",
+  "locationName" : "Box 생성 테스트",
   "x" : "200",
   "y" : "300"
 }</code></pre>
@@ -2144,7 +2144,7 @@ Content-Length: 81
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "boxName" : "Box 생성 테스트",
+  "locationName" : "Box 생성 테스트",
   "x" : "200",
   "y" : "300"
 }' | http POST 'http://localhost:8080/boxes/testCompany/1' \
@@ -2159,7 +2159,7 @@ Content-Length: 81
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "boxName" : "Box 생성 테스트",
+  "locationName" : "Box 생성 테스트",
   "x" : "200",
   "y" : "300"
 }</code></pre>
@@ -2183,7 +2183,7 @@ Content-Length: 81
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boxName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>locationName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">박스 이름</p></td>
 </tr>
@@ -2258,7 +2258,7 @@ Content-Length: 81
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "boxName" : "Box 수정 테스트",
+  "locationName" : "Box 수정 테스트",
   "x" : "200",
   "y" : "300"
 }'</code></pre>
@@ -2277,7 +2277,7 @@ Content-Length: 74
 Host: localhost:8080
 
 {
-  "boxName" : "Box 수정 테스트",
+  "locationName" : "Box 수정 테스트",
   "x" : "200",
   "y" : "300"
 }</code></pre>
@@ -2305,7 +2305,7 @@ Content-Length: 81
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "boxName" : "Box 수정 테스트",
+  "locationName" : "Box 수정 테스트",
   "x" : "200",
   "y" : "300"
 }' | http PATCH 'http://localhost:8080/boxes/testCompany/1' \
@@ -2320,7 +2320,7 @@ Content-Length: 81
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "boxName" : "Box 수정 테스트",
+  "locationName" : "Box 수정 테스트",
   "x" : "200",
   "y" : "300"
 }</code></pre>
@@ -2344,7 +2344,7 @@ Content-Length: 81
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boxName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>locationName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">박스 이름</p></td>
 </tr>
@@ -2914,9 +2914,9 @@ Content-Length: 80
 </div>
 </div>
 <div class="sect2">
-<h3 id="GET-Floor"><a class="link" href="#GET-Floor">floor 선택 조회</a></h3>
+<h3 id="GET-Floorlist"><a class="link" href="#GET-Floorlist">floor 선택 조회</a></h3>
 <div class="sect3">
-<h4 id="GET-Floor_curl_request"><a class="link" href="#GET-Floor_curl_request">Curl request</a></h4>
+<h4 id="GET-Floorlist_curl_request"><a class="link" href="#GET-Floorlist_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/floors/testCompany/1' -i -X GET \
@@ -2930,7 +2930,7 @@ Content-Length: 80
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Floor_http_request"><a class="link" href="#GET-Floor_http_request">HTTP request</a></h4>
+<h4 id="GET-Floorlist_http_request"><a class="link" href="#GET-Floorlist_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /floors/testCompany/1 HTTP/1.1
@@ -2947,7 +2947,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Floor_http_response"><a class="link" href="#GET-Floor_http_response">HTTP response</a></h4>
+<h4 id="GET-Floorlist_http_response"><a class="link" href="#GET-Floorlist_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -2967,7 +2967,7 @@ Content-Length: 183
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Floor_httpie_request"><a class="link" href="#GET-Floor_httpie_request">HTTPie request</a></h4>
+<h4 id="GET-Floorlist_httpie_request"><a class="link" href="#GET-Floorlist_httpie_request">HTTPie request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
@@ -2980,7 +2980,7 @@ Content-Length: 183
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Floor_request_body"><a class="link" href="#GET-Floor_request_body">Request body</a></h4>
+<h4 id="GET-Floorlist_request_body"><a class="link" href="#GET-Floorlist_request_body">Request body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -2990,7 +2990,7 @@ Content-Length: 183
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Floor_request_fields"><a class="link" href="#GET-Floor_request_fields">Request fields</a></h4>
+<h4 id="GET-Floorlist_request_fields"><a class="link" href="#GET-Floorlist_request_fields">Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3014,7 +3014,7 @@ Content-Length: 183
 </table>
 </div>
 <div class="sect3">
-<h4 id="GET-Floor_response_body"><a class="link" href="#GET-Floor_response_body">Response body</a></h4>
+<h4 id="GET-Floorlist_response_body"><a class="link" href="#GET-Floorlist_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -3030,7 +3030,7 @@ Content-Length: 183
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Floor_response_fields"><a class="link" href="#GET-Floor_response_fields">Response fields</a></h4>
+<h4 id="GET-Floorlist_response_fields"><a class="link" href="#GET-Floorlist_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3080,7 +3080,7 @@ Content-Length: 183
 </div>
 </div>
 <div class="sect2">
-<h3 id="GET-Floor"><a class="link" href="#GET-Floor">floor 전체 조회</a></h3>
+<h3 id="GET-Floor"><a class="link" href="#GET-Floor">Floor 전체 조회</a></h3>
 <div class="sect3">
 <h4 id="GET-Floor_curl_request"><a class="link" href="#GET-Floor_curl_request">Curl request</a></h4>
 <div class="listingblock">
@@ -3261,7 +3261,7 @@ Content-Length: 176
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "mrName" : "Mr 테스트 생성",
+  "locationName" : "Mr 테스트 생성",
   "x" : "777",
   "y" : "888"
 }'</code></pre>
@@ -3280,7 +3280,7 @@ Content-Length: 72
 Host: localhost:8080
 
 {
-  "mrName" : "Mr 테스트 생성",
+  "locationName" : "Mr 테스트 생성",
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -3308,7 +3308,7 @@ Content-Length: 84
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "mrName" : "Mr 테스트 생성",
+  "locationName" : "Mr 테스트 생성",
   "x" : "777",
   "y" : "888"
 }' | http POST 'http://localhost:8080/mr/testCompany/1' \
@@ -3323,7 +3323,7 @@ Content-Length: 84
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "mrName" : "Mr 테스트 생성",
+  "locationName" : "Mr 테스트 생성",
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -3347,7 +3347,7 @@ Content-Length: 84
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mrName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>locationName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Mr 이름</p></td>
 </tr>
@@ -3422,7 +3422,7 @@ Content-Length: 84
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "mrName" : "Mr 수정 OK?",
+  "locationName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }'</code></pre>
@@ -3441,7 +3441,7 @@ Content-Length: 66
 Host: localhost:8080
 
 {
-  "mrName" : "Mr 수정 OK?",
+  "locationName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -3469,7 +3469,7 @@ Content-Length: 84
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "mrName" : "Mr 수정 OK?",
+  "locationName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }' | http PATCH 'http://localhost:8080/mr/testCompany/1' \
@@ -3484,7 +3484,7 @@ Content-Length: 84
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "mrName" : "Mr 수정 OK?",
+  "locationName" : "Mr 수정 OK?",
   "x" : "777",
   "y" : "888"
 }</code></pre>
@@ -3508,7 +3508,7 @@ Content-Length: 84
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mrName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>locationName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Mr 이름</p></td>
 </tr>
@@ -3695,7 +3695,7 @@ Content-Length: 84
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "locationName" : "MultiBox 생성 테스트",
   "x" : "555",
   "y" : "444"
 }'</code></pre>
@@ -3714,7 +3714,7 @@ Content-Length: 84
 Host: localhost:8080
 
 {
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "locationName" : "MultiBox 생성 테스트",
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3742,7 +3742,7 @@ Content-Length: 83
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "locationName" : "MultiBox 생성 테스트",
   "x" : "555",
   "y" : "444"
 }' | http POST 'http://localhost:8080/multibox/testCompany/1' \
@@ -3757,7 +3757,7 @@ Content-Length: 83
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "multiBoxName" : "MultiBox 생성 테스트",
+  "locationName" : "MultiBox 생성 테스트",
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3781,7 +3781,7 @@ Content-Length: 83
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>multiBoxName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>locationName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MultiBox 이름</p></td>
 </tr>
@@ -3856,7 +3856,7 @@ Content-Length: 83
     -H 'Authorization: Bearer Token' \
     -H 'Accept: application/json' \
     -d '{
-  "multiBoxName" : "MultiBox 수정 OK???",
+  "locationName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }'</code></pre>
@@ -3875,7 +3875,7 @@ Content-Length: 80
 Host: localhost:8080
 
 {
-  "multiBoxName" : "MultiBox 수정 OK???",
+  "locationName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3903,7 +3903,7 @@ Content-Length: 83
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "multiBoxName" : "MultiBox 수정 OK???",
+  "locationName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }' | http PATCH 'http://localhost:8080/multibox/testCompany/1' \
@@ -3918,7 +3918,7 @@ Content-Length: 83
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "multiBoxName" : "MultiBox 수정 OK???",
+  "locationName" : "MultiBox 수정 OK???",
   "x" : "555",
   "y" : "444"
 }</code></pre>
@@ -3942,7 +3942,7 @@ Content-Length: 83
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>multiBoxName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>locationName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MultiBox 이름</p></td>
 </tr>
@@ -4271,9 +4271,9 @@ Content-Length: 81
 </div>
 </div>
 <div class="sect2">
-<h3 id="POST-Space"><a class="link" href="#POST-Space">Space Floor 생성</a></h3>
+<h3 id="POST-Spaceinfloor"><a class="link" href="#POST-Spaceinfloor">Space Floor 생성</a></h3>
 <div class="sect3">
-<h4 id="POST-Space_curl_request"><a class="link" href="#POST-Space_curl_request">Curl request</a></h4>
+<h4 id="POST-Spaceinfloor_curl_request"><a class="link" href="#POST-Spaceinfloor_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/spaces/testCompany/1' -i -X POST \
@@ -4288,7 +4288,7 @@ Content-Length: 81
 </div>
 </div>
 <div class="sect3">
-<h4 id="POST-Space_http_request"><a class="link" href="#POST-Space_http_request">HTTP request</a></h4>
+<h4 id="POST-Spaceinfloor_http_request"><a class="link" href="#POST-Spaceinfloor_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /spaces/testCompany/1 HTTP/1.1
@@ -4306,7 +4306,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="POST-Space_http_response"><a class="link" href="#POST-Space_http_response">HTTP response</a></h4>
+<h4 id="POST-Spaceinfloor_http_response"><a class="link" href="#POST-Spaceinfloor_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -4322,7 +4322,7 @@ Content-Length: 81
 </div>
 </div>
 <div class="sect3">
-<h4 id="POST-Space_httpie_request"><a class="link" href="#POST-Space_httpie_request">HTTPie request</a></h4>
+<h4 id="POST-Spaceinfloor_httpie_request"><a class="link" href="#POST-Spaceinfloor_httpie_request">HTTPie request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
@@ -4336,7 +4336,7 @@ Content-Length: 81
 </div>
 </div>
 <div class="sect3">
-<h4 id="POST-Space_request_body"><a class="link" href="#POST-Space_request_body">Request body</a></h4>
+<h4 id="POST-Spaceinfloor_request_body"><a class="link" href="#POST-Spaceinfloor_request_body">Request body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -4347,7 +4347,7 @@ Content-Length: 81
 </div>
 </div>
 <div class="sect3">
-<h4 id="POST-Space_request_fields"><a class="link" href="#POST-Space_request_fields">Request fields</a></h4>
+<h4 id="POST-Spaceinfloor_request_fields"><a class="link" href="#POST-Spaceinfloor_request_fields">Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4376,7 +4376,7 @@ Content-Length: 81
 </table>
 </div>
 <div class="sect3">
-<h4 id="POST-Space_response_body"><a class="link" href="#POST-Space_response_body">Response body</a></h4>
+<h4 id="POST-Spaceinfloor_response_body"><a class="link" href="#POST-Spaceinfloor_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -4388,7 +4388,7 @@ Content-Length: 81
 </div>
 </div>
 <div class="sect3">
-<h4 id="POST-Space_response_fields"><a class="link" href="#POST-Space_response_fields">Response fields</a></h4>
+<h4 id="POST-Spaceinfloor_response_fields"><a class="link" href="#POST-Spaceinfloor_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4463,9 +4463,7 @@ Content-Length: 260
     "spaceName" : "Test 공간",
     "floorId" : null,
     "floorName" : null,
-    "boxlist" : [ ],
-    "mrlist" : [ ],
-    "multiboxlist" : [ ]
+    "locationList" : [ ]
   } ]
 }</code></pre>
 </div>
@@ -4502,9 +4500,7 @@ Content-Length: 260
     "spaceName" : "Test 공간",
     "floorId" : null,
     "floorName" : null,
-    "boxlist" : [ ],
-    "mrlist" : [ ],
-    "multiboxlist" : [ ]
+    "locationList" : [ ]
   } ]
 }</code></pre>
 </div>
@@ -4562,28 +4558,18 @@ Content-Length: 260
 <td class="tableblock halign-left valign-top"><p class="tableblock">Floor name</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].boxlist[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].locationList[]</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BoxList</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].mrlist[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MrList</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].multiboxlist[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MultiBoxList</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LocationList</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="GET-Space"><a class="link" href="#GET-Space">Spcae 선택 조회</a></h3>
+<h3 id="GET-Spacelist"><a class="link" href="#GET-Spacelist">Space 선택 조회</a></h3>
 <div class="sect3">
-<h4 id="GET-Space_curl_request"><a class="link" href="#GET-Space_curl_request">Curl request</a></h4>
+<h4 id="GET-Spacelist_curl_request"><a class="link" href="#GET-Spacelist_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/spaces/testCompany/1' -i -X GET \
@@ -4594,7 +4580,7 @@ Content-Length: 260
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Space_http_request"><a class="link" href="#GET-Space_http_request">HTTP request</a></h4>
+<h4 id="GET-Spacelist_http_request"><a class="link" href="#GET-Spacelist_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /spaces/testCompany/1 HTTP/1.1
@@ -4606,7 +4592,7 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Space_http_response"><a class="link" href="#GET-Space_http_response">HTTP response</a></h4>
+<h4 id="GET-Spacelist_http_response"><a class="link" href="#GET-Spacelist_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -4621,16 +4607,14 @@ Content-Length: 260
     "spaceName" : "Test 공간",
     "floorId" : null,
     "floorName" : null,
-    "boxlist" : [ ],
-    "mrlist" : [ ],
-    "multiboxlist" : [ ]
+    "locationList" : [ ]
   } ]
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Space_httpie_request"><a class="link" href="#GET-Space_httpie_request">HTTPie request</a></h4>
+<h4 id="GET-Spacelist_httpie_request"><a class="link" href="#GET-Spacelist_httpie_request">HTTPie request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ http GET 'http://localhost:8080/spaces/testCompany/1' \
@@ -4641,7 +4625,7 @@ Content-Length: 260
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Space_request_body"><a class="link" href="#GET-Space_request_body">Request body</a></h4>
+<h4 id="GET-Spacelist_request_body"><a class="link" href="#GET-Spacelist_request_body">Request body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code></code></pre>
@@ -4649,7 +4633,7 @@ Content-Length: 260
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Space_response_body"><a class="link" href="#GET-Space_response_body">Response body</a></h4>
+<h4 id="GET-Spacelist_response_body"><a class="link" href="#GET-Spacelist_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -4660,16 +4644,14 @@ Content-Length: 260
     "spaceName" : "Test 공간",
     "floorId" : null,
     "floorName" : null,
-    "boxlist" : [ ],
-    "mrlist" : [ ],
-    "multiboxlist" : [ ]
+    "locationList" : [ ]
   } ]
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="GET-Space_response_fields"><a class="link" href="#GET-Space_response_fields">Response fields</a></h4>
+<h4 id="GET-Spacelist_response_fields"><a class="link" href="#GET-Spacelist_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4720,19 +4702,9 @@ Content-Length: 260
 <td class="tableblock halign-left valign-top"><p class="tableblock">Floor name</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].boxlist[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].locationList[]</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BoxList</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].mrlist[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MrList</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].multiboxlist[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MultiBoxList</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LocationList</p></td>
 </tr>
 </tbody>
 </table>

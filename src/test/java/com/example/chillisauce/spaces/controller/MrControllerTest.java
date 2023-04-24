@@ -68,7 +68,7 @@ public class MrControllerTest {
             String url = "/mr/" + companyName + "/" + spaceId;
 
             MrRequestDto mrRequestDto = new MrRequestDto("Mr 테스트 생성", "777", "888");
-            MrResponseDto mrResponseDto = new MrResponseDto(1L, "Mr 테스트 생성","", "777", "888");
+            MrResponseDto mrResponseDto = new MrResponseDto(1L, "Mr 테스트 생성", "777", "888");
             when(mrService.createMr(eq(companyName), eq(spaceId), any(), any())).thenReturn(mrResponseDto);
 
             //when
@@ -84,7 +84,7 @@ public class MrControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("mrName").type(JsonFieldType.STRING).description("Mr 이름"),
+                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("Mr 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("Mr X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("Mr Y 좌표")
 
@@ -106,7 +106,7 @@ public class MrControllerTest {
             Long mrId = 1L;
             String url = "/mr/" + companyName + "/" + mrId;
             MrRequestDto mrRequestDto = new MrRequestDto("Mr 수정 OK?", "777", "888");
-            MrResponseDto mrResponseDto = new MrResponseDto(1L, "Mr 수정 OK?","", "777", "888");
+            MrResponseDto mrResponseDto = new MrResponseDto(1L, "Mr 수정 OK?", "777", "888");
             when(mrService.updateMr(eq(companyName), eq(mrId), any(), any())).thenReturn(mrResponseDto);
 
             //when
@@ -122,7 +122,7 @@ public class MrControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("mrName").type(JsonFieldType.STRING).description("Mr 이름"),
+                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("Mr 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("Mr X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("Mr Y 좌표")
 
@@ -144,7 +144,7 @@ public class MrControllerTest {
             String companyName = "testCompany";
             Long mrId = 1L;
             String url = "/mr/" + companyName + "/" + mrId;
-            MrResponseDto mrResponseDto = new MrResponseDto(1L, "Mr 테스트 생성","", "777", "888");
+            MrResponseDto mrResponseDto = new MrResponseDto(1L, "Mr 테스트 생성", "777", "888");
             when(mrService.deleteMr(eq(companyName), eq(mrId), any())).thenReturn(mrResponseDto);
 
             //when

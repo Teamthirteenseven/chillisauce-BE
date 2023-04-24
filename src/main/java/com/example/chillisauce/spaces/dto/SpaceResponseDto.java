@@ -20,19 +20,13 @@ public class SpaceResponseDto {
 
     private Long floorId;
     private String floorName;
+    private List<LocationDto> locationList = new ArrayList<>();
 
-    private List<BoxResponseDto> boxlist = new ArrayList<>();
-
-    private List<MrResponseDto> mrlist = new ArrayList<>();
-
-    private List<MultiBoxResponseDto> multiboxlist = new ArrayList<>();
 
     public SpaceResponseDto(Space space) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
-        this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
-        this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
-        this.multiboxlist = space.getMultiBoxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
+        this.locationList = space.getLocations().stream().map(LocationDto::new).collect(Collectors.toList());
     }
 
 
@@ -47,9 +41,8 @@ public class SpaceResponseDto {
         this.spaceName = space.getSpaceName();
         this.floorId = floorId;
         this.floorName = floorName;
-        this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
-        this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
-        this.multiboxlist = space.getMultiBoxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
+        this.locationList = space.getLocations().stream().map(LocationDto::new).collect(Collectors.toList());
+
     }
 
     public SpaceResponseDto(Space space, Floor floor) {
@@ -57,9 +50,8 @@ public class SpaceResponseDto {
         this.spaceName = space.getSpaceName();
         this.floorId = floor.getId();
         this.floorName = floor.getFloorName();
-        this.boxlist = space.getBoxes().stream().map(BoxResponseDto::new).collect(Collectors.toList());
-        this.mrlist = space.getMrs().stream().map(MrResponseDto::new).collect(Collectors.toList());
-        this.multiboxlist = space.getMultiBoxes().stream().map(MultiBoxResponseDto::new).collect(Collectors.toList());
+        this.locationList = space.getLocations().stream().map(LocationDto::new).collect(Collectors.toList());
+
     }
 
 }
