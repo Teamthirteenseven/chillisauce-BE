@@ -3,12 +3,12 @@ package com.example.chillisauce.spaces.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Builder
 @Data
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "locationType")
@@ -16,8 +16,14 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty
+    @Column(nullable = false)
     private String locationName;
+    @NotEmpty
+    @Column(nullable = false)
     private String x;
+    @NotEmpty
+    @Column(nullable = false)
     private String y;
 
 

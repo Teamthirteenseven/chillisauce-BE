@@ -19,4 +19,9 @@ public class BoxRequestDto {
         this.y = locationDto.getY();
     }
 
+    public BoxRequestDto(String locationName, String x, String y) {
+        this.locationName = locationName;
+        this.x = x;
+        this.y = y;
+    }
 }

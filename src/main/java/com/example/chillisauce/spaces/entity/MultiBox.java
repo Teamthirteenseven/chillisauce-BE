@@ -15,12 +15,17 @@ public class MultiBox extends Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "multiBox_id")
     private Long id;
 
     public MultiBox(MultiBoxRequestDto multiBoxRequestDto) {
         super(multiBoxRequestDto.getLocationName(), multiBoxRequestDto.getX(), multiBoxRequestDto.getY());
     }
+
+    @Builder
+    public MultiBox(String locationName, String x, String y) {
+        super(locationName, x, y);
+    }
+
 
     public void updateMultiBox(MultiBoxRequestDto multiBoxRequestDto) {
         this.setLocationName(multiBoxRequestDto.getLocationName());

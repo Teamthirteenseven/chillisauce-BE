@@ -71,7 +71,7 @@ public class MultiBoxServiceTest {
                 .build();
         details = new UserDetailsImpl(user, null);
         multiBox = MultiBox.builder() //삭제시 내용 필요 ,생성 및 수정에는 request 를 명시하기 때문에 .build 로 바로 닫아도 됨
-                .multiBoxName("MultiBoxTest")
+                .locationName("MultiBoxTest")
                 .x("777")
                 .y("888")
                 .build();
@@ -96,7 +96,7 @@ public class MultiBoxServiceTest {
 
             //then
             assertNotNull(multiBoxResponseDto);
-            assertEquals("MultiBoxTest", multiBoxResponseDto.getMultiBoxName());
+            assertEquals("MultiBoxTest", multiBoxResponseDto.getLocationName());
             assertEquals("777", multiBoxResponseDto.getX());
             assertEquals("888", multiBoxResponseDto.getY());
 
@@ -115,7 +115,7 @@ public class MultiBoxServiceTest {
 
             //Then
             assertNotNull(multiBoxResponseDto);
-            assertEquals("MultiBoxTest",multiBoxResponseDto.getMultiBoxName());
+            assertEquals("MultiBoxTest",multiBoxResponseDto.getLocationName());
             assertEquals("777",multiBoxResponseDto.getX());
             assertEquals("888",multiBoxResponseDto.getY());
         }
@@ -135,7 +135,7 @@ public class MultiBoxServiceTest {
 
             //Then
             assertNotNull(multiBoxResponseDto);
-            assertEquals("MultiBoxTest",multiBoxResponseDto.getMultiBoxName());
+            assertEquals("MultiBoxTest",multiBoxResponseDto.getLocationName());
             assertEquals("777",multiBoxResponseDto.getX());
             assertEquals("888",multiBoxResponseDto.getY());
         }

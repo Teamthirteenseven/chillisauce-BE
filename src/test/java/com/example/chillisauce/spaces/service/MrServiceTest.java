@@ -66,11 +66,12 @@ public class MrServiceTest {
                 .companies(companies)
                 .build();
         details = new UserDetailsImpl(user, null);
-        mr = Mr.builder() //삭제시 내용 필요 ,생성 및 수정에는 request 를 명시하기 때문에 .build 로 바로 닫아도 됨
-                .mrName("MrTest")
+        mr = Mr.builder()
+                .locationName("MrTest")
                 .x("200")
                 .y("300")
                 .build();
+
 
     }
 
@@ -93,7 +94,7 @@ public class MrServiceTest {
 
             //then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getMrName());
+            assertEquals("MrTest",mrResponseDto.getLocationName());
             assertEquals("200",mrResponseDto.getX());
             assertEquals("300",mrResponseDto.getY());
 
@@ -114,7 +115,7 @@ public class MrServiceTest {
 
             //Then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getMrName());
+            assertEquals("MrTest",mrResponseDto.getLocationName());
             assertEquals("200",mrResponseDto.getX());
             assertEquals("300",mrResponseDto.getY());
         }
@@ -135,7 +136,7 @@ public class MrServiceTest {
 
             //Then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getMrName());
+            assertEquals("MrTest",mrResponseDto.getLocationName());
             assertEquals("200",mrResponseDto.getX());
             assertEquals("300",mrResponseDto.getY());
         }

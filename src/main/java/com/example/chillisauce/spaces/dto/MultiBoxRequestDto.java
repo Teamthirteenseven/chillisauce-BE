@@ -20,4 +20,9 @@ public class MultiBoxRequestDto {
         this.y = locationDto.getY();
     }
 
+    public MultiBoxRequestDto(String locationName, String x, String y) {
+        this.locationName = locationName;
+        this.x = x;
+        this.y = y;
+    }
 }

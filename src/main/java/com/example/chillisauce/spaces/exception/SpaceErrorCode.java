@@ -14,6 +14,7 @@ public enum SpaceErrorCode implements ErrorStatusMessage {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     BOX_ALREADY_IN_USER(BAD_REQUEST, "이미 사용중인 사용자가 있습니다."),
     NOT_HAVE_PERMISSION(BAD_REQUEST, "권한이 없습니다."),
+    USER_ALREADY_AT_LOCATION(BAD_REQUEST, "이미 사용중인 자리입니다."),
 
     NOT_HAVE_PERMISSION_COMPANIES(BAD_REQUEST, "해당 회사에 대한 권한이 없습니다."),
 

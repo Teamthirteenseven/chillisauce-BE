@@ -12,10 +12,10 @@ import java.util.List;
 @Getter
 @Entity
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class Mr extends Location{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mr_id")
     private Long id;
 
     @OneToMany(mappedBy = "meetingRoom")
@@ -25,6 +25,16 @@ public class Mr extends Location{
     public Mr(MrRequestDto mrRequestDto) {
         super(mrRequestDto.getLocationName(), mrRequestDto.getX(), mrRequestDto.getY());
     }
+
+
+    @Builder
+    public Mr(Long id, String locationName, String x, String y, List<Reservation> reservation) {
+        super(locationName, x, y);
+        this.id= id;
+        this.reservations = reservation;
+    }
+
+
 
     public void updateMr(MrRequestDto mrRequestDto) {
         this.setLocationName(mrRequestDto.getLocationName());
