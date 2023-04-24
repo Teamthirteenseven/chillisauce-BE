@@ -47,11 +47,11 @@ public class LocationService {
         }
         if (userLocation.isEmpty()) { //없으면
             UserLocation newUserLocation = userLocationRepository.save(new UserLocation(location, user));
-            return new LocationDto(newUserLocation.getLocation());
+            return new LocationDto(newUserLocation.getLocation(), user);
         } else {
             userLocation.get().setLocation(location);
             userLocationRepository.save(userLocation.get());
-            return new LocationDto(userLocation.get().getLocation());
+            return new LocationDto(userLocation.get().getLocation(), user);
         }
     }
 }
