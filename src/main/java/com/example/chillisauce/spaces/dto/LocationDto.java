@@ -13,7 +13,6 @@ public class LocationDto {
     private String x;
     private String y;
 
-    private String username;
 
 
     public LocationDto(Location location) {
