@@ -18,5 +18,6 @@ public class LocationController {
     public ResponseEntity<ResponseMessage> moveBoxWithUser(@PathVariable Long locationId, @AuthenticationPrincipal UserDetailsImpl details) {
         locationService.moveWithUser(locationId, details);
         return ResponseMessage.responseSuccess("사용자 등록 및 이동 완료", "");
+
     }
 }

@@ -1,5 +1,6 @@
 package com.example.chillisauce.spaces.entity;
 
+import com.example.chillisauce.spaces.dto.LocationDto;
 import com.example.chillisauce.users.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;

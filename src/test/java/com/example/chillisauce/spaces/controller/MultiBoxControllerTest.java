@@ -87,7 +87,7 @@ public class MultiBoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("MultiBox 이름"),
+                                    fieldWithPath("multiBoxName").type(JsonFieldType.STRING).description("MultiBox 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("MultiBox X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("MultiBox Y 좌표")
 
@@ -126,7 +126,7 @@ public class MultiBoxControllerTest {
                             getDocumentRequest(),
                             getDocumentResponse(),
                             requestFields(
-                                    fieldWithPath("locationName").type(JsonFieldType.STRING).description("MultiBox 이름"),
+                                    fieldWithPath("multiBoxName").type(JsonFieldType.STRING).description("MultiBox 이름"),
                                     fieldWithPath("x").type(JsonFieldType.STRING).description("MultiBox X 좌표"),
                                     fieldWithPath("y").type(JsonFieldType.STRING).description("MultiBox Y 좌표")
 

@@ -4,10 +4,7 @@ package com.example.chillisauce.spaces.service;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.*;
-import com.example.chillisauce.spaces.entity.Floor;
-import com.example.chillisauce.spaces.entity.Location;
-import com.example.chillisauce.spaces.entity.Mr;
-import com.example.chillisauce.spaces.entity.Space;
+import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
@@ -18,6 +15,7 @@ import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +72,10 @@ public class SpaceService {
 
     //전체 공간 조회
     @Transactional
-    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
+<<<<<<< Updated upstream
+=======
+//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
+>>>>>>> Stashed changes
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -97,15 +98,16 @@ public class SpaceService {
 
     //공간 선택 조회
     @Transactional
-    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
+//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
     public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
+
         SpaceResponseDto responseDto;
         if (space.getFloor() != null) {
-            responseDto = new SpaceResponseDto(space, space.getFloor().getId(), space.getFloor().getFloorName());
+            responseDto = new SpaceResponseDto(space, space.getFloor());
         } else {
             responseDto = new SpaceResponseDto(space, null, null);
         }
@@ -114,6 +116,7 @@ public class SpaceService {
 
     //공간 개별 수정
     @Transactional
+//    @CacheEvict(cacheNames = "SpaceResponseDtoList", allEntries = true)
     public SpaceResponseDto updateSpace(String companyName, Long spaceId, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
@@ -134,6 +137,7 @@ public class SpaceService {
 
     //공간 삭제
     @Transactional
+//    @CacheEvict(cacheNames = "SpaceResponseDtoList", allEntries = true)
     public SpaceResponseDto deleteSpace(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
