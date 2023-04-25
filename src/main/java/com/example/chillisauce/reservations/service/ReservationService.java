@@ -2,30 +2,28 @@ package com.example.chillisauce.reservations.service;
 
 import com.example.chillisauce.reservations.dto.*;
 import com.example.chillisauce.reservations.entity.Reservation;
+import com.example.chillisauce.reservations.entity.ReservationUser;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
+import com.example.chillisauce.reservations.repository.ReservationUserRepository;
 import com.example.chillisauce.reservations.vo.ReservationTimetable;
-import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.repository.CompanyRepository;
+import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -33,8 +31,10 @@ import java.util.stream.IntStream;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final ReservationUserRepository reservationUserRepository;
     private final MrRepository meetingRoomRepository;
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
 
     /**
      * 회사 전체 예약 조회
@@ -110,7 +110,7 @@ public class ReservationService {
         Mr meetingRoom = meetingRoomRepository.findById(meetingRoomId).orElseThrow(
                 () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
 
-        User user = userDetails.getUser();
+        User organizer = userDetails.getUser(); // 회의 주최자
 
         List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationRequestDto::getStart)
                 .sorted().toList();
@@ -126,13 +126,29 @@ public class ReservationService {
                 });
 
         Reservation reservation = Reservation.builder()
-                .user(user)
+                .user(organizer)
                 .meetingRoom(meetingRoom)
                 .startTime(start)
                 .endTime(end)
                 .build();
 
         reservationRepository.save(reservation);
+
+        //TODO: valid 추가
+        if (requestDto.getUserList() == null) {
+            return new ReservationResponseDto(reservation);
+        }
+
+        // requestDto 유저리스트의 id 값 리스트로부터 참석자 리스트 생성
+        List<Long> ids = requestDto.getUserList().stream().mapToLong(ReservationUserListDto::getUserId).boxed().toList();
+        List<User> attendee = userRepository.findAllByIdIn(ids);
+
+        // 참석자 리스트와 예약 정보를 바탕으로 연결테이블에 저장
+        List<ReservationUser> info = attendee.stream().map(x -> new ReservationUser(x, reservation)).toList();
+        reservationUserRepository.saveAll(info);
+
+        // 모든 참석자 스케줄에 회의 일정 추가
+
         return new ReservationResponseDto(reservation);
     }
 

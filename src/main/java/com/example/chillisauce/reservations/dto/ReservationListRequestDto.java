@@ -1,5 +1,6 @@
 package com.example.chillisauce.reservations.dto;
 
+import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ import java.util.List;
 public class ReservationListRequestDto {
     @NotEmpty(message = "요청의 시각 목록이 비어있습니다.")
     List<ReservationRequestDto> startList;
+    List<ReservationUserListDto> userList;
 }
