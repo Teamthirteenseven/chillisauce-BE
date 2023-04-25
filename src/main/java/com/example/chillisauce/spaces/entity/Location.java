@@ -29,6 +29,7 @@ public class Location {
     private String username;
 
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id")
     private Space space;
