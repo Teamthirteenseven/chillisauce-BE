@@ -28,9 +28,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("startTime") LocalDateTime start,
             @Param("endTime") LocalDateTime end);
 
-    @Query("select s from Schedule s where s.id != :scId " +
+    @Query("select s from Schedule s " +
+            "where s.user.id = :userId and s.id != :scId " +
             "and s.startTime < :endTime and s.endTime > :startTime")
-    List<Schedule> findAllByIdNotAndStartTimeLessThanAndEndTimeGreaterThan(
+    List<Schedule> findAllByUserIdAndIdNotAndStartTimeLessThanAndEndTimeGreaterThan(
+            @Param("userId") Long userId,
             @Param("scId") Long scId,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime);

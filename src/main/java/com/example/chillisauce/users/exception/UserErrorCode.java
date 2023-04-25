@@ -13,6 +13,7 @@ public enum UserErrorCode implements ErrorStatusMessage {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     INVALID_TOKEN(UNAUTHORIZED, "토큰이 유효하지 않습니다"),
     INVALID_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 유효하지 않습니다"),
+    NOT_HAVE_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 존재하지 않습니다."),
     INVALID_CERTIFICATION(UNAUTHORIZED, "인증번호가 유효하지 않습니다"),
     DUPLICATE_EMAIL(BAD_REQUEST, "중복된 이메일이 존재합니다"),
     DUPLICATE_COMPANY(BAD_REQUEST, "중복된 회사명이 존재합니다"),
