@@ -66,7 +66,7 @@ public class MultiBoxControllerTest {
             //given
             String companyName = "testCompany";
             Long spaceId = 1L;
-            String url = "/multibox/" + companyName + "/" + spaceId;
+            String url = "/multiBox/" + companyName + "/" + spaceId;
 
             MultiBoxRequestDto multiBoxRequestDto = new MultiBoxRequestDto("MultiBox 생성 테스트", "555", "444");
             MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300");
@@ -108,7 +108,7 @@ public class MultiBoxControllerTest {
             //given
             String companyName = "testCompany";
             Long multiboxId = 1L;
-            String url = "/multibox/" + companyName + "/" + multiboxId;
+            String url = "/multiBox/" + companyName + "/" + multiboxId;
             MultiBoxRequestDto multiBoxRequestDto = new MultiBoxRequestDto("MultiBox 수정 OK???", "555", "444");
             MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 수정 OK???", "200", "300");
             when(multiBoxService.updateMultiBox(eq(companyName), eq(multiboxId), any(), any())).thenReturn(multiBoxResponseDto);
@@ -147,7 +147,7 @@ public class MultiBoxControllerTest {
             //given
             String companyName = "testCompany";
             Long multiboxId = 1L;
-            String url = "/multibox/" + companyName + "/" + multiboxId;
+            String url = "/multiBox/" + companyName + "/" + multiboxId;
             MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300");
             when(multiBoxService.deleteMultiBox(eq(companyName), eq(multiboxId), any())).thenReturn(multiBoxResponseDto);
 

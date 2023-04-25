@@ -16,21 +16,21 @@ import org.springframework.web.bind.annotation.*;
 public class MultiBoxController {
     private final MultiBoxService multiBoxService;
     //MultiBox 생성
-    @PostMapping("/multibox/{companyName}/{spaceId}")
+    @PostMapping("/multiBox/{companyName}/{spaceId}")
     public ResponseEntity<ResponseMessage> createMultiBox
             (@PathVariable("companyName")String companyName , @PathVariable("spaceId") Long spaceId, @RequestBody MultiBoxRequestDto multiBoxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         multiBoxService.createMultiBox(companyName,spaceId, multiBoxRequestDto, details);
         return ResponseMessage.responseSuccess("MultiBox 생성 성공","");
     }
     //MultiBox 수정
-    @PatchMapping("/multibox/{companyName}/{multiBoxId}")
+    @PatchMapping("/multiBox/{companyName}/{multiBoxId}")
     public ResponseEntity<ResponseMessage> updateMultiBox
             (@PathVariable("companyName") String companyName,@PathVariable("multiBoxId") Long multiBoxId, @RequestBody MultiBoxRequestDto multiBoxRequestDto, @AuthenticationPrincipal UserDetailsImpl details){
         multiBoxService.updateMultiBox(companyName, multiBoxId, multiBoxRequestDto, details);
         return ResponseMessage.responseSuccess("MultiBox 수정 성공","");
     }
     //MultiBox 삭제
-    @DeleteMapping("/multibox/{companyName}/{multiBoxId}")
+    @DeleteMapping("/multiBox/{companyName}/{multiBoxId}")
     public ResponseEntity<ResponseMessage> deleteBox
             (@PathVariable("companyName") String companyName, @PathVariable("multiBoxId") Long multiBoxId, @AuthenticationPrincipal UserDetailsImpl details){
         multiBoxService.deleteMultiBox(companyName, multiBoxId,details);
