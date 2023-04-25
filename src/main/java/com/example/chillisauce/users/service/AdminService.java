@@ -32,7 +32,7 @@ public class AdminService {
         if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
-        List<User> allList = userRepository.findAll();
+        List<User> allList = userRepository.findAllByCompanies_CompanyName(user.getCompanies().getCompanyName());
         return new UserListResponseDto(allList.stream().map(UserDetailResponseDto::new).toList());
     }
 
@@ -43,7 +43,7 @@ public class AdminService {
         if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
-        User getUser = userRepository.findById(userId).orElseThrow(
+        User getUser = userRepository.findByIdAndCompanies_CompanyName(userId, user.getCompanies().getCompanyName()).orElseThrow(
                 () -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         return new UserDetailResponseDto(getUser);
@@ -56,7 +56,7 @@ public class AdminService {
         if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
-        User getUser = userRepository.findById(userId).orElseThrow(
+        User getUser = userRepository.findByIdAndCompanies_CompanyName(userId, user.getCompanies().getCompanyName()).orElseThrow(
                 () -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         if (requestDto.getRole().equals(UserRoleEnum.ADMIN)) {
