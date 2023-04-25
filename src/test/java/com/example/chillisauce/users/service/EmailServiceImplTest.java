@@ -82,5 +82,32 @@ class EmailServiceImplTest {
             assertThat(exception).isNotNull();
             assertThat(exception.getMessage()).isEqualTo("이메일 형식이 맞지 않습니다.");
         }
+
+        @DisplayName("메일 발송 실패 (1분당 2회요청 초과)")
+        @Test
+        void fail2() {
+            //given
+            String to = "1234@1234";
+
+            //when
+            when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+            doNothing().when(mailSender).send(any(MimeMessage.class));
+
+            //2번의 요청을 진행
+            assertDoesNotThrow(() -> {
+                emailService.sendSimpleMessage(to);
+            });
+            assertDoesNotThrow(() -> {
+                emailService.sendSimpleMessage(to);
+            });
+
+            UserException exception = assertThrows(UserException.class, () -> {
+                emailService.sendSimpleMessage(to);
+            });
+
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getMessage()).isEqualTo("반복된 요청입니다. 잠시 후 사용해주세요.");
+        }
     }
 }
