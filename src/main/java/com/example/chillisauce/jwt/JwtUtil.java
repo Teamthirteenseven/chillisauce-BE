@@ -2,6 +2,7 @@ package com.example.chillisauce.jwt;
 
 import com.example.chillisauce.security.UserDetailsServiceImpl;
 //import com.example.chillisauce.users.dto.TokenDto;
+import com.example.chillisauce.users.dto.TokenDto;
 import com.example.chillisauce.users.entity.RefreshToken;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.exception.UserErrorCode;
@@ -65,13 +66,10 @@ public class JwtUtil {
         return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) : request.getHeader(REFRESH_TOKEN);
     }
 
-    //쿠키에 저장한 토큰 가져오기
-
-
     // 토큰 생성
-//    public TokenDto createAllToken(String email) {
-//        return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
-//    }
+    public TokenDto createAllToken(String email) {
+        return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
+    }
 
     public String createToken(String email, String type) {
         //토큰의 payload에 들어가는 유저정보가 많아서 유저의 정보를 간편하게 가져오기 위해 사용.
@@ -80,9 +78,8 @@ public class JwtUtil {
 
         Date date = new Date();
         long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
-        String prefix = type.equals("Access") ? BEARER_PREFIX : ""; //엑세스토큰과 리프레시토큰의 접두사 분리를 위해 사용
 
-        return prefix +
+        return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(email)
                         .claim("userId", user.getId())
@@ -97,7 +94,6 @@ public class JwtUtil {
 
     // 토큰 검증
     public boolean validateToken(String token) {
-        log.info("Token in JwtUtil.validateToken(): {}", token);
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -114,27 +110,18 @@ public class JwtUtil {
     }
 
     //리프레시 토큰 검증
-//    public Boolean refreshTokenValidation(String token) {
-//        //1차 토큰 검증
-//        if (!validateToken(token)) return false;
-//
-//
-//        //DB에 저장한 토큰 비교
-//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
-//
-//        String checkedRefresh = refreshToken.get().getRefreshToken().substring(7);
-//
-//        return token.equals(checkedRefresh);
-//
-//    }
-    //리프레시토큰은 쿠키로 반환하기 때문에 substring를 사용할 필요가 없다.
     public Boolean refreshTokenValidation(String token) {
-        log.info("검증을 거치는 리프레시 토큰 ={}", token);
-        // Get the refresh token from the database
-        RefreshToken refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token))
-                .orElseThrow(() -> new UserException(UserErrorCode.INVALID_REFRESH_TOKEN));
-        // 입력한 토큰과 비교하고 일치하면 true를 반환
-        return token.equals(refreshToken.getRefreshToken());
+        //1차 토큰 검증
+        if (!validateToken(token)) return false;
+
+
+        //DB에 저장한 토큰 비교
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
+
+        String checkedRefresh = refreshToken.get().getRefreshToken().substring(7);
+
+        return token.equals(checkedRefresh);
+
     }
 
 
@@ -168,41 +155,41 @@ public class JwtUtil {
 //        return 60  * 5 * 1000L;    // 테스트 5분
     }
 
-    /* 수정1. 엑세스토큰과 리프레시토큰의 분리 */
-
-    // 엑세스 토큰 생성
-    public String createAccessToken(String email) {
-        return createToken(email, "Access");
-    }
-
-    // 리프레시 토큰 생성
-    public String createRefreshToken(String email) {
-        return createToken(email, "Refresh");
-    }
-
-    //쿠키에 저장된 리프레시 토큰을 가져오는 로직
-    public String getCookieToken(HttpServletRequest request, String tokenName) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie: cookies) {
-                if (cookie.getName().equals(tokenName)) {
-                    String decodedValue = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-                    return decodedValue;
-
-                }
-            }
-        }
-        return null;
-    }
-
-
-    // 헤더에 저장된 엑세스 토큰을 가져오는 로직
-    public String getHeaderTokenEx(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
+//    /* 수정1. 엑세스토큰과 리프레시토큰의 분리 */
+//
+//    // 엑세스 토큰 생성
+//    public String createAccessToken(String email) {
+//        return createToken(email, "Access");
+//    }
+//
+//    // 리프레시 토큰 생성
+//    public String createRefreshToken(String email) {
+//        return createToken(email, "Refresh");
+//    }
+//
+//    //쿠키에 저장된 리프레시 토큰을 가져오는 로직
+//    public String getCookieToken(HttpServletRequest request, String tokenName) {
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null) {
+//            for (Cookie cookie: cookies) {
+//                if (cookie.getName().equals(tokenName)) {
+//                    String decodedValue = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
+//                    return decodedValue;
+//
+//                }
+//            }
+//        }
+//        return null;
+//    }
+//
+//
+//    // 헤더에 저장된 엑세스 토큰을 가져오는 로직
+//    public String getHeaderTokenEx(HttpServletRequest request) {
+//        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+//            return bearerToken.substring(7);
+//        }
+//        return null;
+//    }
 
 }
