@@ -2,9 +2,11 @@ package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
+import es.moki.ratelimitj.core.limiter.request.RequestLimitRule;
+import es.moki.ratelimitj.core.limiter.request.RequestRateLimiter;
+import es.moki.ratelimitj.inmemory.request.InMemorySlidingWindowRequestRateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,12 @@ import org.springframework.stereotype.Service;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -76,6 +83,13 @@ public class EmailServiceImpl implements EmailService{
     }
     @Override
     public String sendSimpleMessage(String to)throws Exception {
+
+        /* 테스트2. RateLimitJ 라이브러리 사용 */
+        if (rateLimiter.overLimitWhenIncremented(to)) {
+            throw new UserException(UserErrorCode.USAGE_LIMIT);
+        }
+        /* 테스트2. RateLimitJ 라이브러리 사용 */
+
         String certificationKey = createKey();
         MimeMessage message = createMessage(to, certificationKey);
         try {//예외처리
@@ -86,4 +100,9 @@ public class EmailServiceImpl implements EmailService{
         }
         return  "certification : " + certificationKey;
     }
+
+    /* 테스트2. RateLimitJ 라이브러리 사용 */
+    RequestLimitRule limit = RequestLimitRule.of(Duration.ofMinutes(1),2);  //1분당 2회 요청 제한
+    RequestRateLimiter rateLimiter = new InMemorySlidingWindowRequestRateLimiter(limit);
+    /* 테스트2. RateLimitJ 라이브러리 사용 */
 }
