@@ -20,4 +20,6 @@ public class ReservationResponseDto {
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
     }
+
+
 }
