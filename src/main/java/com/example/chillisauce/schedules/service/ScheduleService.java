@@ -103,14 +103,6 @@ public class ScheduleService {
         LocalDateTime start = list.get(0);
         LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
-        // 시간이 겹치는 스케줄이 있는 경우 등록할 수 없음
-        List<Schedule> duplicated = scheduleRepository
-                .findFirstByUserIdAndStartTimeLessThanAndEndTimeGreaterThan(user.getId(), start, end);
-
-        if(duplicated.size()!=0){
-            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
-        }
-
         Schedule schedules = Schedule.builder()
                 .user(user)
                 .title(requestDto.getScTitle())

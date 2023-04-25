@@ -184,6 +184,7 @@ class ReservationServiceTest {
             assertThat(result.getEnd()).isEqualTo(LocalDateTime.of(startDate, startTime).plusMinutes(59));
         }
 
+
         @Test
         void 중복되는_시간이_있으면_예외가_발생한다() {
             // given
