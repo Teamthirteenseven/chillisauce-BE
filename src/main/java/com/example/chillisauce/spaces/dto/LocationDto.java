@@ -17,13 +17,6 @@ public class LocationDto {
     private String username;
 
 
-    public LocationDto(Location location, User user) {
-        this.locationId = location.getId();
-        this.locationName = location.getLocationName();
-        this.x = location.getX();
-        this.y = location.getY();
-        this.username = user.getUsername();
-    }
 
     public LocationDto(long id, String locationName, String x, String y) {
         this.locationId = id;
@@ -32,10 +25,12 @@ public class LocationDto {
         this.y = y;
     }
 
-    public LocationDto(Location location) {
+
+    public LocationDto(Location location, String username) {
         this.locationId = location.getId();
         this.locationName = location.getLocationName();
         this.x = location.getX();
         this.y = location.getY();
+        this.username = username;
     }
 }
