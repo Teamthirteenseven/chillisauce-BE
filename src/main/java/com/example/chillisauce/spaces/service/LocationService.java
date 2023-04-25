@@ -9,7 +9,9 @@ import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
+import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
+import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class LocationService {
     private final UserLocationRepository userLocationRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+
+    private final CompanyRepository companyRepository;
 
 
     @Transactional
@@ -46,12 +50,29 @@ public class LocationService {
             throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
         }
         if (userLocation.isEmpty()) { //없으면
+            location.setUsername(user.getUsername());
+            locationRepository.save(location);
             UserLocation newUserLocation = userLocationRepository.save(new UserLocation(location, user));
-            return new LocationDto(newUserLocation.getLocation(), user);
+            return new LocationDto(newUserLocation.getLocation(), user.getUsername());
         } else {
+            Location previousLocation = userLocation.get().getLocation();
+            previousLocation.setUsername(null); // 이전 위치의 username null
+            locationRepository.save(previousLocation);
+
             userLocation.get().setLocation(location);
+            location.setUsername(user.getUsername());
+            locationRepository.save(location);
             userLocationRepository.save(userLocation.get());
-            return new LocationDto(userLocation.get().getLocation(), user);
+            return new LocationDto(userLocation.get().getLocation(), user.getUsername());
         }
     }
+
+//    public Location findCompanyNameAndBoxId(String companyName, Long locationId) {
+//        Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
+//                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+//        );
+//        return locationRepository.findByIdAndSpaceCompanies(locationId, company).orElseThrow(
+//                () -> new SpaceException(SpaceErrorCode.BOX_NOT_FOUND)
+//        );
+//    }
 }
