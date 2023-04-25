@@ -32,6 +32,8 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
 
+    private final JwtUtil jwtUtil;
+
 
     /* 이메일 인증 */
     @PostMapping("/users/signup/email")
