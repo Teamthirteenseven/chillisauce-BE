@@ -14,11 +14,13 @@ public class MultiBoxResponseDto {
     private String multiBoxName;
     private String x;
     private String y;
+    private String username;
     public MultiBoxResponseDto(MultiBox multiBox) {
         this.multiBoxId = multiBox.getId();
         this.multiBoxName = multiBox.getLocationName();
         this.x = multiBox.getX();
         this.y = multiBox.getY();
+        this.username = getUsername();
     }
 
 

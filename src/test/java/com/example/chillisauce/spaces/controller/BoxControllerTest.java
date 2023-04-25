@@ -67,7 +67,7 @@ public class BoxControllerTest {
             String url = "/boxes/" + companyName + "/" + spaceId;
 
             BoxRequestDto boxRequestDto = new BoxRequestDto("Box 생성 테스트", "200", "300");
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 생성 테스트", "200", "300");
+            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 생성 테스트", "200", "300", null);
             when(boxService.createBox(eq(companyName), eq(spaceId), any(), any())).thenReturn(boxResponseDto);
 
 
@@ -108,7 +108,7 @@ public class BoxControllerTest {
             Long boxId = 1L;
             String url = "/boxes/" + companyName + "/" + boxId;
             BoxRequestDto boxRequestDto = new BoxRequestDto("Box 수정 테스트", "200", "300");
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 테스트", "200", "300");
+            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 수정 테스트", "200", "300", null);
             when(boxService.updateBox(eq(companyName), eq(boxId), any(), any())).thenReturn(boxResponseDto);
 
             //when
@@ -146,7 +146,7 @@ public class BoxControllerTest {
             String companyName = "testCompany";
             Long boxId = 1L;
             String url = "/boxes/" + companyName + "/" + boxId;
-            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 삭제 테스트", "200", "300");
+            BoxResponseDto boxResponseDto = new BoxResponseDto(1L, "Box 삭제 테스트", "200", "300", null);
             when(boxService.deleteBox(eq(companyName), eq(boxId), any())).thenReturn(boxResponseDto);
 
             //when

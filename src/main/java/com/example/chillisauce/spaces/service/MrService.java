@@ -1,9 +1,11 @@
 package com.example.chillisauce.spaces.service;
 
+import com.example.chillisauce.reservations.dto.ReservationResponseDto;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.spaces.dto.MrResponseDto;
+import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
@@ -17,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +67,32 @@ public class MrService {
         mrRepository.deleteById(mrId);
         return new MrResponseDto(mr);
     }
+    //Mr 전체 조회
+    @Transactional
+    public List<MrResponseDto> mrlist(String companyName, UserDetailsImpl details) {
+        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+        }
 
+        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
+                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+        );
+
+        List<Mr> mrList = mrRepository.findAllByCompaniesId(companies.getId());
+        List<MrResponseDto> mrResponseDtoList = new ArrayList<>();
+
+        for (Mr mr : mrList) {
+            MrResponseDto mrResponseDto = MrResponseDto.builder()
+                    .mrId(mr.getId())
+                    .mrName(mr.getLocationName())
+                    .x(mr.getX())
+                    .y(mr.getY())
+                    .reservationList(mr.getReservations().stream().map(ReservationResponseDto::new).collect(Collectors.toList()))
+                    .build();
+            mrResponseDtoList.add(mrResponseDto);
+        }
+        return mrResponseDtoList;
+    }
 
     //companyName find , MrId 두개 합쳐놓은 메서드
     public Mr findCompanyNameAndMrId(String companyName, Long mrId) {

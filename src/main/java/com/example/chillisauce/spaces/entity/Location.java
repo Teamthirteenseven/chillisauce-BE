@@ -26,6 +26,8 @@ public class Location {
     @Column(nullable = false)
     private String y;
 
+    private String username;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id")

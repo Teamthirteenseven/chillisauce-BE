@@ -35,4 +35,11 @@ public class MrController {
         mrService.deleteMr(companyName, mrId,details);
         return ResponseMessage.responseSuccess("미팅룸 삭제 완료","");
     }
+
+    @GetMapping("/mr/{companyName}")
+    public ResponseEntity<ResponseMessage> mrlist
+            (@PathVariable("companyName") String companyName,@AuthenticationPrincipal UserDetailsImpl details) {
+
+        return ResponseMessage.responseSuccess("미팅룸 조회 성공",mrService.mrlist(companyName, details));
+    }
 }

@@ -14,6 +14,8 @@ public class BoxResponseDto {
     private String x;
     private String y;
 
+    private String username;
+
 
 
     public BoxResponseDto(Box box) {
@@ -21,6 +23,7 @@ public class BoxResponseDto {
         this.boxName = box.getLocationName();
         this.x = box.getX();
         this.y = box.getY();
+        this.username = getUsername();
     }
 
 }
