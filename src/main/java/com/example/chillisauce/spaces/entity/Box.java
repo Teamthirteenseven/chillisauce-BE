@@ -1,6 +1,7 @@
 package com.example.chillisauce.spaces.entity;
 
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
+import com.example.chillisauce.users.entity.User;
 import lombok.*;
 
 
@@ -30,6 +31,8 @@ public class Box extends Location {
         this.setLocationName(boxRequestDto.getBoxName());
         this.setX(boxRequestDto.getX());
         this.setY(boxRequestDto.getY());
+
+
     }
 
 }

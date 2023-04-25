@@ -23,6 +23,9 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,10 +69,17 @@ public class MrServiceTest {
                 .companies(companies)
                 .build();
         details = new UserDetailsImpl(user, null);
+
+        Reservation reservation = Reservation.builder()
+                // 필요한 Reservation 필드를 여기에 설정하세요.
+                .build();
+        List<Reservation> reservations = new ArrayList<>();
+        reservations.add(reservation);
         mr = Mr.builder()
                 .locationName("MrTest")
                 .x("200")
                 .y("300")
+                .reservation(reservations)
                 .build();
 
 
@@ -129,7 +139,6 @@ public class MrServiceTest {
             when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
             when(mrRepository.findByIdAndSpaceCompanies(mrId,companies)).thenReturn(Optional.of(mr));
             doNothing().when(mrRepository).deleteById(mrId);
-
             //when
             when(reservationService.deleteMeetingRoomInReservations(mrId, null)).thenReturn(String.valueOf(reservation));
             MrResponseDto mrResponseDto = mrService.deleteMr(companyName,mrId,details);

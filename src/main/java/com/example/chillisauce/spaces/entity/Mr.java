@@ -2,11 +2,13 @@ package com.example.chillisauce.spaces.entity;
 
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
+import com.example.chillisauce.users.entity.Companies;
 import lombok.*;
 
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,8 +21,7 @@ public class Mr extends Location{
     private Long id;
 
     @OneToMany(mappedBy = "meetingRoom")
-    List<Reservation> reservations;
-
+    List<Reservation> reservations = new ArrayList<>();
 
     public Mr(MrRequestDto mrRequestDto) {
         super(mrRequestDto.getMrName(), mrRequestDto.getX(), mrRequestDto.getY());

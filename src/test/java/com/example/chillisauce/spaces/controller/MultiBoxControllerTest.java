@@ -69,7 +69,7 @@ public class MultiBoxControllerTest {
             String url = "/multiBox/" + companyName + "/" + spaceId;
 
             MultiBoxRequestDto multiBoxRequestDto = new MultiBoxRequestDto("MultiBox 생성 테스트", "555", "444");
-            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300");
+            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300", null);
             when(multiBoxService.createMultiBox(eq(companyName), eq(spaceId), any(), any())).thenReturn(multiBoxResponseDto);
 
 
@@ -110,7 +110,7 @@ public class MultiBoxControllerTest {
             Long multiboxId = 1L;
             String url = "/multiBox/" + companyName + "/" + multiboxId;
             MultiBoxRequestDto multiBoxRequestDto = new MultiBoxRequestDto("MultiBox 수정 OK???", "555", "444");
-            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 수정 OK???", "200", "300");
+            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 수정 OK???", "200", "300", null);
             when(multiBoxService.updateMultiBox(eq(companyName), eq(multiboxId), any(), any())).thenReturn(multiBoxResponseDto);
 
             //when
@@ -148,7 +148,7 @@ public class MultiBoxControllerTest {
             String companyName = "testCompany";
             Long multiboxId = 1L;
             String url = "/multiBox/" + companyName + "/" + multiboxId;
-            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300");
+            MultiBoxResponseDto multiBoxResponseDto = new MultiBoxResponseDto(1L, "MultiBox 생성 테스트", "200", "300", null);
             when(multiBoxService.deleteMultiBox(eq(companyName), eq(multiboxId), any())).thenReturn(multiBoxResponseDto);
 
             //when
