@@ -4,6 +4,7 @@ import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import com.example.chillisauce.users.dto.UserListResponseDto;
+import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.exception.UserException;
@@ -45,9 +46,13 @@ class AdminServiceTest {
                     .id(1L)
                     .role(UserRoleEnum.ADMIN)
                     .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
-            when(userRepository.findById(admin.getId())).thenReturn(Optional.of(admin));
+            when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.of(admin));
 
             //when
             UserDetailResponseDto result = adminService.getUsers(admin.getId(), details);
@@ -66,6 +71,10 @@ class AdminServiceTest {
                     .id(1L)
                     .role(UserRoleEnum.ADMIN)
                     .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
@@ -73,7 +82,7 @@ class AdminServiceTest {
                     User.builder().id(1L).email("123@123").build(),
                     User.builder().id(1L).email("123@123").build(),
                     User.builder().id(1L).email("123@123").build());
-            when(userRepository.findAll()).thenReturn(allUsers);
+            when(userRepository.findAllByCompanies_CompanyName(admin.getCompanies().getCompanyName())).thenReturn(allUsers);
             //when
             UserListResponseDto result = adminService.getAllUsers(details);
             //then
@@ -90,6 +99,10 @@ class AdminServiceTest {
                     .id(1L)
                     .role(UserRoleEnum.ADMIN)
                     .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
@@ -101,10 +114,13 @@ class AdminServiceTest {
                     .id(2L)
                     .role(UserRoleEnum.USER)
                     .username("손흥민")
+                    .companies(Companies.builder()
+                            .companyName("뽀로로랜드")
+                            .build())
                     .build();
 
             //when
-            when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+            when(userRepository.findByIdAndCompanies_CompanyName(2L, user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
             when(userRepository.save(any())).thenReturn(user);
             UserDetailResponseDto result = adminService.editUser(2L, details, requestDto);
 
@@ -150,9 +166,13 @@ class AdminServiceTest {
                     .id(1L)
                     .role(UserRoleEnum.ADMIN)
                     .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
-            when(userRepository.findById(admin.getId())).thenReturn(Optional.empty());
+            when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.empty());
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
@@ -194,14 +214,18 @@ class AdminServiceTest {
                     .id(1L)
                     .role(UserRoleEnum.ADMIN)
                     .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
-            List<User> allUsers = List.of(
-                    User.builder().id(1L).email("123@123").build(),
-                    User.builder().id(1L).email("123@123").build(),
-                    User.builder().id(1L).email("123@123").build());
-            when(userRepository.findAll()).thenReturn(Collections.emptyList());
+//            List<User> allUsers = List.of(
+//                    User.builder().id(1L).email("123@123").build(),
+//                    User.builder().id(1L).email("123@123").build(),
+//                    User.builder().id(1L).email("123@123").build());
+            when(userRepository.findAllByCompanies_CompanyName(admin.getCompanies().getCompanyName())).thenReturn(Collections.emptyList());
             //when
             UserListResponseDto result = adminService.getAllUsers(details);
             //then
@@ -241,9 +265,13 @@ class AdminServiceTest {
                     .id(1L)
                     .role(UserRoleEnum.ADMIN)
                     .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
-            when(userRepository.findById(2L)).thenReturn(Optional.empty());
+            when(userRepository.findByIdAndCompanies_CompanyName(2L, admin.getCompanies().getCompanyName())).thenReturn(Optional.empty());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
                     .role(UserRoleEnum.MANAGER)
@@ -268,6 +296,10 @@ class AdminServiceTest {
                     .id(1L)
                     .role(UserRoleEnum.ADMIN)
                     .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
@@ -279,10 +311,13 @@ class AdminServiceTest {
                     .id(2L)
                     .role(UserRoleEnum.USER)
                     .username("손흥민")
+                    .companies(Companies.builder()
+                            .companyName("뽀로로랜드")
+                            .build())
                     .build();
 
             //when
-            when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+            when(userRepository.findByIdAndCompanies_CompanyName(2L, user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
 
             UserException exception = assertThrows(UserException.class, () -> {
                 adminService.editUser(2L, details, requestDto);
