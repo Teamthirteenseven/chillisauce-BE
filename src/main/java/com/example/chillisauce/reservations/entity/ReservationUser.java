@@ -3,6 +3,7 @@ package com.example.chillisauce.reservations.entity;
 import com.example.chillisauce.users.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class ReservationUser {
 
     @Id

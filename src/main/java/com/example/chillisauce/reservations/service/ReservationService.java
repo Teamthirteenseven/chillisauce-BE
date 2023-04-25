@@ -8,6 +8,8 @@ import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.reservations.repository.ReservationUserRepository;
 import com.example.chillisauce.reservations.vo.ReservationTimetable;
+import com.example.chillisauce.schedules.entity.Schedule;
+import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.repository.MrRepository;
@@ -32,6 +34,7 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationUserRepository reservationUserRepository;
+    private final ScheduleRepository scheduleRepository;
     private final MrRepository meetingRoomRepository;
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
@@ -148,7 +151,8 @@ public class ReservationService {
         reservationUserRepository.saveAll(info);
 
         // 모든 참석자 스케줄에 회의 일정 추가
-
+        List<Schedule> schedules = info.stream().map(x->new Schedule(x.getReservation(), x.getAttendee())).toList();
+        scheduleRepository.saveAll(schedules);
         return new ReservationResponseDto(reservation);
     }
 
