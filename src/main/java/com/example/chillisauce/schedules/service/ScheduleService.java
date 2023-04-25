@@ -14,6 +14,7 @@ import com.example.chillisauce.users.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
@@ -48,6 +49,7 @@ public class ScheduleService {
         });
     }
 
+    @Transactional(readOnly = true)
     public ScheduleTimetableResponseDto getDaySchedules(LocalDate selDate, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
@@ -80,6 +82,7 @@ public class ScheduleService {
         return false;
     }
 
+    @Transactional(readOnly = true)
     public ScheduleListResponseDto getAllSchedules(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
@@ -91,6 +94,7 @@ public class ScheduleService {
         return new ScheduleListResponseDto(dtoList);
     }
 
+    @Transactional
     public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
@@ -120,6 +124,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(saved);
     }
 
+    @Transactional
     public ScheduleResponseDto editSchedule(Long scheduleId,
                                             ScheduleRequestDto requestDto,
                                             UserDetailsImpl userDetails) {
@@ -132,14 +137,15 @@ public class ScheduleService {
             throw new ScheduleException(ScheduleErrorCode.INVALID_USER_SCHEDULE_UPDATE);
         }
 
+        // 요청으로부터 start 리스트 받아서 정렬
         List<LocalDateTime> list = requestDto.getStartList().stream().map(ScheduleTime::getStart)
                 .sorted().toList();
         LocalDateTime start = list.get(0);
         LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
 
         List<Schedule> duplicated = scheduleRepository
-                .findAllByIdNotAndStartTimeLessThanAndEndTimeGreaterThan(scheduleId,
-                        start, end);
+                .findAllByUserIdAndIdNotAndStartTimeLessThanAndEndTimeGreaterThan(user.getId(),
+                        scheduleId, start, end);
 
         if(duplicated.size()!=0) {
             throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
@@ -150,6 +156,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
+    @Transactional
     public String deleteSchedule(Long scheduleId, UserDetailsImpl userDetails) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() ->
                 new ScheduleException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
