@@ -18,11 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Slf4j
@@ -105,16 +102,16 @@ public class UserService {
             throw new UserException(UserErrorCode.NOT_PROPER_PASSWORD);
         }
 
-//        // 이메일 정보로 토큰 생성
-//        TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getEmail());
-//        //리프레시 토큰 있는지 확인
-//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
-//        if(refreshToken.isPresent()) {
-//            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-//        } else {
-//            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), loginRequestDto.getEmail());
-//            refreshTokenRepository.save(newToken);
-//        }
+        // 이메일 정보로 토큰 생성
+        TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getEmail());
+        //리프레시 토큰 있는지 확인
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
+        if(refreshToken.isPresent()) {
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+        } else {
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), loginRequestDto.getEmail());
+            refreshTokenRepository.save(newToken);
+        }
 
 //        Cookie accessTokenCookie = new Cookie(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
 //        accessTokenCookie.setHttpOnly(true);
@@ -129,92 +126,65 @@ public class UserService {
 //        response.addCookie(accessTokenCookie);
 //        response.addCookie(refreshTokenCookie);
 
-//        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, tokenDto.getAccessToken());
-//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, tokenDto.getAccessToken());
+        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
-        /* 수정 1. 엑세스토큰과 리프레시토큰의 헤더 쿠키 전환 */
-
-        // 이메일 정보로 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(loginRequestDto.getEmail());
-        String refreshToken = jwtUtil.createRefreshToken(loginRequestDto.getEmail());
-
-
-        // 리프레시 토큰 DB 저장
-        Optional<RefreshToken> refreshTokenFromDB = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
-        if (refreshTokenFromDB.isPresent()) {
-            refreshTokenRepository.save(refreshTokenFromDB.get().updateToken(refreshToken));
-        } else {
-            RefreshToken newToken = new RefreshToken(refreshToken, loginRequestDto.getEmail());
-            refreshTokenRepository.save(newToken);
-        }
-
-        //엑세스토큰을 헤더로 반환.
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-
-        //리프레시 토큰을 쿠키로 반환
-        String encodedRefreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
-
-        Cookie refreshTokenCookie = new Cookie(JwtUtil.REFRESH_TOKEN, encodedRefreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge((int) jwtUtil.getRefreshTime());
-        refreshTokenCookie.setPath("/");
-
-        response.addCookie(refreshTokenCookie);
+//        /* 수정 1. 엑세스토큰과 리프레시토큰의 헤더 쿠키 전환 */
+//
+//        // 이메일 정보로 토큰 생성
+//        String accessToken = jwtUtil.createAccessToken(loginRequestDto.getEmail());
+//        String refreshToken = jwtUtil.createRefreshToken(loginRequestDto.getEmail());
+//
+//
+//        // 리프레시 토큰 DB 저장
+//        Optional<RefreshToken> refreshTokenFromDB = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
+//        if (refreshTokenFromDB.isPresent()) {
+//            refreshTokenRepository.save(refreshTokenFromDB.get().updateToken(refreshToken));
+//        } else {
+//            RefreshToken newToken = new RefreshToken(refreshToken, loginRequestDto.getEmail());
+//            refreshTokenRepository.save(newToken);
+//        }
+//
+//        //엑세스토큰을 헤더로 반환.
+//        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+//
+//        //리프레시 토큰을 쿠키로 반환
+//        String encodedRefreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+//
+//        Cookie refreshTokenCookie = new Cookie(JwtUtil.REFRESH_TOKEN, encodedRefreshToken);
+//        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setMaxAge((int) jwtUtil.getRefreshTime());
+//        refreshTokenCookie.setPath("/");
+//
+//        response.addCookie(refreshTokenCookie);
 
 
         return "로그인 성공";
     }
 
-//    @Transactional
-//    public void refresh(HttpServletRequest request, HttpServletResponse response) {
-//        // 클라이언트로부터 리프레시 토큰 가져오기
-//        String refreshToken = jwtUtil.getCookieToken(request, JwtUtil.REFRESH_TOKEN);
-//
-//        log.info("Refresh token in UserService.refresh(): {}", refreshToken);
-////        String refreshToken = jwtUtil.getHeaderTokenRefresh(request);
-//        // 리프레시 토큰 검증 및 DB와 일치하는지 확인
-//        if (jwtUtil.refreshTokenValidation(refreshToken)) {
-//            // 리프레시 토큰으로 이메일 정보 가져오기
-//            String email = jwtUtil.getUserInfoFromToken(refreshToken);
-//
-//            // 새로운 엑세스 토큰 발급
-//            String newAccessToken = jwtUtil.createToken(email, "Access");
-//
-//            // 헤더에 새로운 엑세스 토큰 설정
-//            jwtUtil.setHeaderAccessToken(response, newAccessToken);
-//        } else {
-//            // 리프레시 토큰이 유효하지 않거나 DB와 일치하지 않는 경우
-//            throw new UserException(UserErrorCode.INVALID_REFRESH_TOKEN);
-//        }
-//    }
-
     @Transactional
     public void refresh(HttpServletRequest request, HttpServletResponse response) {
         // 클라이언트로부터 리프레시 토큰 가져오기
-        String refreshToken = jwtUtil.getCookieToken(request, JwtUtil.REFRESH_TOKEN);
-
-        log.info("입력한 리프레시 토큰 ={}", refreshToken);
+        String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
 //        String refreshToken = jwtUtil.getHeaderTokenRefresh(request);
+
         // 리프레시 토큰 검증 및 DB와 일치하는지 확인
-        if (refreshToken != null) {
-            if (jwtUtil.refreshTokenValidation(refreshToken)) {
-                // 리프레시 토큰으로 이메일 정보 가져오기
-                String email = jwtUtil.getUserInfoFromToken(refreshToken);
+        if (jwtUtil.refreshTokenValidation(refreshToken)) {
+            // 리프레시 토큰으로 이메일 정보 가져오기
+            String email = jwtUtil.getUserInfoFromToken(refreshToken);
 
-                // 새로운 엑세스 토큰 발급
-                String newAccessToken = jwtUtil.createToken(email, "Access");
+            // 새로운 엑세스 토큰 발급
+            String newAccessToken = jwtUtil.createToken(email, "Access");
 
-                // 헤더에 새로운 엑세스 토큰 설정
-                jwtUtil.setHeaderAccessToken(response, newAccessToken);
-            } else {
-                // 리프레시 토큰이 유효하지 않거나 DB와 일치하지 않는 경우
-                throw new UserException(UserErrorCode.INVALID_REFRESH_TOKEN);
-            }
+            // 헤더에 새로운 엑세스 토큰 설정
+            jwtUtil.setHeaderAccessToken(response, newAccessToken);
         } else {
-            throw new UserException(UserErrorCode.NOT_HAVE_REFRESH_TOKEN);
+            // 리프레시 토큰이 유효하지 않거나 DB와 일치하지 않는 경우
+            throw new UserException(UserErrorCode.INVALID_REFRESH_TOKEN);
         }
-
     }
+
+
 
     // 유저 목록 전체조회
     // 유저 권한 수정
