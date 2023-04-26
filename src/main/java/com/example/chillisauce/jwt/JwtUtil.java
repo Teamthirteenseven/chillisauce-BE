@@ -1,7 +1,6 @@
 package com.example.chillisauce.jwt;
 
 import com.example.chillisauce.security.UserDetailsServiceImpl;
-//import com.example.chillisauce.users.dto.TokenDto;
 import com.example.chillisauce.users.dto.TokenDto;
 import com.example.chillisauce.users.entity.RefreshToken;
 import com.example.chillisauce.users.entity.User;
@@ -22,11 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -154,42 +150,5 @@ public class JwtUtil {
         return 60 * 60 * 24 * 7 * 1000L;    //7일
 //        return 60  * 5 * 1000L;    // 테스트 5분
     }
-
-//    /* 수정1. 엑세스토큰과 리프레시토큰의 분리 */
-//
-//    // 엑세스 토큰 생성
-//    public String createAccessToken(String email) {
-//        return createToken(email, "Access");
-//    }
-//
-//    // 리프레시 토큰 생성
-//    public String createRefreshToken(String email) {
-//        return createToken(email, "Refresh");
-//    }
-//
-//    //쿠키에 저장된 리프레시 토큰을 가져오는 로직
-//    public String getCookieToken(HttpServletRequest request, String tokenName) {
-//        Cookie[] cookies = request.getCookies();
-//        if (cookies != null) {
-//            for (Cookie cookie: cookies) {
-//                if (cookie.getName().equals(tokenName)) {
-//                    String decodedValue = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-//                    return decodedValue;
-//
-//                }
-//            }
-//        }
-//        return null;
-//    }
-//
-//
-//    // 헤더에 저장된 엑세스 토큰을 가져오는 로직
-//    public String getHeaderTokenEx(HttpServletRequest request) {
-//        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-//            return bearerToken.substring(7);
-//        }
-//        return null;
-//    }
 
 }

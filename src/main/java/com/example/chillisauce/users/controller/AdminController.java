@@ -42,4 +42,11 @@ public class AdminController {
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage.responseSuccess("정보 수정 성공", adminService.editUser(userId, userDetails, requestDto));
     }
+
+    /* 사원 삭제 */
+    @DeleteMapping("/admin/users/{userId}")
+    public ResponseEntity<ResponseMessage>  deleteUser (@PathVariable Long userId,
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseMessage.responseSuccess(adminService.deleteUser(userId, userDetails), "");
+    }
 }
