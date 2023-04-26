@@ -271,7 +271,9 @@ class ReservationControllerTest {
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
-                                    fieldWithPath("data").type(JsonFieldType.STRING).description("데이터")
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("에러 데이터"),
+                                    fieldWithPath("data.message").type(JsonFieldType.STRING).description("에러메시지"),
+                                    fieldWithPath("data.statusCode").type(JsonFieldType.STRING).description("HTTP 상태코드")
                             )
                     ));
         }
