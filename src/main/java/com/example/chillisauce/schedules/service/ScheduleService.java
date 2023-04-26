@@ -6,6 +6,7 @@ import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.exception.ScheduleErrorCode;
 import com.example.chillisauce.schedules.exception.ScheduleException;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
+import com.example.chillisauce.schedules.vo.ScheduleTimeTable;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -28,24 +29,6 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
-    // 예약 가능 첫 시각 : 오전 7시, 마지막 시각 : 22시
-    private static final Integer OPEN_HOUR = 7;
-    private static final Integer CLOSE_HOUR = 22;
-
-    private final Set<TimeUnit> timeSet;
-
-    /**
-     * timeSet 초기화
-     */
-    @PostConstruct
-    public void initializeTimeSet() {
-        IntStream.range(OPEN_HOUR, CLOSE_HOUR + 1).forEach(x -> {
-            LocalTime start = LocalTime.of(x, 0);
-            LocalTime end = LocalTime.of(x, 59);
-            timeSet.add(new TimeUnit(start, end));
-        });
-    }
-
     @Transactional(readOnly = true)
     public ScheduleTimetableResponseDto getDaySchedules(LocalDate selDate, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -56,7 +39,7 @@ public class ScheduleService {
 
         //TODO: 예약 수 x timeSet entry 만큼 loop 돌기 때문에 성능이 좋지 않음
         List<ScheduleTimeResponseDto> timeList =
-                timeSet.stream().map(
+                ScheduleTimeTable.TIME_SET.stream().map(
                         x -> {
                             LocalTime startTime = LocalTime.of(x.getStart().getHour(), x.getStart().getMinute());
                             LocalTime endTime = LocalTime.of(x.getEnd().getHour(), x.getEnd().getMinute());
@@ -95,6 +78,7 @@ public class ScheduleService {
     public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
+        // startList 정렬
         List<LocalDateTime> list = requestDto.getStartList().stream().map(ScheduleTime::getStart)
                 .sorted().toList();
         LocalDateTime start = list.get(0);
@@ -126,19 +110,11 @@ public class ScheduleService {
             throw new ScheduleException(ScheduleErrorCode.INVALID_USER_SCHEDULE_UPDATE);
         }
 
-        // 요청으로부터 start 리스트 받아서 정렬
+        // startList 정렬
         List<LocalDateTime> list = requestDto.getStartList().stream().map(ScheduleTime::getStart)
                 .sorted().toList();
         LocalDateTime start = list.get(0);
         LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
-
-        List<Schedule> duplicated = scheduleRepository
-                .findAllByUserIdAndIdNotAndStartTimeLessThanAndEndTimeGreaterThan(user.getId(),
-                        scheduleId, start, end);
-
-        if(duplicated.size()!=0) {
-            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
-        }
 
         schedule.update(requestDto, start, end);
 
@@ -158,6 +134,6 @@ public class ScheduleService {
 
         scheduleRepository.deleteById(schedule.getId());
 
-        return "";
+        return "success";
     }
 }

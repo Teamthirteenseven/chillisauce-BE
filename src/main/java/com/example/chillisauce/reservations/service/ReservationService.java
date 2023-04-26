@@ -145,15 +145,15 @@ public class ReservationService {
             return new ReservationResponseDto(reservation);
         }
 
-        // requestDto 유저리스트의 id 값 리스트로부터 참석자 리스트 생성
+        // userList id -> User mapping
         List<Long> ids = requestDto.getUserList().stream().mapToLong(ReservationAttendee::getUserId).boxed().toList();
-        List<User> attendee = userRepository.findAllByIdIn(ids);
+        List<User> attendee = userRepository.findAllByIdInAndCompanies_CompanyName(ids, organizer.getCompanies().getCompanyName());
 
-        // 참석자 리스트와 예약 정보를 바탕으로 연결테이블에 저장
+        // 참석자 리스트와 예약 정보를 ReservationUser 연결 테이블에 저장
         List<ReservationUser> info = attendee.stream().map(x -> new ReservationUser(x, reservation)).toList();
         reservationUserRepository.saveAll(info);
 
-        // 모든 참석자 스케줄에 회의 일정 추가
+        // 모든 참석자의 스케줄에 회의 일정 추가
         List<Schedule> schedules = info.stream().map(x->new Schedule(x.getReservation(), x.getAttendee())).toList();
         scheduleRepository.saveAll(schedules);
         return new ReservationResponseDto(reservation);
@@ -219,6 +219,6 @@ public class ReservationService {
             reservation.update(null);
         }
 
-        return null;
+        return "success";
     }
 }

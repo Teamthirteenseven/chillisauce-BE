@@ -20,6 +20,7 @@ public class Box extends Location {
     private String username;
 
 
+
     public Box(BoxRequestDto boxRequestDto) {
         super(boxRequestDto.getBoxName(), boxRequestDto.getX(), boxRequestDto.getY());
     }
