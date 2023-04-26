@@ -1,5 +1,9 @@
 package com.example.chillisauce.users.service;
 
+import com.example.chillisauce.reservations.entity.Reservation;
+import com.example.chillisauce.reservations.repository.ReservationRepository;
+import com.example.chillisauce.schedules.entity.Schedule;
+import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
@@ -34,6 +38,10 @@ class AdminServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private ScheduleRepository scheduleRepository;
+    @Mock
+    private ReservationRepository reservationRepository;
 
     @Nested
     @DisplayName("성공 케이스")
@@ -129,6 +137,53 @@ class AdminServiceTest {
             assertThat(result.getRole()).isEqualTo(UserRoleEnum.MANAGER);
             assertThat(user.getRole()).isEqualTo(UserRoleEnum.MANAGER);
 
+        }
+
+        @DisplayName("사원 삭제")
+        @Test
+        void success4() {
+            //given
+            User admin = User.builder()
+                    .id(1L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            User user = User.builder()
+                    .id(2L)
+                    .role(UserRoleEnum.USER)
+                    .username("손흥민")
+                    .companies(Companies.builder()
+                            .companyName("뽀로로랜드")
+                            .build())
+                    .build();
+
+            Schedule schedule = Schedule.builder()
+                    .user(user)
+                    .build();
+
+            Reservation reservation = Reservation.builder()
+                    .user(user)
+                    .build();
+
+            when(userRepository.findById(any())).thenReturn(Optional.of(user));
+            when(scheduleRepository.findAllByUserId(any())).thenReturn(List.of(schedule));
+            when(reservationRepository.findAllByUserId(any())).thenReturn(List.of(reservation));
+
+            //when
+            String result = adminService.deleteUser(2L, details);
+
+            //then
+            assertThat(result).isEqualTo("사원 삭제 성공");
+
+            verify(scheduleRepository).deleteAll(List.of(schedule));
+            verify(reservationRepository).deleteAll(List.of(reservation));
+            verify(userRepository).delete(user);
         }
 
     }
@@ -328,5 +383,33 @@ class AdminServiceTest {
             assertThat(exception.getMessage()).isEqualTo("관리자 권한으로 수정할 수 없습니다.");
 
         }
+
+        @DisplayName("사원 삭제 실패(등록된 사원 없음)")
+        @Test
+        void fail8() {
+            //given
+            User admin = User.builder()
+                    .id(1L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+            when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+            //when
+            UserException exception = assertThrows(UserException.class, () -> {
+                adminService.deleteUser(2L, details);
+            });
+
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getMessage()).isEqualTo("등록된 사용자가 없습니다");
+
+        }
+
     }
 }

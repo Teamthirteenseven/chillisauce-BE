@@ -1,6 +1,7 @@
 package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.jwt.JwtUtil;
+import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.*;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.RefreshToken;
@@ -33,7 +34,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final TestUserInjector testUserInjector;
 
-    //관리자 회원가입
+    /* 관리자 회원 가입 */
     @Transactional
     public AdminSignupResponseDto signupAdmin(AdminSignupRequestDto adminSignupRequestDto, CompanyRequestDto companyRequestDto) {
         //이메일 중복확인
@@ -60,7 +61,7 @@ public class UserService {
         return new AdminSignupResponseDto(company.getCertification());
     }
 
-    //일반사원 회원가입
+    /* 사원 회원 가입 */
     @Transactional
     public String signupUser(UserSignupRequestDto userSignupRequestDto) {
         //이메일 중복확인
@@ -80,7 +81,7 @@ public class UserService {
         return "일반 회원 가입 성공";
     }
 
-    //인증번호 일치여부 확인
+    /* 인증번호 일치여부 확인 */
     @Transactional
     public String checkCertification(String certification) {
         //사원이 입력한 인증번호로 해당 회사를 찾기 (일반 사원만 해당되는 것이라 구분을 어떻게 해야할지)
@@ -90,7 +91,7 @@ public class UserService {
         return "인증번호가 확인 되었습니다.";
     }
 
-    // 로그인
+    /* 로그인 */
     @Transactional
     public String Login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         // 사용자 확인
@@ -106,7 +107,7 @@ public class UserService {
         TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getEmail());
         //리프레시 토큰 있는지 확인
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
-        if(refreshToken.isPresent()) {
+        if (refreshToken.isPresent()) {
             refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
         } else {
             RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), loginRequestDto.getEmail());
@@ -162,11 +163,11 @@ public class UserService {
         return "로그인 성공";
     }
 
+    /* 리프레쉬 */
     @Transactional
     public void refresh(HttpServletRequest request, HttpServletResponse response) {
         // 클라이언트로부터 리프레시 토큰 가져오기
         String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
-//        String refreshToken = jwtUtil.getHeaderTokenRefresh(request);
 
         // 리프레시 토큰 검증 및 DB와 일치하는지 확인
         if (jwtUtil.refreshTokenValidation(refreshToken)) {
@@ -184,18 +185,19 @@ public class UserService {
         }
     }
 
+    /* 회원 정보 수정 */
 
 
-    // 유저 목록 전체조회
-    // 유저 권한 수정
 
-    //이메일중복확인
+
+
+    /* 이메일 중복확인 */
     private boolean checkEmailDuplicate(String email) {
 
         return userRepository.findByEmail(email).isPresent();
     }
 
-    //비밀번호 중복확인
+    /* 비밀번호 일치여부 확인 */
     private String checkPasswordMatch(String password, String passwordCheck) {
         if (!password.equals(passwordCheck)) {
             throw new UserException(UserErrorCode.NOT_PROPER_PASSWORD);

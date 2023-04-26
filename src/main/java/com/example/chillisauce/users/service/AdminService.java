@@ -1,6 +1,14 @@
 package com.example.chillisauce.users.service;
 
+import com.example.chillisauce.reservations.entity.Reservation;
+import com.example.chillisauce.reservations.repository.ReservationRepository;
+import com.example.chillisauce.reservations.service.ReservationService;
+import com.example.chillisauce.schedules.entity.Schedule;
+import com.example.chillisauce.schedules.repository.ScheduleRepository;
+import com.example.chillisauce.schedules.service.ScheduleService;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.spaces.entity.UserLocation;
+import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import com.example.chillisauce.users.dto.UserListResponseDto;
@@ -17,6 +25,7 @@ import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,6 +33,9 @@ import java.util.Map;
 public class AdminService {
 
     private final UserRepository userRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final ReservationRepository reservationRepository;
+    private final UserLocationRepository userLocationRepository;
 
     /* 사원 목록 전체 조회 */
     @Transactional(readOnly = true)
@@ -66,6 +78,36 @@ public class AdminService {
         getUser.update(requestDto);
         userRepository.save(getUser);
         return new UserDetailResponseDto(getUser);
+    }
+
+    /* 사원 삭제 */
+    @Transactional
+    public String deleteUser(Long userId,UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
+        }
+        //퇴사처리 하려는 사원 찾기
+        User findUser = userRepository.findById(userId).orElseThrow(
+                () -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        //사원의 스케줄 삭제
+        List<Schedule> schedules = scheduleRepository.findAllByUserId(userId);
+        scheduleRepository.deleteAll(schedules);
+
+        //사원의 예약 삭제
+        List<Reservation> reservations = reservationRepository.findAllByUserId(userId);
+        reservationRepository.deleteAll(reservations);
+
+        //사원의 로케이션 삭제
+//        Optional<UserLocation> userLocation = userLocationRepository.findByUserId(userId);
+//        if (userLocation.isPresent()) {
+//
+//        }
+
+        //회원 삭제
+        userRepository.delete(findUser);
+        return "사원 삭제 성공";
     }
 
 }
