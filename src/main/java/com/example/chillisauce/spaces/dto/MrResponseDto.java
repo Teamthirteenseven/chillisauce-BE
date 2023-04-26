@@ -2,11 +2,13 @@ package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
 import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.UserLocation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +40,6 @@ public class MrResponseDto {
         this.x = x;
         this.y = y;
     }
+
 }
-
-
 

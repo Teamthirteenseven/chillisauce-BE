@@ -18,6 +18,7 @@ public class LocationDto {
 
 
 
+
     public LocationDto(long id, String locationName, String x, String y) {
         this.locationId = id;
         this.locationName = locationName;
@@ -33,4 +34,6 @@ public class LocationDto {
         this.y = location.getY();
         this.username = username;
     }
+
+
 }
