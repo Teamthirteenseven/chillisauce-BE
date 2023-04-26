@@ -5,11 +5,10 @@ import com.example.chillisauce.security.UserDetailsImpl;
 
 import com.example.chillisauce.spaces.dto.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
-import com.example.chillisauce.spaces.entity.Floor;
-import com.example.chillisauce.spaces.entity.Mr;
-import com.example.chillisauce.spaces.entity.Space;
+import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
+import com.example.chillisauce.spaces.repository.BoxRepository;
 import com.example.chillisauce.spaces.repository.FloorRepository;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
@@ -22,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -45,12 +45,13 @@ public class SpaceServiceTest {
     private SpaceRepository spaceRepository;
     @Mock
     private FloorRepository floorRepository;
+    @Mock
+    private BoxRepository boxRepository;
     @InjectMocks
     private SpaceService spaceService;
     @Mock
     private MrRepository mrRepository;
-    @Mock
-    private ReservationService reservationService;
+
     private Companies companies;
     private UserDetailsImpl details;
     private Space space;
@@ -151,13 +152,22 @@ public class SpaceServiceTest {
             Long spaceId = 1L;
 
             Space space = Space.builder()
+                    .id(spaceId)
                     .spaceName("테스트 Space")
                     .floor(floor)
                     .companies(companies)
                     .build();
-
+            List<Object[]> mockLocationsWithUserLocations = new ArrayList<>();
+            Location mockLocation1 = new Location(1L, "테스트 위치 1", "100", "100", space);
+            UserLocation mockUserLocation1 = new UserLocation(1L, 1L, "사용자1", mockLocation1);
+            mockLocationsWithUserLocations.add(new Object[]{mockLocation1, mockUserLocation1});
+            Location mockLocation2 = new Location(2L, "테스트 위치 2", "200", "200", space);
+            UserLocation mockUserLocation2 = new UserLocation(2L, 2L, "사용자2", mockLocation2);
+            mockLocationsWithUserLocations.add(new Object[]{mockLocation2, mockUserLocation2});
+            when(boxRepository.findAllLocationsWithUserLocations()).thenReturn(mockLocationsWithUserLocations);
             when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
             when(spaceRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(space));
+
 
             //when
             List<SpaceResponseDto> result = spaceService.getSpacelist(companyName, spaceId, details);
@@ -171,6 +181,7 @@ public class SpaceServiceTest {
             assertEquals(floor.getFloorName(), spaceResponseDto.getFloorName());
         }
 
+
         @Test
         void Space_공간_선택_조회_Floor_null() {
             //given
@@ -178,10 +189,21 @@ public class SpaceServiceTest {
             Long spaceId = 1L;
 
             Space space = Space.builder()
+                    .id(spaceId)
                     .spaceName("테스트 Space")
                     .floor(null)
                     .companies(companies)
                     .build();
+
+
+            List<Object[]> mockLocationsWithUserLocations = new ArrayList<>();
+            Location mockLocation1 = new Location(1L, "테스트 위치 1", "100", "100", space);
+            UserLocation mockUserLocation1 = new UserLocation(1L, 1L, "사용자1", mockLocation1);
+            mockLocationsWithUserLocations.add(new Object[]{mockLocation1, mockUserLocation1});
+            Location mockLocation2 = new Location(2L, "테스트 위치 2", "200", "200", space);
+            UserLocation mockUserLocation2 = new UserLocation(2L, 2L, "사용자2", mockLocation2);
+            mockLocationsWithUserLocations.add(new Object[]{mockLocation2, mockUserLocation2});
+            when(boxRepository.findAllLocationsWithUserLocations()).thenReturn(mockLocationsWithUserLocations);
             when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
             when(spaceRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(space));
 

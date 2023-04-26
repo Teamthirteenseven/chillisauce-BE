@@ -55,11 +55,12 @@ public class LocationControllerTest {
     @WithMockUser
     void 사용자_등록_및_BOX_MultiBox_이동_성공() throws Exception {
         //given
+        String companyName = "test";
         Long locationId = 1L;
-        String url = "/locations/" + locationId;
+        String url = "/locations/" + companyName +"/" + locationId;
         BoxRequestDto boxRequestDto = new BoxRequestDto("테스트", "200", "300");
         LocationDto locationDto = new LocationDto(1L, "테스트",  "200", "300");
-        when(locationService.moveWithUser(eq(locationId), any())).thenReturn(locationDto);
+        when(locationService.moveWithUser(eq(companyName),eq(locationId), any())).thenReturn(locationDto);
 
         //when
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.patch(url)

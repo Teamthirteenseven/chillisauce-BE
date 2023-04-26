@@ -28,18 +28,16 @@ public class Location {
     @Column(nullable = false)
     private String y;
 
-    private String username;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id")
     private Space space;
 
-    public Location(Location location, String username) {
+    public Location(Location location) {
         this.locationName = location.getLocationName();
         this.x = location.getX();
         this.y = location.getY();
-        this.username = username;
     }
 
 
