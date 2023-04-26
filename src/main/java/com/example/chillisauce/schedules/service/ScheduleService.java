@@ -1,8 +1,5 @@
 package com.example.chillisauce.schedules.service;
 
-import com.example.chillisauce.reservations.dto.ReservationRequestDto;
-import com.example.chillisauce.reservations.exception.ReservationErrorCode;
-import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.schedules.dto.*;
 import com.example.chillisauce.schedules.entity.Schedule;

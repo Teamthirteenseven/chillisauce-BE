@@ -1,4 +1,4 @@
-package com.example.chillisauce.reservations.dto;
+package com.example.chillisauce.reservations.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,9 @@
 package com.example.chillisauce.reservations.service;
 
-import com.example.chillisauce.reservations.dto.*;
+import com.example.chillisauce.reservations.dto.request.ReservationRequestDto;
+import com.example.chillisauce.reservations.dto.request.ReservationTime;
+import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
+import com.example.chillisauce.reservations.dto.response.*;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.entity.ReservationUser;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
@@ -108,14 +111,14 @@ public class ReservationService {
      */
     @Transactional
     public ReservationResponseDto addReservation(Long meetingRoomId,
-                                                 ReservationListRequestDto requestDto,
+                                                 ReservationRequestDto requestDto,
                                                  UserDetailsImpl userDetails) {
         Mr meetingRoom = meetingRoomRepository.findById(meetingRoomId).orElseThrow(
                 () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
 
         User organizer = userDetails.getUser(); // 회의 주최자
 
-        List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationRequestDto::getStart)
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationTime::getStart)
                 .sorted().toList();
         LocalDateTime start = list.get(0);
         LocalDateTime end = list.get(list.size() - 1).plusMinutes(59);
@@ -143,7 +146,7 @@ public class ReservationService {
         }
 
         // requestDto 유저리스트의 id 값 리스트로부터 참석자 리스트 생성
-        List<Long> ids = requestDto.getUserList().stream().mapToLong(ReservationUserListDto::getUserId).boxed().toList();
+        List<Long> ids = requestDto.getUserList().stream().mapToLong(ReservationAttendee::getUserId).boxed().toList();
         List<User> attendee = userRepository.findAllByIdIn(ids);
 
         // 참석자 리스트와 예약 정보를 바탕으로 연결테이블에 저장
@@ -161,7 +164,7 @@ public class ReservationService {
      */
     @Transactional
     public ReservationResponseDto editReservation(Long reservationId,
-                                                  ReservationListRequestDto requestDto,
+                                                  ReservationRequestDto requestDto,
                                                   UserDetailsImpl userDetails) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND));
@@ -171,7 +174,7 @@ public class ReservationService {
             throw new ReservationException(ReservationErrorCode.INVALID_USER_RESERVATION_UPDATE);
         }
 
-        List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationRequestDto::getStart)
+        List<LocalDateTime> list = requestDto.getStartList().stream().map(ReservationTime::getStart)
                 .sorted().toList();
         LocalDateTime start = list.get(0);
         LocalDateTime end = list.get(list.size() - 1).plusMinutes(59);

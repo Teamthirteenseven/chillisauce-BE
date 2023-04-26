@@ -1,4 +1,4 @@
-package com.example.chillisauce.reservations.dto;
+package com.example.chillisauce.reservations.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationUserListDto {
+public class ReservationAttendee {
     Long userId;
 }

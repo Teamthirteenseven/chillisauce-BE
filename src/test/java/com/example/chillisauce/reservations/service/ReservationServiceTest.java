@@ -1,11 +1,17 @@
 package com.example.chillisauce.reservations.service;
 
-import com.example.chillisauce.reservations.dto.*;
+import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
+import com.example.chillisauce.reservations.dto.request.ReservationRequestDto;
+import com.example.chillisauce.reservations.dto.request.ReservationTime;
+import com.example.chillisauce.reservations.dto.response.ReservationListResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationTimetableResponseDto;
 import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
+import com.example.chillisauce.reservations.repository.ReservationUserRepository;
 import com.example.chillisauce.reservations.vo.ReservationTimetable;
+import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.entity.Mr;
@@ -13,6 +19,7 @@ import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
+import com.example.chillisauce.users.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,14 +34,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -48,6 +52,12 @@ class ReservationServiceTest {
     ReservationRepository reservationRepository;
     @Mock
     MrRepository meetingRoomRepository;
+    @Mock
+    UserRepository userRepository;
+    @Mock
+    ReservationUserRepository reservationUserRepository;
+    @Mock
+    ScheduleRepository scheduleRepository;
     @InjectMocks
     ReservationService reservationService;
 
@@ -152,7 +162,7 @@ class ReservationServiceTest {
     class AddReservationTestCase {
         // given
         Long meetingRoomId = 1L;
-        User user = User.builder()
+        User organizer = User.builder()
                 .id(1L)
                 .email("test@email.com")
                 .username("tester")
@@ -160,19 +170,27 @@ class ReservationServiceTest {
                 .role(UserRoleEnum.USER)
                 .build();
 
+        User attendee = User.builder().id(2L).build();
+
         Mr meetingRoom = Mr.builder()
                 .id(meetingRoomId)
                 .build();
-        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
+        UserDetailsImpl userDetails = new UserDetailsImpl(organizer, organizer.getEmail());
         LocalDate startDate = LocalDate.of(2023, 4, 8);
         LocalTime startTime = LocalTime.of(12, 0);
         LocalDateTime start = LocalDateTime.of(startDate, startTime);
-        ReservationRequestDto unitDto = new ReservationRequestDto(start);
-        List<ReservationRequestDto> list = List.of(unitDto);
-        ReservationListRequestDto requestDto = new ReservationListRequestDto(list);
+        ReservationTime unitDto = new ReservationTime(start);
+        List<ReservationTime> startList = List.of(unitDto);
+        ReservationAttendee userOne = new ReservationAttendee(1L);
+        ReservationAttendee userTwo = new ReservationAttendee(2L);
+        List<ReservationAttendee> userList = List.of(userOne, userTwo);
+        ReservationRequestDto requestDto = new ReservationRequestDto(startList, userList);
 
         @Test
         void 예약을_등록한다() {
+            // given
+            when(userRepository.findAllByIdIn(any())).thenReturn(List.of(organizer, attendee));
+
             // when
             when(meetingRoomRepository.findById(eq(meetingRoomId))).thenReturn(Optional.of(meetingRoom));
 
@@ -191,14 +209,14 @@ class ReservationServiceTest {
             LocalDate secondDate = LocalDate.of(2023, 4, 8);
             LocalTime secondTime = LocalTime.of(12, 0);
             LocalDateTime secondStart = LocalDateTime.of(secondDate, secondTime);
-            ReservationRequestDto secondUnitDto = new ReservationRequestDto(secondStart);
-            List<ReservationRequestDto> list = List.of(secondUnitDto);
+            ReservationTime secondUnitDto = new ReservationTime(secondStart);
+            List<ReservationTime> list = List.of(secondUnitDto);
             Reservation firstReservation = Reservation.builder()
                     .startTime(start)
                     .endTime(start.plusMinutes(59))
                     .build();
 
-            ReservationListRequestDto secondReservationDto = new ReservationListRequestDto(list);
+            ReservationRequestDto secondReservationDto = new ReservationRequestDto(list, userList);
 
             when(meetingRoomRepository.findById(any(Long.class)))
                     .thenReturn(Optional.of(meetingRoom)).thenThrow(ReservationException.class);
@@ -228,9 +246,9 @@ class ReservationServiceTest {
             List<ReservationResponseDto> resultList = new ArrayList<>();
 
             LocalDateTime startTime = LocalDateTime.of(2023, 4, 8, 12, 0);
-            ReservationRequestDto unitDto = new ReservationRequestDto(startTime);
-            List<ReservationRequestDto> list = List.of(unitDto);
-            ReservationListRequestDto start = new ReservationListRequestDto(list);
+            ReservationTime unitDto = new ReservationTime(startTime);
+            List<ReservationTime> list = List.of(unitDto);
+            ReservationRequestDto start = new ReservationRequestDto(list, userList);
             when(meetingRoomRepository.findById(meetingRoomId)).thenReturn(Optional.of(meetingRoom));
 
             // when
@@ -294,9 +312,12 @@ class ReservationServiceTest {
         LocalDate editDate = LocalDate.of(2023, 4, 8);
         LocalTime editTime = LocalTime.of(12, 0);
         LocalDateTime editStart = LocalDateTime.of(editDate, editTime);
-        ReservationRequestDto unitDto = new ReservationRequestDto(editStart);
-        List<ReservationRequestDto> list = List.of(unitDto);
-        ReservationListRequestDto requestDto = new ReservationListRequestDto(list);
+        ReservationTime unitDto = new ReservationTime(editStart);
+        List<ReservationTime> startList = List.of(unitDto);
+        ReservationAttendee userOne = new ReservationAttendee(1L);
+        ReservationAttendee userTwo = new ReservationAttendee(2L);
+        List<ReservationAttendee> userList = List.of(userOne, userTwo);
+        ReservationRequestDto requestDto = new ReservationRequestDto(startList, userList);
 
         @Test
         void 예약을_수정한다() {
