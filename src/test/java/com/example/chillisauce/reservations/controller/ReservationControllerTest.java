@@ -1,10 +1,15 @@
 package com.example.chillisauce.reservations.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
-import com.example.chillisauce.reservations.dto.*;
+import com.example.chillisauce.reservations.dto.request.ReservationRequestDto;
+import com.example.chillisauce.reservations.dto.request.ReservationTime;
+import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
+import com.example.chillisauce.reservations.dto.response.*;
 import com.example.chillisauce.reservations.exception.ReservationExceptionHandler;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,6 +56,7 @@ class ReservationControllerTest {
     private ReservationService reservationService;
 
     private MockMvc mockMvc;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void init(RestDocumentationContextProvider restDocumentation) {
@@ -59,6 +65,7 @@ class ReservationControllerTest {
                 .setControllerAdvice(new ReservationExceptionHandler())
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     @Nested
@@ -67,6 +74,7 @@ class ReservationControllerTest {
         // given
         String companyName = "testCompany";
         String url = "/reservations/" + companyName + "/all";
+
         @Test
         @WithMockUser
         void 전체_회의실_예약내역을_반환한다() throws Exception {
@@ -164,6 +172,7 @@ class ReservationControllerTest {
                             )
                     ));
         }
+
         private ReservationTimetableResponseDto getReservationTimetable() {
             Long mrId = 1L;
 
@@ -190,18 +199,22 @@ class ReservationControllerTest {
     @Nested
     @DisplayName("예약 POST 요청 시")
     class AddReservationTestCase {
+        // given
+        String url = "/reservations/1";
+        LocalDateTime startOne = LocalDateTime.of(2023, 4, 10, 13, 0);
+        LocalDateTime startTwo = LocalDateTime.of(2023, 4, 10, 14, 0);
+        LocalDateTime end = LocalDateTime.of(2023, 4, 10, 14, 59);
+        ReservationTime requestOne = new ReservationTime(startOne);
+        ReservationTime requestTwo = new ReservationTime(startTwo);
+        ReservationAttendee userOne = new ReservationAttendee(1L);
+        ReservationAttendee userTwo = new ReservationAttendee(2L);
+        List<ReservationAttendee> userList = List.of(userOne, userTwo);
+        ReservationRequestDto requestBody = new ReservationRequestDto(List.of(requestOne, requestTwo), userList);
+        ReservationResponseDto response = new ReservationResponseDto(startOne, end);
+
         @Test
         @WithMockUser
         void 예약을_등록한다() throws Exception {
-            // given
-            String url = "/reservations/1";
-            LocalDateTime startOne = LocalDateTime.of(2023, 4, 10, 13, 0);
-            LocalDateTime startTwo = LocalDateTime.of(2023, 4, 10, 14, 0);
-            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 14, 59);
-            ReservationRequestDto requestOne = new ReservationRequestDto(startOne);
-            ReservationRequestDto requestTwo = new ReservationRequestDto(startTwo);
-            ReservationListRequestDto requestBody = new ReservationListRequestDto(List.of(requestOne, requestTwo));
-            ReservationResponseDto response = new ReservationResponseDto(startOne, end);
             when(reservationService.addReservation(eq(1L), any(), any(UserDetailsImpl.class))).thenReturn(response);
 
             // when
@@ -209,10 +222,7 @@ class ReservationControllerTest {
                     .header("Authorization", "Bearer Token")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content("{\"startList\":[" +
-                            "{\"start\":\"2023-04-10T13:00\"}," +
-                            "{\"start\":\"2023-04-10T14:00\"}" +
-                            "]}"));
+                    .content(objectMapper.writeValueAsString(requestBody)));
 
             // then
             result.andExpect(status().isOk())
@@ -221,7 +231,9 @@ class ReservationControllerTest {
                             getDocumentResponse(),
                             requestFields(
                                     fieldWithPath("startList").type(JsonFieldType.ARRAY).description("시작시각목록"),
-                                    fieldWithPath("startList[].start").type(JsonFieldType.STRING).description("시작시각")
+                                    fieldWithPath("startList[].start").type(JsonFieldType.STRING).description("시작시각"),
+                                    fieldWithPath("userList").type(JsonFieldType.ARRAY).description("참석자 목록"),
+                                    fieldWithPath("userList[].userId").type(JsonFieldType.NUMBER).description("참석자 id값")
                             ),
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
@@ -268,18 +280,22 @@ class ReservationControllerTest {
     @Nested
     @DisplayName("예약 PATCH 요청 시")
     class EditReservationTestCase {
+        // given
+        String url = "/reservations/1";
+        LocalDateTime startOne = LocalDateTime.of(2023, 4, 10, 13, 0);
+        LocalDateTime startTwo = LocalDateTime.of(2023, 4, 10, 14, 0);
+        LocalDateTime end = LocalDateTime.of(2023, 4, 10, 14, 59);
+        ReservationTime requestOne = new ReservationTime(startOne);
+        ReservationTime requestTwo = new ReservationTime(startTwo);
+        ReservationAttendee userOne = new ReservationAttendee(1L);
+        ReservationAttendee userTwo = new ReservationAttendee(2L);
+        List<ReservationAttendee> userList = List.of(userOne, userTwo);
+        ReservationRequestDto requestBody = new ReservationRequestDto(List.of(requestOne, requestTwo), userList);
+        ReservationResponseDto response = new ReservationResponseDto(startOne, end);
+
         @Test
         @WithMockUser
         void 예약을_수정한다() throws Exception {
-            // given
-            String url = "/reservations/1";
-            LocalDateTime startOne = LocalDateTime.of(2023, 4, 10, 13, 0);
-            LocalDateTime startTwo = LocalDateTime.of(2023, 4, 10, 14, 0);
-            LocalDateTime end = LocalDateTime.of(2023, 4, 10, 14, 59);
-            ReservationRequestDto requestOne = new ReservationRequestDto(startOne);
-            ReservationRequestDto requestTwo = new ReservationRequestDto(startTwo);
-            ReservationListRequestDto requestBody = new ReservationListRequestDto(List.of(requestOne, requestTwo));
-            ReservationResponseDto response = new ReservationResponseDto(startOne, end);
             when(reservationService.editReservation(eq(1L), any(), any())).thenReturn(response);
 
             // when
@@ -287,10 +303,7 @@ class ReservationControllerTest {
                     .header("Authorization", "Bearer Token")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .content("{\"startList\":[" +
-                            "{\"start\":\"2023-04-10T13:00\"}," +
-                            "{\"start\":\"2023-04-10T14:00\"}" +
-                            "]}"));
+                    .content(objectMapper.writeValueAsString(requestBody)));
 
             // then
             result.andExpect(status().isOk())
@@ -299,7 +312,9 @@ class ReservationControllerTest {
                             getDocumentResponse(),
                             requestFields(
                                     fieldWithPath("startList").type(JsonFieldType.ARRAY).description("시작시각목록"),
-                                    fieldWithPath("startList[].start").type(JsonFieldType.STRING).description("시작시각")
+                                    fieldWithPath("startList[].start").type(JsonFieldType.STRING).description("시작시각"),
+                                    fieldWithPath("userList").type(JsonFieldType.ARRAY).description("참석자 목록"),
+                                    fieldWithPath("userList[].userId").type(JsonFieldType.NUMBER).description("참석자 id값")
                             ),
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),

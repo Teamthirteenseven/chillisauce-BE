@@ -1,4 +1,4 @@
-package com.example.chillisauce.reservations.dto;
+package com.example.chillisauce.reservations.dto.response;
 
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.fasterxml.jackson.annotation.JsonFormat;
