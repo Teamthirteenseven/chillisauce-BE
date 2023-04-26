@@ -3,13 +3,14 @@ package com.example.chillisauce.spaces.controller;
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.SpaceRequestDto;
-import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.service.SpaceService;
-import com.example.chillisauce.users.entity.Companies;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -19,14 +20,14 @@ public class SpaceController {
 
     //플로우 안에 공간 생성
     @PostMapping("/spaces/{companyName}/{floorId}")
-    public ResponseEntity<ResponseMessage> createSpaceinfloor
+    public ResponseEntity<ResponseMessage<String>> createSpaceinfloor
             (@PathVariable("companyName") String companyName, @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details,@PathVariable("floorId") Long floorId) {
         spaceService.createSpaceinfloor(companyName, spaceRequestDto, details, floorId);
         return ResponseMessage.responseSuccess("공간 생성 성공","");
     }
     //공간 생성
     @PostMapping("/spaces/{companyName}")
-    public ResponseEntity<ResponseMessage> createSpace
+    public ResponseEntity<ResponseMessage<String>> createSpace
             (@PathVariable("companyName") String companyName, @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
         spaceService.createSpace(companyName, spaceRequestDto, details);
         return ResponseMessage.responseSuccess("공간 생성 성공","");
@@ -34,7 +35,7 @@ public class SpaceController {
 
     //공간 전체조회
     @GetMapping("/spaces/{companyName}")
-    public ResponseEntity<ResponseMessage> allSpacelist
+    public ResponseEntity<ResponseMessage<List<SpaceResponseDto>>> allSpacelist
             (@PathVariable("companyName") String companyName,@AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("공간 조회 성공",spaceService.allSpacelist(companyName, details));
@@ -42,14 +43,14 @@ public class SpaceController {
 
     //공간 선택조회
     @GetMapping("/spaces/{companyName}/{spaceId}")
-    public ResponseEntity<ResponseMessage> getSpacelist
+    public ResponseEntity<ResponseMessage<List<SpaceResponseDto>>> getSpacelist
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("공간 조회 성공",spaceService.getSpacelist(companyName, spaceId, details));
     }
     //공간 개별 수정
     @PatchMapping("/spaces/{companyName}/{spaceId}")
-    public ResponseEntity<ResponseMessage> updateSpace
+    public ResponseEntity<ResponseMessage<String>> updateSpace
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId,
                                       @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details) {
         spaceService.updateSpace(companyName, spaceId, spaceRequestDto,details);
@@ -57,7 +58,7 @@ public class SpaceController {
     }
     //공간 삭제
     @DeleteMapping("/spaces/{companyName}/{spaceId}")
-    public ResponseEntity<ResponseMessage> deleteSpace
+    public ResponseEntity<ResponseMessage<String>> deleteSpace
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details){
         spaceService.deleteSpace(companyName,spaceId,details);
         return ResponseMessage.responseSuccess("공간 삭제 성공","");

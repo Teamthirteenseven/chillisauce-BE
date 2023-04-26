@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ScheduleExceptionHandler {
     @ExceptionHandler(value = { ScheduleException.class })
-    protected ResponseEntity<ResponseMessage> handleReservationException(ScheduleException e) {
+    protected ResponseEntity<ResponseMessage<Object>> handleReservationException(ScheduleException e) {
         return ResponseMessage.responseError(e.getMessage(), e.getStatusCode());
     }
 }

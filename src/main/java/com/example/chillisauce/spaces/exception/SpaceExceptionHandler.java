@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class SpaceExceptionHandler {
     @ExceptionHandler(value = { SpaceException.class })
-    protected ResponseEntity<ResponseMessage> handleCustomException(SpaceException e) {
+    protected ResponseEntity<ResponseMessage<Object>> handleCustomException(SpaceException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
         return ResponseMessage.responseError(e.getErrorCode());
 

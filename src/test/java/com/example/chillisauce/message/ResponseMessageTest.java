@@ -34,12 +34,12 @@ class ResponseMessageTest {
         ErrorStatusMessage errorStatusMessage = new ErrorStatusMessageImpl(HttpStatus.BAD_REQUEST, "error message");
 
         // when
-        ResponseEntity<ResponseMessage> result = ResponseMessage.responseError(errorStatusMessage);
+        ResponseEntity<ResponseMessage<Object>> result = ResponseMessage.responseError(errorStatusMessage);
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().getMessage()).isEqualTo("error message");
+        assertThat(result.getBody().message()).isEqualTo("error message");
     }
 
     @Test
@@ -49,11 +49,11 @@ class ResponseMessageTest {
         Object data = new Object();
 
         // when
-        ResponseEntity<ResponseMessage> result = ResponseMessage.responseSuccess(message, data);
+        ResponseEntity<ResponseMessage<Object>> result = ResponseMessage.responseSuccess(message, data);
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().getMessage()).isEqualTo("응답 성공");
+        assertThat(result.getBody().message()).isEqualTo("응답 성공");
     }
 }
