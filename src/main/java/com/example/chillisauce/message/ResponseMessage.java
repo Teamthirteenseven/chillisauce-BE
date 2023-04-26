@@ -17,14 +17,13 @@ public class ResponseMessage {
     private final int statusCode;
     private final Object data;
 
-
     public static ResponseEntity<ResponseMessage> responseError(ErrorStatusMessage errorCode) {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
                 .body(ResponseMessage.builder()
                         .statusCode(errorCode.getHttpStatus().value())
                         .message(errorCode.getMessage())
-                        .data("")
+                        .data(new ErrorMessageWrapper(errorCode.getMessage(), errorCode.getHttpStatus()))
                         .build()
                 );
     }
@@ -35,7 +34,7 @@ public class ResponseMessage {
                 .body(ResponseMessage.builder()
                         .statusCode(statusCode.value())
                         .message(message)
-                        .data("")
+                        .data(new ErrorMessageWrapper(message, statusCode))
                         .build()
                 );
     }
