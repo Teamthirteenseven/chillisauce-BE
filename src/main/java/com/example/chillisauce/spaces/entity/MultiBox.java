@@ -17,6 +17,7 @@ public class MultiBox extends Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     public MultiBox(MultiBoxRequestDto multiBoxRequestDto) {
         super(multiBoxRequestDto.getMultiBoxName(), multiBoxRequestDto.getX(), multiBoxRequestDto.getY());
     }

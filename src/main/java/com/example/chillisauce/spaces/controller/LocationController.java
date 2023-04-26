@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LocationController {
     private final LocationService locationService;
-    @PatchMapping("/locations/{locationId}")
-    public ResponseEntity<ResponseMessage> moveBoxWithUser(@PathVariable Long locationId, @AuthenticationPrincipal UserDetailsImpl details) {
-        locationService.moveWithUser(locationId, details);
+    @PatchMapping("/locations/{companyName}/{locationId}")
+    public ResponseEntity<ResponseMessage> moveBoxWithUser(@PathVariable String companyName, @PathVariable Long locationId, @AuthenticationPrincipal UserDetailsImpl details) {
+        locationService.moveWithUser(companyName,locationId, details);
         return ResponseMessage.responseSuccess("사용자 등록 및 이동 완료", "");
 
     }

@@ -23,6 +23,7 @@ public class Mr extends Location{
     @OneToMany(mappedBy = "meetingRoom")
     List<Reservation> reservations = new ArrayList<>();
 
+
     public Mr(MrRequestDto mrRequestDto) {
         super(mrRequestDto.getMrName(), mrRequestDto.getX(), mrRequestDto.getY());
     }
