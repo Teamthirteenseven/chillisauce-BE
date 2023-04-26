@@ -21,6 +21,6 @@ public class SearchController {
     public ResponseEntity<ResponseMessage> searchUser(
             @RequestParam(value = "name") String name,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return null;
+        return ResponseMessage.responseSuccess("유저 검색 성공", searchService.searchUser(name, userDetails));
     }
 }
