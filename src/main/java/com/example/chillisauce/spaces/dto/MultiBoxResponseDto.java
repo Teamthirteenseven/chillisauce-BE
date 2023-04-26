@@ -38,5 +38,12 @@ public class MultiBoxResponseDto {
 
     }
 
+    public MultiBoxResponseDto(MultiBox multiBox, UserLocation userLocation) {
+        this.multiBoxId = multiBox.getId();
+        this.multiBoxName = multiBox.getLocationName();
+        this.x = multiBox.getX();
+        this.y = multiBox.getY();
+        this.username = userLocation != null ? userLocation.getUsername() : null;
+    }
 
 }

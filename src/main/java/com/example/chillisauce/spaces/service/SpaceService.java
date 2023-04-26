@@ -111,6 +111,7 @@ public class SpaceService {
                 .map(location -> new Object[]{location, userLocationMap.get(location.getId())})
                 .collect(Collectors.toList());
 
+
         Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
         String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
 
