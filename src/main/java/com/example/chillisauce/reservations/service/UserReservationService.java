@@ -1,9 +1,7 @@
 package com.example.chillisauce.reservations.service;
 
-import com.example.chillisauce.reservations.dto.ReservationDetailResponseDto;
-import com.example.chillisauce.reservations.dto.ReservationListResponseDto;
-import com.example.chillisauce.reservations.dto.UserReservationListResponseDto;
-import com.example.chillisauce.reservations.dto.UserReservationResponseDto;
+import com.example.chillisauce.reservations.dto.response.UserReservationListResponseDto;
+import com.example.chillisauce.reservations.dto.response.UserReservationResponseDto;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.security.UserDetailsImpl;

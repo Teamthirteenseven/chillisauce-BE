@@ -1,5 +1,6 @@
 package com.example.chillisauce.schedules.entity;
 
+import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.schedules.dto.ScheduleRequestDto;
 import com.example.chillisauce.users.entity.User;
 import lombok.AllArgsConstructor;
@@ -40,5 +41,13 @@ public class Schedule {
         this.comment= requestDto.getScComment();
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public Schedule(Reservation reservation, User user){
+        this.title="default title";
+        this.comment="default comment";
+        this.user=user;
+        this.startTime=reservation.getStartTime();
+        this.endTime=reservation.getEndTime();
     }
 }
