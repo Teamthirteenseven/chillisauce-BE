@@ -7,6 +7,7 @@ import com.example.chillisauce.spaces.dto.*;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
+import com.example.chillisauce.spaces.repository.BoxRepository;
 import com.example.chillisauce.spaces.repository.FloorRepository;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
@@ -15,15 +16,13 @@ import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -37,6 +36,8 @@ public class SpaceService {
 
     private final ReservationService reservationService;
     private final MrRepository mrRepository;
+
+    private final BoxRepository boxRepository;
 
 
     //플로우 안에 공간 생성
@@ -95,21 +96,42 @@ public class SpaceService {
 
     //공간 선택 조회
     @Transactional
-//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
     public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
 
-        SpaceResponseDto responseDto;
-        if (space.getFloor() != null) {
-            responseDto = new SpaceResponseDto(space, space.getFloor());
-        } else {
-            responseDto = new SpaceResponseDto(space, null, null);
-        }
+        Map<Long, List<UserLocation>> userLocationMap = boxRepository.findAllLocationsWithUserLocations().stream()
+                .filter(obj -> ((Location) obj[0]).getSpace().getId().equals(space.getId())) //쿼리 결과를 필터링 각 위치에 ID에 대한 사용자 위치 목록을 맵으로
+                .collect(Collectors.groupingBy(obj -> ((Location) obj[0]).getId(),
+                        Collectors.mapping(obj -> (UserLocation) obj[1], Collectors.toList())));
+
+        List<Object[]> locationsWithUserLocations = space.getLocations().stream()
+                .map(location -> new Object[]{location, getFirstUserLocation(userLocationMap, location.getId())})
+                .collect(Collectors.toList()); //Object 를 생성하고 리스트로 수집
+
+        Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
+        String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
+
+        SpaceResponseDto responseDto = new SpaceResponseDto(space, floorId, floorName, locationsWithUserLocations);
         return Collections.singletonList(responseDto);
     }
+
+//    @Transactional
+//    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
+//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+//        }
+//        Space space = findCompanyNameAndSpaceId(companyName, spaceId);
+//        SpaceResponseDto responseDto;
+//        if (space.getFloor() != null) {
+//            responseDto = new SpaceResponseDto(space, space.getFloor().getId(), space.getFloor().getFloorName());
+//        } else {
+//            responseDto = new SpaceResponseDto(space, null, null);
+//        }
+//        return Collections.singletonList(responseDto);
+//    }
 
     //공간 개별 수정
     @Transactional
@@ -164,5 +186,12 @@ public class SpaceService {
                 () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
         );
     }
+    //주어진 위치 ID에 해당하는 첫 번째 UserLocation 객체를 반환하는 메서드
+    private UserLocation getFirstUserLocation(Map<Long, List<UserLocation>> userLocationMap, Long locationId) {
+        List<UserLocation> userLocationsAtLocation = userLocationMap.getOrDefault(locationId, Collections.emptyList());
+        return userLocationsAtLocation.isEmpty() ? null : userLocationsAtLocation.get(0);
+        //userLocationMap 에서 locationId 사용하여 userLocation 객체 리스트를 검색 값이 없으면 null 값을 반환
+        // 리스트가 있으면 userLocationsAtLocation.get(0); 객체반환
+     }
 
 }

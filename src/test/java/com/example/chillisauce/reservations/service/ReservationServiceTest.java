@@ -167,6 +167,7 @@ class ReservationServiceTest {
                 .email("test@email.com")
                 .username("tester")
                 .password("12345678")
+                .companies(Companies.builder().build())
                 .role(UserRoleEnum.USER)
                 .build();
 
@@ -189,7 +190,7 @@ class ReservationServiceTest {
         @Test
         void 예약을_등록한다() {
             // given
-            when(userRepository.findAllByIdIn(any())).thenReturn(List.of(organizer, attendee));
+            when(userRepository.findAllByIdInAndCompanies_CompanyName(any(), any())).thenReturn(List.of(organizer, attendee));
 
             // when
             when(meetingRoomRepository.findById(eq(meetingRoomId))).thenReturn(Optional.of(meetingRoom));

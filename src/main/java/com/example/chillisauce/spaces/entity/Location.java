@@ -28,20 +28,11 @@ public class Location {
     @Column(nullable = false)
     private String y;
 
-    private String username;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id")
     private Space space;
-
-    public Location(Location location, String username) {
-        this.locationName = location.getLocationName();
-        this.x = location.getX();
-        this.y = location.getY();
-        this.username = username;
-    }
-
 
     public void linkSpace(Space space) {
         this.space = space;

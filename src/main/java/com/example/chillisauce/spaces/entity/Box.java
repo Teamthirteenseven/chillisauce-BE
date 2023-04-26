@@ -10,11 +10,14 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 public class Box extends Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String username;
 
 
     public Box(BoxRequestDto boxRequestDto) {
@@ -27,6 +30,8 @@ public class Box extends Location {
     }
 
 
+
+
     public void updateBox(BoxRequestDto boxRequestDto) {
         this.setLocationName(boxRequestDto.getBoxName());
         this.setX(boxRequestDto.getX());
@@ -34,6 +39,7 @@ public class Box extends Location {
 
 
     }
+
 
 }
 

@@ -6,8 +6,10 @@ import com.example.chillisauce.spaces.dto.LocationDto;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
+import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
+import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,10 +36,16 @@ public class LocationServiceTest {
 
     @Mock
     private UserLocationRepository userLocationRepository;
+    @Mock
+    private CompanyRepository companyRepository;
 
     private UserDetailsImpl details;
 
     private UserLocation userLocation;
+
+    private Companies companies;
+
+    private Location location;
 
 
 
@@ -50,6 +58,8 @@ public class LocationServiceTest {
         Location location = new Location("테스트", "200", "300");
         userLocation = new UserLocation();
         userLocation.setLocation(location);
+        companies = Companies.builder().build();
+
     }
 
     @Nested
@@ -59,14 +69,16 @@ public class LocationServiceTest {
         void UserLocation_isPresent_true_유저_등록_이동() {
             // given
             Long locationId = 2L;
+            String companyName = "test";
             Location differentLocation = new Location("다른 테스트", "100", "100");
             details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
 
             when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
-            when(locationRepository.findById(locationId)).thenReturn(Optional.of(differentLocation));
+            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
+            when(locationRepository.findByIdAndSpaceCompanies(locationId, companies)).thenReturn(Optional.of(differentLocation));
             when(userLocationRepository.findByUserId(details.getUser().getId())).thenReturn(Optional.of(userLocation));
             // when
-            LocationDto locationDto = locationService.moveWithUser(locationId,details);
+            LocationDto locationDto = locationService.moveWithUser(companyName,locationId,details);
 
             // then
             assertEquals(locationDto.getLocationName(), differentLocation.getLocationName());

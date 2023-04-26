@@ -1,6 +1,7 @@
 package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.spaces.entity.MultiBox;
+import com.example.chillisauce.spaces.entity.UserLocation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +21,16 @@ public class MultiBoxResponseDto {
         this.multiBoxName = multiBox.getLocationName();
         this.x = multiBox.getX();
         this.y = multiBox.getY();
-        this.username = getUsername();
+
+
     }
 
+    public MultiBoxResponseDto(MultiBox multiBox, UserLocation userLocation) {
+        this.multiBoxId = multiBox.getId();
+        this.multiBoxName = multiBox.getLocationName();
+        this.x = multiBox.getX();
+        this.y = multiBox.getY();
+        this.username = userLocation != null ? userLocation.getUsername() : null;
+    }
 
 }
