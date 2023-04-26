@@ -2,6 +2,9 @@ package com.example.chillisauce.reservations.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.reservations.dto.request.ReservationRequestDto;
+import com.example.chillisauce.reservations.dto.response.ReservationListResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationTimetableResponseDto;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +34,7 @@ public class ReservationController {
     @Operation(summary = "전체 예약 조회",
             description = "특정 회의실의 특정 날짜 예약 내역을 타임단위로 조회합니다.")
     @GetMapping("/reservations/{companyName}/all")
-    public ResponseEntity<ResponseMessage> getAllReservations(
+    public ResponseEntity<ResponseMessage<ReservationListResponseDto>> getAllReservations(
             @Parameter(description = "회사 이름", required = true, example = "testCompany")
             @PathVariable String companyName,
             @Parameter(hidden = true)
@@ -47,7 +50,7 @@ public class ReservationController {
     @Operation(summary = "예약 타임테이블 조회",
             description = "특정 회의실의 특정 날짜 예약 내역을 타임단위로 조회합니다.")
     @GetMapping("/reservations/{meetingRoomId}")
-    public ResponseEntity<ResponseMessage> getReservationTimetable(
+    public ResponseEntity<ResponseMessage<ReservationTimetableResponseDto>> getReservationTimetable(
             @Parameter(description = "선택날짜", example = "2023-04-10")
             @RequestParam(value = "selDate", required = false, defaultValue = "#{T(java.time.LocalDate).now()}")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selDate,
@@ -65,7 +68,7 @@ public class ReservationController {
     @Operation(summary = "예약 등록",
             description = "특정 회의실에 예약을 등록합니다. DB에 등록된 회의실의 id값이 필요합니다.")
     @PostMapping("/reservations/{meetingRoomId}")
-    public ResponseEntity<ResponseMessage> addReservation(
+    public ResponseEntity<ResponseMessage<ReservationResponseDto>> addReservation(
             @Parameter(description = "회의실 id 값", required = true, example = "3")
             @PathVariable Long meetingRoomId,
             @RequestBody @Valid ReservationRequestDto requestDto,
@@ -80,7 +83,7 @@ public class ReservationController {
     @Operation(summary = "예약 수정",
             description = "회원 자신이 등록한 예약을 수정합니다. DB에 등록된 예약의 id값이 필요합니다.")
     @PatchMapping("/reservations/{reservationId}")
-    public ResponseEntity<ResponseMessage> editReservation(
+    public ResponseEntity<ResponseMessage<ReservationResponseDto>> editReservation(
             @Parameter(description = "예약 id 값", required = true, example = "3")
             @PathVariable Long reservationId,
             @RequestBody @Valid ReservationRequestDto requestDto,
@@ -95,7 +98,7 @@ public class ReservationController {
     @Operation(summary = "예약 삭제",
             description = "회원 자신이 등록한 예약을 삭제합니다. DB에 등록된 예약의 id값이 필요합니다.")
     @DeleteMapping("/reservations/{reservationId}")
-    public ResponseEntity<ResponseMessage> deleteReservation(
+    public ResponseEntity<ResponseMessage<String>> deleteReservation(
             @Parameter(description = "예약 id 값", required = true, example = "3")
             @PathVariable Long reservationId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -104,7 +107,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/reservations/meetingRoom/{meetingRoomId}")
-    public ResponseEntity<ResponseMessage> deleteMeetingRoomInReservations(
+    public ResponseEntity<ResponseMessage<String>> deleteMeetingRoomInReservations(
             @Parameter(description = "회의실 id 값", required = true, example = "1")
             @PathVariable Long meetingRoomId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {

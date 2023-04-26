@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class UserExceptionHandler {
     @ExceptionHandler(value = { UserException.class })
-    protected ResponseEntity<ResponseMessage> handleCustomException(UserException e) {
+    protected ResponseEntity<ResponseMessage<Object>> handleCustomException(UserException e) {
         return ResponseMessage.responseError(e.getMessage(), e.getStatusCode());
 
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    protected ResponseEntity<ResponseMessage> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ResponseMessage<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String message = e.getFieldError() == null ? "" : e.getFieldError().getDefaultMessage();
         return ResponseMessage.responseError(message, HttpStatus.BAD_REQUEST);
     }

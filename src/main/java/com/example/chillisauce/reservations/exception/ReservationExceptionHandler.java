@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(basePackageClasses = ReservationController.class)
 public class ReservationExceptionHandler {
     @ExceptionHandler(value = {ReservationException.class})
-    protected ResponseEntity<ResponseMessage> handleReservationException(ReservationException e) {
+    protected ResponseEntity<ResponseMessage<Object>> handleReservationException(ReservationException e) {
         return ResponseMessage.responseError(e.getMessage(), e.getStatusCode());
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    protected ResponseEntity<ResponseMessage> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ResponseMessage<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String message = e.getFieldError() == null ? "" : e.getFieldError().getDefaultMessage();
         return ResponseMessage.responseError(message, HttpStatus.BAD_REQUEST);
     }

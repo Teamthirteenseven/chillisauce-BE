@@ -251,7 +251,7 @@ class ReservationControllerTest {
             // given
             String url = "/reservations/1";
             String message = "요청의 시각 목록이 비어있습니다.";
-            ResponseEntity<ResponseMessage> response = ResponseMessage.responseError(message, HttpStatus.BAD_REQUEST);
+            ResponseEntity<ResponseMessage<Object>> response = ResponseMessage.responseError(message, HttpStatus.BAD_REQUEST);
 
             // when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url)
@@ -271,9 +271,7 @@ class ReservationControllerTest {
                             responseFields(
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
-                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("에러 데이터"),
-                                    fieldWithPath("data.message").type(JsonFieldType.STRING).description("에러메시지"),
-                                    fieldWithPath("data.statusCode").type(JsonFieldType.STRING).description("HTTP 상태코드")
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("에러 데이터")
                             )
                     ));
         }

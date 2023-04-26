@@ -1,21 +1,12 @@
 package com.example.chillisauce.users.controller;
 
-import com.example.chillisauce.jwt.JwtUtil;
 import com.example.chillisauce.message.ResponseMessage;
-import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.*;
-import com.example.chillisauce.users.exception.UserErrorCode;
-import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.service.EmailService;
-import com.example.chillisauce.users.service.EmailServiceImpl;
 import com.example.chillisauce.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,13 +26,13 @@ public class UserController {
 
     /* 이메일 인증 */
     @PostMapping("/users/signup/email")
-    public ResponseEntity<ResponseMessage> SendMail(@Valid @RequestBody HashMap<String, String> email) throws Exception {
+    public ResponseEntity<ResponseMessage<String>> SendMail(@Valid @RequestBody HashMap<String, String> email) throws Exception {
         return ResponseMessage.responseSuccess("이메일을 발송하였습니다", emailService.sendSimpleMessage(email.get("email")));
     }
 
     /* 관리자 회원가입 */
     @PostMapping("/users/signup/admin")
-    public ResponseEntity<ResponseMessage> signupAdmin(@Valid @RequestBody SignupRequestDto request) {
+    public ResponseEntity<ResponseMessage<AdminSignupResponseDto>> signupAdmin(@Valid @RequestBody SignupRequestDto request) {
         /**
          * 파라미터로 dto를 2개 사용이 안되기 때문에 트리구조를 빗대어 dto를 설계.
          * 현재 SignupRequest라는 dto에서 필요한 모든 값을 입력 받고,
@@ -55,14 +46,14 @@ public class UserController {
 
     /* 사원 회원가입 */
     @PostMapping("/users/signup/user")
-    public ResponseEntity<ResponseMessage> signupUser(@Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
+    public ResponseEntity<ResponseMessage<String>> signupUser(@Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
 
         return ResponseMessage.responseSuccess(userService.signupUser(userSignupRequestDto), "");
     }
 
     /* 로그인 */
     @PostMapping("/users/login")
-    public ResponseEntity<ResponseMessage> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<ResponseMessage<String>> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
 
         return ResponseMessage.responseSuccess(userService.Login(loginRequestDto, response), "");
     }
@@ -75,7 +66,7 @@ public class UserController {
 
     /* 인증번호 확인 */
     @PostMapping("/users/signup/match")
-    public ResponseEntity<ResponseMessage> checkCertificationMatch(@RequestBody HashMap<String, String> certification) {
+    public ResponseEntity<ResponseMessage<String>> checkCertificationMatch(@RequestBody HashMap<String, String> certification) {
         return ResponseMessage.responseSuccess(userService.checkCertification(certification.get("certification")), "");
     }
 }

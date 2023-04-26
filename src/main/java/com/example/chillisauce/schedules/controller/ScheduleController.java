@@ -1,7 +1,10 @@
 package com.example.chillisauce.schedules.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
+import com.example.chillisauce.schedules.dto.ScheduleListResponseDto;
 import com.example.chillisauce.schedules.dto.ScheduleRequestDto;
+import com.example.chillisauce.schedules.dto.ScheduleResponseDto;
+import com.example.chillisauce.schedules.dto.ScheduleTimetableResponseDto;
 import com.example.chillisauce.schedules.service.ScheduleService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,7 @@ public class ScheduleController {
      * 당일 스케줄 조회
      */
     @GetMapping("/schedules")
-    public ResponseEntity<ResponseMessage> getDaySchedules(
+    public ResponseEntity<ResponseMessage<ScheduleTimetableResponseDto>> getDaySchedules(
             @RequestParam(value = "selDate", required = false, defaultValue = "#{T(java.time.LocalDate).now()}")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate selDate,
@@ -37,7 +40,7 @@ public class ScheduleController {
      * 개인 전체 스케줄 조회
      */
     @GetMapping("/schedules/all")
-    public ResponseEntity<ResponseMessage> getAllSchedules(
+    public ResponseEntity<ResponseMessage<ScheduleListResponseDto>> getAllSchedules(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage.responseSuccess("개인 전체 스케줄 조회 성공", scheduleService.getAllSchedules(userDetails));
     }
@@ -45,7 +48,7 @@ public class ScheduleController {
      * 개인 스케줄 등록
      */
     @PostMapping("/schedules")
-    public ResponseEntity<ResponseMessage> addSchedule(
+    public ResponseEntity<ResponseMessage<ScheduleResponseDto>> addSchedule(
             @RequestBody @Valid ScheduleRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage.responseSuccess("스케줄 등록 성공", scheduleService.addSchedule(requestDto, userDetails));
@@ -55,7 +58,7 @@ public class ScheduleController {
      * 스케줄 수정
      */
     @PatchMapping("/schedules/{scId}")
-    public ResponseEntity<ResponseMessage> editSchedule(
+    public ResponseEntity<ResponseMessage<ScheduleResponseDto>> editSchedule(
             @PathVariable Long scId,
             @RequestBody ScheduleRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -66,7 +69,7 @@ public class ScheduleController {
      * 스케줄 삭제
      */
     @DeleteMapping("/schedules/{scId}")
-    public ResponseEntity<ResponseMessage> deleteSchedule(
+    public ResponseEntity<ResponseMessage<String>> deleteSchedule(
             @PathVariable Long scId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage.responseSuccess("스케줄 삭제 성공", scheduleService.deleteSchedule(scId, userDetails));
