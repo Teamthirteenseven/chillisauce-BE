@@ -108,8 +108,9 @@ public class SpaceService {
                         Collectors.mapping(obj -> (UserLocation) obj[1], Collectors.toList())));
 
         List<Object[]> locationsWithUserLocations = space.getLocations().stream()
-                .map(location -> new Object[]{location, getFirstUserLocation(userLocationMap, location.getId())})
-                .collect(Collectors.toList()); //Object 를 생성하고 리스트로 수집
+                .map(location -> new Object[]{location, userLocationMap.get(location.getId())})
+                .collect(Collectors.toList());
+
 
         Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
         String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;

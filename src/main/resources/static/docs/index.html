@@ -536,6 +536,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }'</code></pre>
 </div>
@@ -549,7 +554,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 108
+Content-Length: 180
 Host: localhost:8080
 
 {
@@ -557,6 +562,11 @@ Host: localhost:8080
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }</code></pre>
 </div>
@@ -590,6 +600,11 @@ Content-Length: 152
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }' | http POST 'http://localhost:8080/reservations/1' \
     'Content-Type:application/json' \
@@ -607,6 +622,11 @@ Content-Length: 152
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }</code></pre>
 </div>
@@ -637,6 +657,16 @@ Content-Length: 152
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>startList[].start</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">시작시각</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">참석자 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userList[].userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">참석자 id값</p></td>
 </tr>
 </tbody>
 </table>
@@ -1046,6 +1076,11 @@ Content-Length: 442
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }'</code></pre>
 </div>
@@ -1059,7 +1094,7 @@ Content-Length: 442
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 108
+Content-Length: 180
 Host: localhost:8080
 
 {
@@ -1067,6 +1102,11 @@ Host: localhost:8080
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }</code></pre>
 </div>
@@ -1100,6 +1140,11 @@ Content-Length: 152
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }' | http PATCH 'http://localhost:8080/reservations/1' \
     'Content-Type:application/json' \
@@ -1117,6 +1162,11 @@ Content-Length: 152
     "start" : "2023-04-10T13:00"
   }, {
     "start" : "2023-04-10T14:00"
+  } ],
+  "userList" : [ {
+    "userId" : 1
+  }, {
+    "userId" : 2
   } ]
 }</code></pre>
 </div>
@@ -1147,6 +1197,16 @@ Content-Length: 152
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>startList[].start</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">시작시각</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">참석자 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userList[].userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">참석자 id값</p></td>
 </tr>
 </tbody>
 </table>
