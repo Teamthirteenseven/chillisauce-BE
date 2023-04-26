@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ScheduleExceptionHandler {
     @ExceptionHandler(value = { ScheduleException.class })
     protected ResponseEntity<ResponseMessage> handleReservationException(ScheduleException e) {
-        log.error("handleScheduleException throw ScheduleException : {}", e.getErrorCode());
-        return ResponseMessage.responseError(e.getErrorCode());
+        return ResponseMessage.responseError(e.getMessage(), e.getStatusCode());
     }
 }
