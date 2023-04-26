@@ -1,6 +1,6 @@
 package com.example.chillisauce.spaces.dto;
 
-import com.example.chillisauce.reservations.dto.ReservationResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.UserLocation;
 import lombok.AllArgsConstructor;
@@ -42,6 +42,4 @@ public class MrResponseDto {
     }
 
 }
-
-
 

@@ -1,4 +1,4 @@
-package com.example.chillisauce.reservations.dto;
+package com.example.chillisauce.reservations.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "예약 요청 단위 DTO")
-public class ReservationRequestDto {
+public class ReservationTime {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime start;
 }
