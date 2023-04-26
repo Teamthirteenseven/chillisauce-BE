@@ -17,7 +17,6 @@ public class Box extends Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
 
 
     public Box(BoxRequestDto boxRequestDto) {

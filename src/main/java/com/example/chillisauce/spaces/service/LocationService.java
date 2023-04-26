@@ -34,7 +34,6 @@ public class LocationService {
 
 
 
-
     @Transactional
     public LocationDto moveWithUser(String companyName, Long locationId, UserDetailsImpl details) {
         User user = userRepository.findById(details.getUser().getId()).orElseThrow(
@@ -73,3 +72,4 @@ public class LocationService {
         );
     }
 }
+
