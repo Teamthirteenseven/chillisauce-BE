@@ -1,11 +1,10 @@
 package com.example.chillisauce.spaces.service;
 
-import com.example.chillisauce.reservations.dto.ReservationResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.spaces.dto.MrResponseDto;
-import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
@@ -15,7 +14,6 @@ import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

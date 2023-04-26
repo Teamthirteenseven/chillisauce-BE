@@ -1,8 +1,5 @@
 package com.example.chillisauce.schedules.service;
 
-import com.example.chillisauce.reservations.dto.ReservationRequestDto;
-import com.example.chillisauce.reservations.exception.ReservationErrorCode;
-import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.vo.TimeUnit;
 import com.example.chillisauce.schedules.dto.*;
 import com.example.chillisauce.schedules.entity.Schedule;
@@ -102,14 +99,6 @@ public class ScheduleService {
                 .sorted().toList();
         LocalDateTime start = list.get(0);
         LocalDateTime end = list.get(list.size()-1).plusMinutes(59);
-
-        // 시간이 겹치는 스케줄이 있는 경우 등록할 수 없음
-        List<Schedule> duplicated = scheduleRepository
-                .findFirstByUserIdAndStartTimeLessThanAndEndTimeGreaterThan(user.getId(), start, end);
-
-        if(duplicated.size()!=0){
-            throw new ScheduleException(ScheduleErrorCode.DUPLICATED_TIME);
-        }
 
         Schedule schedules = Schedule.builder()
                 .user(user)

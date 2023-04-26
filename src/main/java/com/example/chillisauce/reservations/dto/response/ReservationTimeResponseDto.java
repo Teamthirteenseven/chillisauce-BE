@@ -1,4 +1,4 @@
-package com.example.chillisauce.reservations.dto;
+package com.example.chillisauce.reservations.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
