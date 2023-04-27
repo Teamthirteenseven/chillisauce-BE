@@ -394,9 +394,41 @@ class AdminServiceTest {
 
         }
 
-        @DisplayName("사원 삭제 실패(등록된 사원 없음)")
+        @DisplayName("사원 권한 수정 실패(관리자 권한은 수정 불가)")
         @Test
         void fail8() {
+            //given
+            User admin = User.builder()
+                    .id(2L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
+                    .role(UserRoleEnum.MANAGER)
+                    .updateRole(true)
+                    .build();
+
+            when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.of(admin));
+
+            UserException exception = assertThrows(UserException.class, () -> {
+                adminService.editUser(admin.getId(), details, requestDto);
+            });
+
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("관리자 권한은 변경할 수 없습니다.");
+
+        }
+
+        @DisplayName("사원 삭제 실패(등록된 사원 없음)")
+        @Test
+        void fail9() {
             //given
             User admin = User.builder()
                     .id(1L)
