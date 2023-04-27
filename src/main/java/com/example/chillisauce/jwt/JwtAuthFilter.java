@@ -26,6 +26,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.getHeaderToken(request, "Access");
         String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
 
+        log.info("필터에서 확인하는 리프레시토큰={}", refreshToken);
+
         if(accessToken != null) {
             if(!jwtUtil.validateToken(accessToken)){
                 jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());

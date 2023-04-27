@@ -168,7 +168,7 @@ public class UserService {
     public void refresh(HttpServletRequest request, HttpServletResponse response) {
         // 클라이언트로부터 리프레시 토큰 가져오기
         String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
-
+        log.info("서비스로직에 넘어온 리프레시토큰={}", refreshToken);
         // 리프레시 토큰 검증 및 DB와 일치하는지 확인
         if (jwtUtil.refreshTokenValidation(refreshToken)) {
             // 리프레시 토큰으로 이메일 정보 가져오기
