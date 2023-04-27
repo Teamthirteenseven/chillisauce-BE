@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class UserExceptionHandler {
     @ExceptionHandler(value = { UserException.class })
     protected ResponseEntity<ResponseMessage<Object>> handleCustomException(UserException e) {
-        return ResponseMessage.responseError(e.getMessage(), e.getStatusCode());
+        return ResponseMessage.responseError(e.getErrorCode());
 
     }
 

@@ -18,11 +18,11 @@ import org.springframework.http.HttpStatus;
 //}
 /* 테스트1 익셉션 수정 */
 public class UserException extends RuntimeException {
-    private final HttpStatus statusCode;
+    private final UserErrorCode errorCode;
 
-    public UserException(UserErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.statusCode = errorCode.getHttpStatus();
-    }
+//    public UserException(UserErrorCode errorCode) {
+//        super(errorCode.getMessage());
+//        this.statusCode = errorCode.getHttpStatus();
+//    }
 }
 /* 테스트1 익셉션 수정 */
