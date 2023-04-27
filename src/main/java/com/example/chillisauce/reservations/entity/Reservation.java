@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,6 +33,9 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="meeting_room_id")
     Mr meetingRoom;
+
+    @OneToMany(mappedBy = "reservation")
+    List<ReservationUser> reservationUser;
 
     public void update(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime = startTime;

@@ -156,7 +156,8 @@ public class ReservationService {
         // 모든 참석자의 스케줄에 회의 일정 추가
         List<Schedule> schedules = info.stream().map(x->new Schedule(x.getReservation(), x.getAttendee())).toList();
         scheduleRepository.saveAll(schedules);
-        return new ReservationResponseDto(reservation, attendee.stream().map(User::getUsername).toList());
+        return new ReservationResponseDto(reservation, attendee.stream()
+                .map(x -> new UsernameResponseDto(x.getUsername())).toList());
     }
 
     /**
