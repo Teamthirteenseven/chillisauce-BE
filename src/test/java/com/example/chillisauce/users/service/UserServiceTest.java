@@ -314,7 +314,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("등록된 사용자가 없습니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 사용자가 없습니다");
         }
 
         @DisplayName("로그인 실패(비밀번호 오류)")
@@ -348,7 +348,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
 
         }
 
@@ -392,7 +392,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("중복된 이메일이 존재합니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("중복된 이메일이 존재합니다");
         }
 
         @DisplayName("관리자 회원가입 실패(중복된 회사명)")
@@ -419,7 +419,7 @@ class UserServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("중복된 회사명이 존재합니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("중복된 회사명이 존재합니다");
         }
 
         @DisplayName("관리자 회원가입 실패(비밀번호 일치 오류)")
@@ -443,7 +443,7 @@ class UserServiceTest {
             });
 
             //then
-            assertThat(exception.getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
         }
 
         @DisplayName("사원 회원가입 실패(중복된 이메일)")
@@ -466,7 +466,7 @@ class UserServiceTest {
             });
 
             //then
-            assertThat(exception.getMessage()).isEqualTo("중복된 이메일이 존재합니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("중복된 이메일이 존재합니다");
         }
 
         @DisplayName("사원 회원가입 실패(비밀번호 일치 오류)")
@@ -486,7 +486,7 @@ class UserServiceTest {
                 userService.signupUser(requestDto);
             });
             //then
-            assertThat(exception.getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
         }
 
         @DisplayName("회원가입 실패(유효하지 않은 인증번호)")
@@ -503,7 +503,7 @@ class UserServiceTest {
             });
 
             //then
-            assertThat(exception.getMessage()).isEqualTo("인증번호가 유효하지 않습니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("인증번호가 유효하지 않습니다");
         }
 
         @DisplayName("새로운 엑세스토큰 발급 실패")
@@ -522,7 +522,7 @@ class UserServiceTest {
                     () -> userService.refresh(request, response));
 
             //then
-            assertThat(exception.getMessage()).isEqualTo("리프레시 토큰이 유효하지 않습니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("리프레시 토큰이 유효하지 않습니다");
         }
 
 //        @DisplayName("새로운 엑세스토큰 발급 실패(리프레시토큰이 Null 인 경우)")
