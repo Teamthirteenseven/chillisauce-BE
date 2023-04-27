@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -43,6 +44,10 @@ public class UserExceptionHandler {
         }
         HttpHeaders headers = new HttpHeaders();
         headers.setContentLength(Objects.requireNonNull(bodyStr).getBytes(StandardCharsets.UTF_8).length);
+        Charset utf8 = StandardCharsets.UTF_8;
+        MediaType mediaType = new MediaType("application", "json", utf8);
+        headers.setContentType(mediaType);
+//        headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(responseEntity.getBody(), headers, responseEntity.getStatusCode());
     }
     /* 테스트*/
