@@ -142,6 +142,7 @@ public class JwtUtil {
 
     //토큰 만료시간 static변수 -> 메서드
     public long getAccessTime() {
+
         return 8 * 60 * 60 * 1000L; //2시간 -> 8시간으로 수정 오류 해결하면 다시 원복예정
 //        return 5 * 60 * 1000L; //5분
     }
@@ -149,6 +150,7 @@ public class JwtUtil {
     public long getRefreshTime() {
         return 60 * 60 * 24 * 7 * 1000L;    //7일
 //        return 60  * 10 * 1000L;    // 테스트 10분
+
     }
 
 }
