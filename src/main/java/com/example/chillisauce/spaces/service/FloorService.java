@@ -38,7 +38,6 @@ public class FloorService {
 
     //Floor 생성
     @Transactional
-    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto createFloor(String companyName, FloorRequestDto floorRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
@@ -51,7 +50,7 @@ public class FloorService {
     }
     //Floor 선택 조회
     @Transactional
-    @Cacheable(cacheNames = "FloorResponseDtoList", key ="#companyName + '_' + #floorId")
+//    @Cacheable(cacheNames = "FloorResponseDtoList", key ="#companyName + '_' + #floorId")
     public List<FloorResponseDto> getFloorlist(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -65,7 +64,7 @@ public class FloorService {
 
     //Floor 전체 조회
     @Transactional
-    @Cacheable(cacheNames = "FloorResponseDtoList", key = "#companyName")
+//    @Cacheable(cacheNames = "FloorResponseDtoList", key = "#companyName")
     public List<FloorResponseDto> getFloor (String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -83,7 +82,6 @@ public class FloorService {
     }
     //floor 수정
     @Transactional
-    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto updateFloor (String companyName, Long floorId, FloorRequestDto floorRequestDto, UserDetailsImpl details){
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
@@ -96,7 +94,6 @@ public class FloorService {
 
     //floor 삭제
     @Transactional
-    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto deleteFloor(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
