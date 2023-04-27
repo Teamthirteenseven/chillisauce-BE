@@ -210,7 +210,7 @@ class ReservationControllerTest {
         ReservationAttendee userTwo = new ReservationAttendee(2L);
         List<ReservationAttendee> userList = List.of(userOne, userTwo);
         ReservationRequestDto requestBody = new ReservationRequestDto(List.of(requestOne, requestTwo), userList);
-        ReservationResponseDto response = new ReservationResponseDto(startOne, end);
+        ReservationResponseDto response = new ReservationResponseDto(startOne, end, new ArrayList<>());
 
         @Test
         @WithMockUser
@@ -240,7 +240,8 @@ class ReservationControllerTest {
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
                                     fieldWithPath("data.start").type(JsonFieldType.STRING).description("시작시각"),
-                                    fieldWithPath("data.end").type(JsonFieldType.STRING).description("종료시각")
+                                    fieldWithPath("data.end").type(JsonFieldType.STRING).description("종료시각"),
+                                    fieldWithPath("data.userList").type(JsonFieldType.ARRAY).description("참석자 이")
                             )
                     ));
         }
@@ -291,7 +292,7 @@ class ReservationControllerTest {
         ReservationAttendee userTwo = new ReservationAttendee(2L);
         List<ReservationAttendee> userList = List.of(userOne, userTwo);
         ReservationRequestDto requestBody = new ReservationRequestDto(List.of(requestOne, requestTwo), userList);
-        ReservationResponseDto response = new ReservationResponseDto(startOne, end);
+        ReservationResponseDto response = new ReservationResponseDto(startOne, end, new ArrayList<>());
 
         @Test
         @WithMockUser
@@ -321,7 +322,8 @@ class ReservationControllerTest {
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
                                     fieldWithPath("data.start").type(JsonFieldType.STRING).description("시작시각"),
-                                    fieldWithPath("data.end").type(JsonFieldType.STRING).description("종료시각")
+                                    fieldWithPath("data.end").type(JsonFieldType.STRING).description("종료시각"),
+                                    fieldWithPath("data.userList").type(JsonFieldType.ARRAY).description("참석자 이름")
                             )
                     ));
         }
