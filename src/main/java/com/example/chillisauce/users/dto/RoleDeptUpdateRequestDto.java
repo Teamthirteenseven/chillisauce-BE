@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoleDeptUpdateRequestDto {
     private UserRoleEnum role;
-    private String dept;
+    private boolean updateRole;
+//    private String dept;
 }

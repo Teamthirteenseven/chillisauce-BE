@@ -71,6 +71,20 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     //RateLimitJ
     implementation 'es.moki.ratelimitj:ratelimitj-inmemory:0.5.0'
+    //QueryDSL
+//    implementation "com.querydsl:querydsl-jpa:4.4.0"
+//    annotationProcessor(
+//            "javax.persistence:javax.persistence-api",
+//            "javax.annotation:javax.annotation-api",
+//            "com.querydsl:querydsl-apt:4.4.0:jpa")
+//    sourceSets {
+//        main {
+//            java {
+//                srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+//            }
+//        }
+//    }
+
 }
 
 ext {
