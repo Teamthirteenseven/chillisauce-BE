@@ -9,12 +9,5 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class ReservationException extends RuntimeException {
-
-    private final String message;
-    private final HttpStatus statusCode;
-
-    public ReservationException(ReservationErrorCode errorCode) {
-        this.message = errorCode.getMessage();
-        this.statusCode = errorCode.getHttpStatus();
-    }
+    private final ReservationErrorCode errorCode;
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -15,10 +16,17 @@ public class ReservationResponseDto {
     LocalDateTime start;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime end;
+    List<String> userList;
 
-    public ReservationResponseDto(Reservation reservation) {
+    public ReservationResponseDto(Reservation reservation){
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
+    }
+
+    public ReservationResponseDto(Reservation reservation, List<String> userList) {
+        this.start = reservation.getStartTime();
+        this.end = reservation.getEndTime();
+        this.userList = userList;
     }
 
 
