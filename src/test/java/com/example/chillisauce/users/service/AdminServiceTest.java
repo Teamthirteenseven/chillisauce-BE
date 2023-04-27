@@ -5,6 +5,8 @@ import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.spaces.entity.UserLocation;
+import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import com.example.chillisauce.users.dto.UserListResponseDto;
@@ -42,6 +44,8 @@ class AdminServiceTest {
     private ScheduleRepository scheduleRepository;
     @Mock
     private ReservationRepository reservationRepository;
+    @Mock
+    private UserLocationRepository userLocationRepository;
 
     @Nested
     @DisplayName("성공 케이스")
@@ -171,9 +175,14 @@ class AdminServiceTest {
                     .user(user)
                     .build();
 
+            UserLocation location = UserLocation.builder()
+                    .userId(2L).
+                    build();
+
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
             when(scheduleRepository.findAllByUserId(any())).thenReturn(List.of(schedule));
             when(reservationRepository.findAllByUserId(any())).thenReturn(List.of(reservation));
+            when(userLocationRepository.findByUserId(any())).thenReturn(Optional.of(location));
 
             //when
             String result = adminService.deleteUser(2L, details);
@@ -183,6 +192,7 @@ class AdminServiceTest {
 
             verify(scheduleRepository).deleteAll(List.of(schedule));
             verify(reservationRepository).deleteAll(List.of(reservation));
+            verify(userLocationRepository).delete(location);
             verify(userRepository).delete(user);
         }
 

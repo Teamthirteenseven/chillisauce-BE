@@ -100,10 +100,8 @@ public class AdminService {
         reservationRepository.deleteAll(reservations);
 
         //사원의 로케이션 삭제
-//        Optional<UserLocation> userLocation = userLocationRepository.findByUserId(userId);
-//        if (userLocation.isPresent()) {
-//
-//        }
+        Optional<UserLocation> userLocation = userLocationRepository.findByUserId(userId);
+        userLocation.ifPresent(userLocationRepository::delete);
 
         //회원 삭제
         userRepository.delete(findUser);
