@@ -5,6 +5,7 @@ import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.users.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class UserExceptionHandler {
 //    @ExceptionHandler(value = { UserException.class })
@@ -27,8 +29,8 @@ public class UserExceptionHandler {
 //    }
 
     /* 테스트*/
-    @Autowired
-    private ObjectMapper objectMapper;
+
+    private final ObjectMapper objectMapper;
     @ExceptionHandler(value = { UserException.class })
     protected ResponseEntity<ResponseMessage<Object>> handleCustomException(UserException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());

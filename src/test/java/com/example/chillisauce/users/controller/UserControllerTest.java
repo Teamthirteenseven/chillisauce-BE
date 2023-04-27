@@ -49,13 +49,14 @@ class UserControllerTest {
     @Mock
     private EmailServiceImpl emailService;
     private MockMvc mockMvc;
+    @Mock
     private ObjectMapper objectMapper;
 
     @BeforeEach
     public void init(RestDocumentationContextProvider restDocumentation) {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(userController)
-                .setControllerAdvice(new UserExceptionHandler())
+                .setControllerAdvice(new UserExceptionHandler(new ObjectMapper()))
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
         this.objectMapper = new ObjectMapper();
