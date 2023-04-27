@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ReservationExceptionHandler {
     @ExceptionHandler(value = {ReservationException.class})
     protected ResponseEntity<ResponseMessage<Object>> handleReservationException(ReservationException e) {
-        return ResponseMessage.responseError(e.getMessage(), e.getStatusCode());
+        return ResponseMessage.responseError(e.getErrorCode());
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
