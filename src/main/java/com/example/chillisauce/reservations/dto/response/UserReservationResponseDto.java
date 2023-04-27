@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -27,7 +28,7 @@ public class UserReservationResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime end;
 
-    // List<UsernameResponseDto> userList;
+    List<UsernameResponseDto> userList;
 
     public UserReservationResponseDto(Reservation reservation) {
         this.reservationId = reservation.getId();
@@ -37,11 +38,12 @@ public class UserReservationResponseDto {
         this.end = reservation.getEndTime();
     }
 
-    public UserReservationResponseDto(Reservation reservation, Long mrId, String username) {
+    public UserReservationResponseDto(Reservation reservation, Long mrId, String username, List<UsernameResponseDto> userList) {
         this.reservationId = reservation.getId();
         this.mrId = mrId;
         this.username = username;
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
+        this.userList = userList;
     }
 }

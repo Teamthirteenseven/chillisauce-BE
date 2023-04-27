@@ -16,14 +16,14 @@ public class ReservationResponseDto {
     LocalDateTime start;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime end;
-    List<String> userList;
+    List<UsernameResponseDto> userList;
 
     public ReservationResponseDto(Reservation reservation){
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
     }
 
-    public ReservationResponseDto(Reservation reservation, List<String> userList) {
+    public ReservationResponseDto(Reservation reservation, List<UsernameResponseDto> userList) {
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
         this.userList = userList;
