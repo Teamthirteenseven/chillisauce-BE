@@ -3,10 +3,7 @@ package com.example.chillisauce.spaces.dto;
 import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.UserLocation;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class MrResponseDto {
     private Long mrId;
