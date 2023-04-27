@@ -73,7 +73,6 @@ dependencies {
     //RateLimitJ
     implementation 'es.moki.ratelimitj:ratelimitj-inmemory:0.5.0'
     //QueryDSL
-
 //    implementation 'com.querydsl:querydsl-jpa:4.4.0' // Added Querydsl JPA dependency
 //    implementation 'com.querydsl:querydsl-apt:4.4.0' // Added Querydsl APT dependency
 
