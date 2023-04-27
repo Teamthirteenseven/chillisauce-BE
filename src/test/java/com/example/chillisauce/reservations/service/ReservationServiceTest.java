@@ -233,8 +233,8 @@ class ReservationServiceTest {
 
             // then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("해당 시간대에 이미 등록된 예약이 있습니다.");
+            assertThat(exception.getErrorCode()).isNotNull();
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("해당 시간대에 이미 등록된 예약이 있습니다.");
         }
 
         @Test
@@ -280,7 +280,7 @@ class ReservationServiceTest {
 
             // then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("등록된 회의실이 없습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 회의실이 없습니다.");
         }
     }
 
