@@ -6,10 +6,12 @@ import com.example.chillisauce.users.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class BoxResponseDto {
     private Long boxId;
     private String boxName;

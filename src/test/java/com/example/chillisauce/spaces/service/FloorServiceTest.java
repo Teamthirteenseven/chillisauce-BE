@@ -4,6 +4,7 @@ import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.FloorRequestDto;
 import com.example.chillisauce.spaces.dto.FloorResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
@@ -23,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.junit.jupiter.api.function.Executable;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -150,11 +153,12 @@ public class FloorServiceTest {
         void Floor_삭제() {
             String companyName = "testFloor";
             Long floorId = 1L;
+            List<Mr> mrList = new ArrayList<>();
 
             when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(Companies.builder().build()));
             when(floorRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(floor));
-            doNothing().when(floorRepository).deleteById(floorId);
-            doNothing().when(mrRepository).deleteAll();
+            doNothing().when(floorRepository).delete(floor);
+            doNothing().when(mrRepository).deleteAll(mrList);
             //when
             FloorResponseDto floorResponseDto = floorService.deleteFloor(companyName, floorId, details);
 

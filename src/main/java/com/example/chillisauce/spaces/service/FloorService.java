@@ -18,6 +18,7 @@ import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,23 +99,15 @@ public class FloorService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = findCompanyNameAndFloorId(companyName, floorId);
-        List<Mr> mrlist = new ArrayList<>();
-        for (Space space : floor.getSpaces()) {
-            List<Location> allLocations = space.getLocations();
-
-            for (Location location : allLocations) {
-                if (location instanceof Mr) {
-                    mrlist.add((Mr) location);
-                }
-            }
-        }
-        for (Mr mr : mrlist) {
+        List<Mr> mrList = mrRepository.findByFloor(floor);
+        for (Mr mr : mrList) {
             reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
         }
-        mrRepository.deleteAll();
-        floorRepository.deleteById(floorId);
+        mrRepository.deleteAll(mrList);
+        floorRepository.delete(floor);
         return new FloorResponseDto(floor);
     }
+
 
     public Floor findCompanyNameAndFloorId(String companyName, Long floorId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
