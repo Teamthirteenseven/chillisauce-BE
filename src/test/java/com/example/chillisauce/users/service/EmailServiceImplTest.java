@@ -80,7 +80,7 @@ class EmailServiceImplTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("이메일 형식이 맞지 않습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("이메일 형식이 맞지 않습니다.");
         }
 
         @DisplayName("메일 발송 실패 (1분당 2회요청 초과)")
@@ -107,7 +107,7 @@ class EmailServiceImplTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("반복된 요청입니다. 잠시 후 사용해주세요.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("반복된 요청입니다. 잠시 후 사용해주세요.");
         }
     }
 }

@@ -209,7 +209,7 @@ class AdminServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("권한이 없습니다.");
 
         }
 
@@ -236,7 +236,7 @@ class AdminServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("등록된 사용자가 없습니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 사용자가 없습니다");
 
         }
 
@@ -258,7 +258,7 @@ class AdminServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("권한이 없습니다.");
         }
 
         @DisplayName("사원 목록 조회 실패(사원 목록 없음)")
@@ -309,7 +309,7 @@ class AdminServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("권한이 없습니다.");
         }
 
         @DisplayName("사원 권한 수정 실패(등록된 사원 없음)")
@@ -339,7 +339,7 @@ class AdminServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("등록된 사용자가 없습니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 사용자가 없습니다");
 
         }
 
@@ -380,7 +380,7 @@ class AdminServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("관리자 권한으로 수정할 수 없습니다.");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("관리자 권한으로 수정할 수 없습니다.");
 
         }
 
@@ -407,7 +407,7 @@ class AdminServiceTest {
 
             //then
             assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("등록된 사용자가 없습니다");
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 사용자가 없습니다");
 
         }
 
