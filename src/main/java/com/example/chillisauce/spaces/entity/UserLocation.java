@@ -3,6 +3,7 @@ package com.example.chillisauce.spaces.entity;
 import com.example.chillisauce.spaces.dto.LocationDto;
 import com.example.chillisauce.users.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class UserLocation {
 
     @Id
