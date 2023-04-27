@@ -29,7 +29,7 @@ public class Space {
     private String spaceName;
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Location> locations = new ArrayList<>();
+    private List<Location> locations = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "companies_id", nullable = false)

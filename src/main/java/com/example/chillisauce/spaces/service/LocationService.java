@@ -17,6 +17,7 @@ import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +34,8 @@ public class LocationService {
     private final CompanyRepository companyRepository;
 
 
-
-
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public LocationDto moveWithUser(String companyName, Long locationId, UserDetailsImpl details) {
         User user = userRepository.findById(details.getUser().getId()).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.USER_NOT_FOUND)
