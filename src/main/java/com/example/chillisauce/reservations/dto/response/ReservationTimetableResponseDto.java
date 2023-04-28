@@ -15,7 +15,8 @@ import java.util.List;
 public class ReservationTimetableResponseDto {
     @Schema(description = "회의실 Id")
     Long mrId;
-
+    @Schema(description = "회의실 이름")
+    String mrName;
     @Schema(description = "타임테이블 리스트")
     List<ReservationTimeResponseDto> timeList;
 }

@@ -91,7 +91,7 @@ public class ReservationService {
                                 o1.getStart().isBefore(o2.getStart()) ? -1 : 0))
                         .toList();
 
-        return new ReservationTimetableResponseDto(meetingRoom.getId(), timeList);
+        return new ReservationTimetableResponseDto(meetingRoom.getId(), meetingRoom.getLocationName(), timeList);
     }
 
     // 예약의 시작시간에 해당하는 타임은 true 반환
