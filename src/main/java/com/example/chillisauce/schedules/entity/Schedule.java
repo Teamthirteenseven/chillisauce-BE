@@ -44,8 +44,8 @@ public class Schedule {
     }
 
     public Schedule(Reservation reservation, User user){
-        this.title="default title";
-        this.comment="default comment";
+        this.title="회의";
+        this.comment=reservation.getMeetingRoom().getLocationName();
         this.user=user;
         this.startTime=reservation.getStartTime();
         this.endTime=reservation.getEndTime();
