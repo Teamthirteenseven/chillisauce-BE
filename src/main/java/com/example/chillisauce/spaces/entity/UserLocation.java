@@ -24,7 +24,7 @@ public class UserLocation {
 
     private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 
@@ -35,4 +35,5 @@ public class UserLocation {
         this.username = user.getUsername();
 
     }
+
 }

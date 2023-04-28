@@ -5,6 +5,9 @@ import com.example.chillisauce.security.UserDetailsImpl;
 
 import com.example.chillisauce.spaces.dto.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
@@ -157,6 +160,7 @@ public class SpaceServiceTest {
                     .floor(floor)
                     .companies(companies)
                     .build();
+
             List<Object[]> mockLocationsWithUserLocations = new ArrayList<>();
             Location mockLocation1 = new Location(1L, "테스트 위치 1", "100", "100", space);
             UserLocation mockUserLocation1 = new UserLocation(1L, 1L, "사용자1", mockLocation1);
@@ -440,6 +444,7 @@ public class SpaceServiceTest {
         }
     }
 }
+
 
 
 
