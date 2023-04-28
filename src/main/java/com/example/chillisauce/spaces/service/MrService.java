@@ -36,7 +36,7 @@ public class MrService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto createMr (String companyName, Long spaceId, MrRequestDto mrRequestDto, UserDetailsImpl details){
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
@@ -50,7 +50,7 @@ public class MrService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto updateMr(String companyName, Long mrId, MrRequestDto mrRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Mr mr = findCompanyNameAndMrId(companyName,mrId);
@@ -62,7 +62,7 @@ public class MrService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto deleteMr(String companyName, Long mrId, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Mr mr = findCompanyNameAndMrId(companyName,mrId);

@@ -40,7 +40,7 @@ public class FloorService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto createFloor(String companyName, FloorRequestDto floorRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
@@ -85,7 +85,7 @@ public class FloorService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto updateFloor (String companyName, Long floorId, FloorRequestDto floorRequestDto, UserDetailsImpl details){
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = findCompanyNameAndFloorId(companyName, floorId);
@@ -98,7 +98,7 @@ public class FloorService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto deleteFloor(String companyName, Long floorId, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = findCompanyNameAndFloorId(companyName, floorId);
