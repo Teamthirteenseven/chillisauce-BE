@@ -1,10 +1,10 @@
 package com.example.chillisauce.spaces.entity;
 
-import com.example.chillisauce.users.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,11 +28,21 @@ public class Location {
     @Column(nullable = false)
     private String y;
 
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<UserLocation> userLocations = new ArrayList<>();
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id")
     private Space space;
+
+    public Location(Long id, String locationName, String x, String y, Space space) {
+        this.id = id;
+        this.locationName = locationName;
+        this.x = x;
+        this.y = y;
+        this.space = space;
+    }
 
     public void linkSpace(Space space) {
         this.space = space;

@@ -113,9 +113,9 @@ public class JwtUtil {
 
         //DB에 저장한 토큰 비교
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
-
+        log.info("DB에 저장된 리프레시토큰={}", refreshToken);
         String checkedRefresh = refreshToken.get().getRefreshToken().substring(7);
-
+        log.info("DB에 저장된 리프레시토큰 Bearer 제거={}", checkedRefresh);
         return token.equals(checkedRefresh);
 
     }
@@ -142,13 +142,13 @@ public class JwtUtil {
 
     //토큰 만료시간 static변수 -> 메서드
     public long getAccessTime() {
-        return 2 * 60 * 60 * 1000L; //2시간
-//        return 3 * 60 * 1000L; //3분
+        return 8 * 60 * 60 * 1000L; //2시간 -> 8시간으로 수정 오류 해결하면 다시 원복예정
+//        return 5 * 60 * 1000L; //5분
     }
 
     public long getRefreshTime() {
         return 60 * 60 * 24 * 7 * 1000L;    //7일
-//        return 60  * 5 * 1000L;    // 테스트 5분
+//        return 60  * 10 * 1000L;    // 테스트 10분
     }
 
 }

@@ -75,6 +75,10 @@ public class AdminService {
             throw new UserException(UserErrorCode.UNABLE_MODIFY_PERMISSION_FOR_ADMIN);
         }
 
+        if (requestDto.isUpdateRole() && getUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new UserException(UserErrorCode.DO_NOT_CHANGED_PERMISSION);
+        }
+
         getUser.update(requestDto);
         userRepository.save(getUser);
         return new UserDetailResponseDto(getUser);
@@ -100,10 +104,8 @@ public class AdminService {
         reservationRepository.deleteAll(reservations);
 
         //사원의 로케이션 삭제
-//        Optional<UserLocation> userLocation = userLocationRepository.findByUserId(userId);
-//        if (userLocation.isPresent()) {
-//
-//        }
+        Optional<UserLocation> userLocation = userLocationRepository.findByUserId(userId);
+        userLocation.ifPresent(userLocationRepository::delete);
 
         //회원 삭제
         userRepository.delete(findUser);

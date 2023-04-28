@@ -5,6 +5,8 @@ import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.spaces.entity.UserLocation;
+import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import com.example.chillisauce.users.dto.UserListResponseDto;
@@ -42,6 +44,8 @@ class AdminServiceTest {
     private ScheduleRepository scheduleRepository;
     @Mock
     private ReservationRepository reservationRepository;
+    @Mock
+    private UserLocationRepository userLocationRepository;
 
     @Nested
     @DisplayName("성공 케이스")
@@ -171,9 +175,14 @@ class AdminServiceTest {
                     .user(user)
                     .build();
 
+            UserLocation location = UserLocation.builder()
+                    .userId(2L).
+                    build();
+
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
             when(scheduleRepository.findAllByUserId(any())).thenReturn(List.of(schedule));
             when(reservationRepository.findAllByUserId(any())).thenReturn(List.of(reservation));
+            when(userLocationRepository.findByUserId(any())).thenReturn(Optional.of(location));
 
             //when
             String result = adminService.deleteUser(2L, details);
@@ -183,6 +192,7 @@ class AdminServiceTest {
 
             verify(scheduleRepository).deleteAll(List.of(schedule));
             verify(reservationRepository).deleteAll(List.of(reservation));
+            verify(userLocationRepository).delete(location);
             verify(userRepository).delete(user);
         }
 
@@ -384,9 +394,41 @@ class AdminServiceTest {
 
         }
 
-        @DisplayName("사원 삭제 실패(등록된 사원 없음)")
+        @DisplayName("사원 권한 수정 실패(관리자 권한은 수정 불가)")
         @Test
         void fail8() {
+            //given
+            User admin = User.builder()
+                    .id(2L)
+                    .role(UserRoleEnum.ADMIN)
+                    .username("뽀로로")
+                    .companies(
+                            Companies.builder()
+                                    .companyName("뽀로로랜드")
+                                    .build())
+                    .build();
+            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
+                    .role(UserRoleEnum.MANAGER)
+                    .updateRole(true)
+                    .build();
+
+            when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.of(admin));
+
+            UserException exception = assertThrows(UserException.class, () -> {
+                adminService.editUser(admin.getId(), details, requestDto);
+            });
+
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("관리자 권한은 변경할 수 없습니다.");
+
+        }
+
+        @DisplayName("사원 삭제 실패(등록된 사원 없음)")
+        @Test
+        void fail9() {
             //given
             User admin = User.builder()
                     .id(1L)

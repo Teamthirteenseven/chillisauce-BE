@@ -156,7 +156,8 @@ public class ReservationService {
         // 모든 참석자의 스케줄에 회의 일정 추가
         List<Schedule> schedules = info.stream().map(x->new Schedule(x.getReservation(), x.getAttendee())).toList();
         scheduleRepository.saveAll(schedules);
-        return new ReservationResponseDto(reservation);
+        return new ReservationResponseDto(reservation, attendee.stream()
+                .map(x -> new UsernameResponseDto(x.getUsername())).toList());
     }
 
     /**
@@ -170,7 +171,7 @@ public class ReservationService {
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
         User user = userDetails.getUser();
-        if (!reservation.getUser().getEmail().equals(user.getEmail())) {
+        if (!reservation.getUser().getId().equals(user.getId())) {
             throw new ReservationException(ReservationErrorCode.INVALID_USER_RESERVATION_UPDATE);
         }
 

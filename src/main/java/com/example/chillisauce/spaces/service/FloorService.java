@@ -18,6 +18,7 @@ import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ public class FloorService {
 
     //Floor 생성
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto createFloor(String companyName, FloorRequestDto floorRequestDto, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
@@ -49,7 +51,7 @@ public class FloorService {
     }
     //Floor 선택 조회
     @Transactional
-//    @Cacheable(cacheNames = "FloorResponseDtoList", key ="#companyName + '_' + #floorId")
+    @Cacheable(cacheNames = "FloorResponseDtoList", key ="#companyName + '_' + #floorId")
     public List<FloorResponseDto> getFloorlist(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)){
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -63,7 +65,7 @@ public class FloorService {
 
     //Floor 전체 조회
     @Transactional
-//    @Cacheable(cacheNames = "FloorResponseDtoList", key = "#companyName")
+    @Cacheable(cacheNames = "FloorResponseDtoList", key = "#companyName")
     public List<FloorResponseDto> getFloor (String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -81,6 +83,7 @@ public class FloorService {
     }
     //floor 수정
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto updateFloor (String companyName, Long floorId, FloorRequestDto floorRequestDto, UserDetailsImpl details){
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
@@ -93,28 +96,21 @@ public class FloorService {
 
     //floor 삭제
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public FloorResponseDto deleteFloor(String companyName, Long floorId, UserDetailsImpl details) {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = findCompanyNameAndFloorId(companyName, floorId);
-        List<Mr> mrlist = new ArrayList<>();
-        for (Space space : floor.getSpaces()) {
-            List<Location> allLocations = space.getLocations();
-
-            for (Location location : allLocations) {
-                if (location instanceof Mr) {
-                    mrlist.add((Mr) location);
-                }
-            }
-        }
-        for (Mr mr : mrlist) {
+        List<Mr> mrList = mrRepository.findByFloor(floor);
+        for (Mr mr : mrList) {
             reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
         }
-        mrRepository.deleteAll();
-        floorRepository.deleteById(floorId);
+        mrRepository.deleteAll(mrList);
+        floorRepository.delete(floor);
         return new FloorResponseDto(floor);
     }
+
 
     public Floor findCompanyNameAndFloorId(String companyName, Long floorId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(

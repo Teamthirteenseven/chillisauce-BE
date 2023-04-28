@@ -45,7 +45,11 @@ public class ScheduleService {
                             LocalTime endTime = LocalTime.of(x.getEnd().getHour(), x.getEnd().getMinute());
                             LocalDateTime startDateTime = LocalDateTime.of(selDate, startTime);
                             return new ScheduleTimeResponseDto(isOccupied(startDateTime, all), startTime, endTime);
-                        }).toList();
+                        })
+                        // 07시부터 22시까지 정렬하기 위한 Comparator 구현
+                        .sorted(((o1, o2) -> o1.getStart().isAfter(o2.getStart()) ? 1 :
+                                o1.getStart().isBefore(o2.getStart()) ? -1 : 0))
+                        .toList();
 
         return new ScheduleTimetableResponseDto(timeList);
     }

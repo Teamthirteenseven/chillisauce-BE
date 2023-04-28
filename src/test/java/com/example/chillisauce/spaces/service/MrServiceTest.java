@@ -70,7 +70,7 @@ public class MrServiceTest {
                 .build();
         details = new UserDetailsImpl(user, null);
 
-        Reservation reservation = Reservation.builder()
+        reservation = Reservation.builder()
                 // 필요한 Reservation 필드를 여기에 설정하세요.
                 .build();
         List<Reservation> reservations = new ArrayList<>();

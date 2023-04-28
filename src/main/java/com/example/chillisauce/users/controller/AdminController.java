@@ -34,7 +34,7 @@ public class AdminController {
         return ResponseMessage.responseSuccess("사원 조회 성공", adminService.getUsers(userId, userDetails));
     }
 
-    /* 사원 선택 조회 */
+    /* 사원 권한 수정 */
     @PatchMapping("/admin/users/{userId}")
     public ResponseEntity<ResponseMessage<UserDetailResponseDto>> editUser (@PathVariable Long userId,
                                                                             @RequestBody RoleDeptUpdateRequestDto requestDto,

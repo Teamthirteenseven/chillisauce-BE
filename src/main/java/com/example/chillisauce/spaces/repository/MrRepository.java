@@ -1,5 +1,6 @@
 package com.example.chillisauce.spaces.repository;
 
+import com.example.chillisauce.spaces.entity.Floor;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.users.entity.Companies;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,8 @@ public interface MrRepository extends JpaRepository <Mr, Long> {
 
     @Query("SELECT m FROM Mr m WHERE m.space.companies.id = :companiesId")
     List<Mr> findAllByCompaniesId(@Param("companiesId") Long companiesId);
+
+    @Query("SELECT m FROM Mr m WHERE m.space.floor = :floor")
+    List<Mr> findByFloor(@Param("floor")Floor floor);
+
 }
