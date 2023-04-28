@@ -32,8 +32,9 @@ public class UserReservationService {
         User user = userDetails.getUser();
         List<Reservation> reservations = reservationRepository.findAllByUserId(user.getId());
         List<Long> ids = reservations.stream().mapToLong(Reservation::getId).boxed().toList();
+
         List<ReservationUserWrapper> linkList = reservationUserRepository.findReservationUserByReservationIdIn(ids);
-        log.info("list={}", linkList.toString());
+
         return new UserReservationListResponseDto(reservations.stream().map(x -> {
             Mr m = x.getMeetingRoom();
             User u = x.getUser();
