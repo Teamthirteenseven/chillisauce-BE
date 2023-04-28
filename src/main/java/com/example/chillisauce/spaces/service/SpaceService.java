@@ -16,7 +16,6 @@ import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -121,6 +120,8 @@ public class SpaceService {
         SpaceResponseDto responseDto = new SpaceResponseDto(space, floorId, floorName, locationsWithUserLocations);
         return Collections.singletonList(responseDto);
     }
+
+
 
     //공간 개별 수정
     @Transactional
