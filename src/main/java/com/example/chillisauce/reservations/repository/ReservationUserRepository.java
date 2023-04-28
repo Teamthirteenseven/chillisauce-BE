@@ -12,6 +12,6 @@ public interface ReservationUserRepository extends JpaRepository<ReservationUser
     @Query("select r.attendee.username as username, r.reservation.id as reservationId " +
             "from ReservationUser r " +
             "left join r.attendee " +
-            "left join r.reservation where r.id in :reservationId")
+            "left join r.reservation where r.reservation.id in :reservationId")
     List<ReservationUserWrapper> findReservationUserByReservationIdIn(@Param("reservationId") List<Long> reservationId);
 }
