@@ -17,6 +17,8 @@ public class UserReservationResponseDto {
     Long reservationId;
     @Schema(description = "회의실 id")
     Long mrId;
+    @Schema(description = "회의실 이름")
+    String mrName;
     @Schema(description = "예약한 직원 이름")
     String username;
 
@@ -33,6 +35,7 @@ public class UserReservationResponseDto {
     public UserReservationResponseDto(Reservation reservation) {
         this.reservationId = reservation.getId();
         this.mrId = reservation.getMeetingRoom().getId();
+        this.mrName=reservation.getMeetingRoom().getLocationName();
         this.username = reservation.getUser().getUsername();
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
@@ -41,6 +44,7 @@ public class UserReservationResponseDto {
     public UserReservationResponseDto(Reservation reservation, Long mrId, String username, List<UsernameResponseDto> userList) {
         this.reservationId = reservation.getId();
         this.mrId = mrId;
+        this.mrName=reservation.getMeetingRoom().getLocationName();
         this.username = username;
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
