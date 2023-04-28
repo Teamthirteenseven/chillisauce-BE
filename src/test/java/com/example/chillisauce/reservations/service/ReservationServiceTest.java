@@ -141,8 +141,8 @@ class ReservationServiceTest {
         void 특정_회의실_특정_날짜의_예약타임테이블을_조회한다() {
             // given
             when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
-            when(reservationRepository.findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
-                    selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX))).thenReturn(List.of(reservationOne, reservationTwo));
+//            when(reservationRepository.findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
+//                    selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX))).thenReturn(List.of(reservationOne, reservationTwo));
 
             // when
             ReservationTimetableResponseDto result = reservationService
