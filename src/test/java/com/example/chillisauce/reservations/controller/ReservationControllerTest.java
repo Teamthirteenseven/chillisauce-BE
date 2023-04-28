@@ -78,6 +78,7 @@ class ReservationControllerTest {
         @Test
         @WithMockUser
         void 전체_회의실_예약내역을_반환한다() throws Exception {
+            // given
             ReservationListResponseDto all = getAllReservationResponse();
             when(reservationService.getAllReservations(eq(companyName), any())).thenReturn(all);
 
