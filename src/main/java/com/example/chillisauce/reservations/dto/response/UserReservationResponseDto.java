@@ -3,6 +3,8 @@ package com.example.chillisauce.reservations.dto.response;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +12,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "유저 예약 정보 응답 DTO")
 public class UserReservationResponseDto {
     @Schema(description = "예약 id")
@@ -30,6 +34,7 @@ public class UserReservationResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime end;
 
+    @Schema(description = "참석자 목록")
     List<UsernameResponseDto> userList;
 
     public UserReservationResponseDto(Reservation reservation) {
