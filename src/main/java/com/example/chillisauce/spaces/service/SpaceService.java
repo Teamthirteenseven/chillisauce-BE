@@ -43,7 +43,7 @@ public class SpaceService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto createSpaceinfloor(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details, Long floorId) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = floorRepository.findById(floorId).orElseThrow(
@@ -61,7 +61,7 @@ public class SpaceService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto createSpace(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
 
@@ -127,7 +127,7 @@ public class SpaceService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto updateSpace(String companyName, Long spaceId, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
@@ -148,7 +148,7 @@ public class SpaceService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto deleteSpace(String companyName, Long spaceId, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
