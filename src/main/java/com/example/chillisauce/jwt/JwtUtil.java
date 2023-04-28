@@ -4,6 +4,7 @@ import com.example.chillisauce.security.UserDetailsServiceImpl;
 import com.example.chillisauce.users.dto.TokenDto;
 import com.example.chillisauce.users.entity.RefreshToken;
 import com.example.chillisauce.users.entity.User;
+import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.RefreshTokenRepository;
@@ -151,4 +152,18 @@ public class JwtUtil {
 //        return 60  * 10 * 1000L;    // 테스트 10분
     }
 
+    public String createSuperuserToken(String username, String type) {
+        Date date = new Date();
+        long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
+
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username)
+                        .claim("username", username)
+                        .claim("role", UserRoleEnum.SUPERUSER)
+                        .setExpiration(new Date(date.getTime() + time))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+    }
 }
