@@ -49,7 +49,7 @@ public class SpaceResponseDto {
         this.boxList = locationsWithUserLocations.stream().filter(obj -> obj[0] instanceof Box).map(obj -> {
                     Box box = (Box) obj[0];
                     @SuppressWarnings("unchecked")
-                    List<UserLocation> userLocations = (List<UserLocation>) ((List<?>) obj[1]);
+                    List<UserLocation> userLocations = (List<UserLocation>) obj[1];
                     UserLocation userLocation = userLocations != null ? userLocations.stream().findFirst().orElse(null) : null;
                     return new BoxResponseDto(box, userLocation);
                 })

@@ -1,6 +1,5 @@
 package com.example.chillisauce.spaces.entity;
 
-import com.example.chillisauce.users.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
