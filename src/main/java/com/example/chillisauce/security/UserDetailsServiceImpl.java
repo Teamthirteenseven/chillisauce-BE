@@ -19,10 +19,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // jwt토큰 발급절차에서 subject의 내용이 달라질 경우 이 로직에서도 수정이 필요
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        if(email.equals(superuserInformation.getSuperUser().getEmail())){
-            log.info("Prometheus scrape success");
-            return new UserDetailsImpl(superuserInformation.getSuperUser(), null);
-        }
+//        if(email.equals(superuserInformation.getSuperUser().getEmail())){
+//            log.info("Prometheus scrape success");
+//            return new UserDetailsImpl(superuserInformation.getSuperUser(), null);
+//        }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));

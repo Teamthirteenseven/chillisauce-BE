@@ -10,17 +10,17 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 public class SuperuserInformation {
-    private final User superUser;
+//    private final User superUser;
 
-    @Autowired
-    private SuperuserInformation(@Value("${spring.security.user.name}") String superusername,
-                                 @Value("${spring.security.user.password}") String superuserPassword,
-                                 @Value("${spring.security.user.roles}") UserRoleEnum superuserRole) {
-        this.superUser=User.builder()
-                .email(superusername)
-                .password(superuserPassword)
-                .role(superuserRole)
-                .build();
-    }
+//    @Autowired
+//    private SuperuserInformation(@Value("${spring.security.user.name}") String superusername,
+//                                 @Value("${spring.security.user.password}") String superuserPassword,
+//                                 @Value("${spring.security.user.roles}") UserRoleEnum superuserRole) {
+//        this.superUser=User.builder()
+//                .email(superusername)
+//                .password(superuserPassword)
+//                .role(superuserRole)
+//                .build();
+//    }
 
 }
