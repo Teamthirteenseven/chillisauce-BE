@@ -49,7 +49,7 @@ class ReservationRepositoryTest {
 
     @Test
     public void 예약등록_성공() {
-        // given
+//        // given
 //        Companies company = companyRepository.save(Companies.builder()
 //                .companyName("삼성전자")
 //                .certification("admin")
@@ -95,7 +95,5 @@ class ReservationRepositoryTest {
 //        assertThat(result.getMeetingRoom()).isNotNull();
 //        assertThat(result.getStartTime()).isEqualTo(LocalDateTime.of(2023, 4, 5, 10, 0));
 //        assertThat(result.getEndTime()).isEqualTo(LocalDateTime.of(2023, 4, 5, 11, 0));
-//    }
-//}
     }
 }

@@ -1,10 +1,10 @@
 package com.example.chillisauce.actuator;
 
 import com.example.chillisauce.jwt.JwtUtil;
+import com.example.chillisauce.security.SuperuserInformation;
 import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,15 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class SuperuserService {
     private final JwtUtil jwtUtil;
-
-    @Value("${spring.security.user.name}")
-    private String superusername;
-    @Value("${spring.security.user.password}")
-    private String superuserPassword;
-
+    private final SuperuserInformation superuserInformation;
     public String loginSuperuser(SuperuserRequest request, HttpServletResponse response){
 
-        if(!request.password.equals(superuserPassword) || !request.username.equals(superusername)){
+        if(!request.password.equals(superuserInformation.getSuperUser().getPassword()) ||
+                !request.username.equals(superuserInformation.getSuperUser().getEmail())){
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
 
