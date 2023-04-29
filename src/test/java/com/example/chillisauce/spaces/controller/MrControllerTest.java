@@ -1,5 +1,6 @@
 package com.example.chillisauce.spaces.controller;
 
+import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
 import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.BoxResponseDto;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
@@ -23,6 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentRequest;
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentResponse;
@@ -163,6 +167,42 @@ public class MrControllerTest {
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
                                     fieldWithPath("data").type(JsonFieldType.STRING).description("")
 
+                            )
+                    ));
+        }
+
+        @Test
+        @WithMockUser
+        void Mr_조회_성공() throws  Exception {
+            //given
+            String companyName = "testCompany";
+            String url = "/mr/" + companyName;
+            List<MrResponseDto> mrResponseDtoList = new ArrayList<>();
+            List<ReservationResponseDto> reservationList = new ArrayList<>();
+            mrResponseDtoList.add(new MrResponseDto(1L,"Mr 테스트 생성", "777" , "888", reservationList));
+
+            when(mrService.mrlist(eq(companyName), any())).thenReturn(mrResponseDtoList);
+
+            //when
+            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
+                    .header("Authorization", "Bearer Token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            //then
+            result.andExpect(status().isOk())
+                    .andDo(document("get-mrlist",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            responseFields(
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("결과값"),
+                                    fieldWithPath("data[].mrId").type(JsonFieldType.NUMBER).description("mr id"),
+                                    fieldWithPath("data[].mrName").type(JsonFieldType.STRING).description("mr 이름"),
+                                    fieldWithPath("data[].x").type(JsonFieldType.STRING).description("Mr X값 좌표"),
+                                    fieldWithPath("data[].y").type(JsonFieldType.STRING).description("Mr Y값 좌표"),
+                                    fieldWithPath("data[].reservationList[]").type(JsonFieldType.ARRAY).description("예약 리스트")
                             )
                     ));
         }

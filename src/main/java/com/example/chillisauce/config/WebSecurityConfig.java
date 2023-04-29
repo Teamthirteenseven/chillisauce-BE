@@ -80,6 +80,7 @@ public class WebSecurityConfig {
 
         http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
 
+
         return http.build();
     }
 
