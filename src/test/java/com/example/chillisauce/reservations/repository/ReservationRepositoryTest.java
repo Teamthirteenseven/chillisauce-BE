@@ -1,5 +1,6 @@
 package com.example.chillisauce.reservations.repository;
 
+import com.example.chillisauce.config.TestConfig;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
@@ -10,17 +11,26 @@ import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
+@Import(TestConfig.class)
 class ReservationRepositoryTest {
     @Autowired
     private ReservationRepository reservationRepository;

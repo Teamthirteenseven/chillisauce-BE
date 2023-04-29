@@ -186,3 +186,20 @@ operation::post-users-signup-match[]
 === login
 operation::post-users-login[]
 
+[[Admin-API]]
+==Admin API
+[[GET-getAllUsers]]
+== 사원 목록 조회
+operation::get-all-userList[]
+
+[[GET-getUsers]]
+== 사원 선택 조회
+operation::get-user[]
+
+[[PATCH-editUser]]
+== 사원 권한 수정
+operation::patch-user-role[]
+
+[[DELETE-deleteUser]]
+== 사원 삭제
+operation::delete-user[]
