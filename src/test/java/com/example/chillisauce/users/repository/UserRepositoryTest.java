@@ -1,17 +1,26 @@
 package com.example.chillisauce.users.repository;
 
+import com.example.chillisauce.config.TestConfig;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@DataJpaTest
+//@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@Transactional
 @Nested
 @DisplayName("users Test")
 class UserRepositoryTest {
@@ -20,6 +29,15 @@ class UserRepositoryTest {
     private UserRepository userRepository;
     @Autowired
     private CompanyRepository companyRepository;
+
+    @BeforeEach
+    void setUp() {
+        Companies companies = Companies.builder()
+                .companyName("호그와트")
+                .certification("1234")
+                .build();
+        companyRepository.save(companies);
+    }
 
     @DisplayName("관리자 추가")
     @Test
@@ -38,7 +56,7 @@ class UserRepositoryTest {
                 .build();
 
         //when
-        companyRepository.save(companies);
+//        companyRepository.save(companies);
         User saveAdmin = userRepository.save(user);
 
         //then
@@ -67,7 +85,7 @@ class UserRepositoryTest {
                 .build();
 
         //when
-        companyRepository.save(companies);
+//        companyRepository.save(companies);
         User saveUser = userRepository.save(user);
 
         //then

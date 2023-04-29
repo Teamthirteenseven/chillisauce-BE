@@ -41,6 +41,7 @@ public class AdminService {
     @Transactional(readOnly = true)
     public UserListResponseDto getAllUsers(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
+        
         if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {    //어드민과 매니저 권한 동일하게
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
