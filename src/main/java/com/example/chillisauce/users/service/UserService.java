@@ -1,7 +1,6 @@
 package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.jwt.JwtUtil;
-import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.*;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.RefreshToken;
@@ -42,9 +41,14 @@ public class UserService {
             throw new UserException(UserErrorCode.DUPLICATE_EMAIL);
         }
         //회사명 중복확인
-        boolean found = companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent();
-        if (found) {
+        boolean checkedCompanyName = companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent();
+        if (checkedCompanyName) {
             throw new UserException(UserErrorCode.DUPLICATE_COMPANY);
+        }
+
+        boolean checkedCertification = companyRepository.findByCertification(companyRequestDto.getCertification()).isPresent();
+        if (checkedCertification) {
+            throw new UserException(UserErrorCode.DUPLICATE_CERTIFICATION);
         }
 
         Companies company = companyRepository.save(new Companies(companyRequestDto));
@@ -114,51 +118,8 @@ public class UserService {
             refreshTokenRepository.save(newToken);
         }
 
-//        Cookie accessTokenCookie = new Cookie(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-//        accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setMaxAge((int) jwtUtil.getAccessTime());
-//        accessTokenCookie.setPath("/");
-//
-//        Cookie refreshTokenCookie = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-//        refreshTokenCookie.setHttpOnly(true);
-//        refreshTokenCookie.setMaxAge((int) jwtUtil.getRefreshTime());
-//        refreshTokenCookie.setPath("/");
-
-//        response.addCookie(accessTokenCookie);
-//        response.addCookie(refreshTokenCookie);
-
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-
-//        /* 수정 1. 엑세스토큰과 리프레시토큰의 헤더 쿠키 전환 */
-//
-//        // 이메일 정보로 토큰 생성
-//        String accessToken = jwtUtil.createAccessToken(loginRequestDto.getEmail());
-//        String refreshToken = jwtUtil.createRefreshToken(loginRequestDto.getEmail());
-//
-//
-//        // 리프레시 토큰 DB 저장
-//        Optional<RefreshToken> refreshTokenFromDB = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
-//        if (refreshTokenFromDB.isPresent()) {
-//            refreshTokenRepository.save(refreshTokenFromDB.get().updateToken(refreshToken));
-//        } else {
-//            RefreshToken newToken = new RefreshToken(refreshToken, loginRequestDto.getEmail());
-//            refreshTokenRepository.save(newToken);
-//        }
-//
-//        //엑세스토큰을 헤더로 반환.
-//        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-//
-//        //리프레시 토큰을 쿠키로 반환
-//        String encodedRefreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
-//
-//        Cookie refreshTokenCookie = new Cookie(JwtUtil.REFRESH_TOKEN, encodedRefreshToken);
-//        refreshTokenCookie.setHttpOnly(true);
-//        refreshTokenCookie.setMaxAge((int) jwtUtil.getRefreshTime());
-//        refreshTokenCookie.setPath("/");
-//
-//        response.addCookie(refreshTokenCookie);
-
 
         return "로그인 성공";
     }
@@ -186,9 +147,6 @@ public class UserService {
     }
 
     /* 회원 정보 수정 */
-
-
-
 
 
     /* 이메일 중복확인 */
