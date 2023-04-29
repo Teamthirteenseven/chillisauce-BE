@@ -116,9 +116,8 @@ public class SpaceControllerTest {
 
             SpaceRequestDto spaceRequestDto = new SpaceRequestDto("Test 공간");
             String jsonString = objectMapper.writeValueAsString(spaceRequestDto);
-            System.out.println(jsonString);
             SpaceResponseDto spaceResponseDto = new SpaceResponseDto(1L, "Test 공간");
-            when(spaceService.createSpaceinfloor(eq(companyName), any(), any(), eq(floorId))).thenReturn(spaceResponseDto);
+            when(spaceService.createSpaceInFloor(eq(companyName), any(), any(), eq(floorId))).thenReturn(spaceResponseDto);
 
             //when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(url)

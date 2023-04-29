@@ -22,6 +22,7 @@ import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +73,19 @@ public class ReservationService {
 
         User user = userDetails.getUser();
 
+        // 오늘 날짜 이전이면 모두 true 처리
+        if (selDate.isBefore(LocalDate.now())) {
+            List<ReservationTimeResponseDto> timeList = ReservationTimetable.TIME_SET.stream().map(
+                    x -> {
+                        LocalTime startTime = LocalTime.of(x.getStart().getHour(), x.getStart().getMinute());
+                        LocalTime endTime = LocalTime.of(x.getEnd().getHour(), x.getEnd().getMinute());
+                        return new ReservationTimeResponseDto(true, startTime, endTime);
+                    }).sorted(((o1, o2) -> o1.getStart().isAfter(o2.getStart()) ? 1 :
+                            o1.getStart().isBefore(o2.getStart()) ? -1 : 0))
+                    .toList();
+            return new ReservationTimetableResponseDto(meetingRoom.getId(), meetingRoom.getLocationName(), timeList);
+        }
+
         // 회의실의 해당 날짜에 해당하는 모든 예약 리스트
         List<Reservation> all = reservationRepository
                 .findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
@@ -91,7 +105,7 @@ public class ReservationService {
                                 o1.getStart().isBefore(o2.getStart()) ? -1 : 0))
                         .toList();
 
-        return new ReservationTimetableResponseDto(meetingRoom.getId(), timeList);
+        return new ReservationTimetableResponseDto(meetingRoom.getId(), meetingRoom.getLocationName(), timeList);
     }
 
     // 예약의 시작시간에 해당하는 타임은 true 반환
@@ -110,6 +124,7 @@ public class ReservationService {
      * 회의실 예약 등록
      */
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public ReservationResponseDto addReservation(Long meetingRoomId,
                                                  ReservationRequestDto requestDto,
                                                  UserDetailsImpl userDetails) {
@@ -154,7 +169,7 @@ public class ReservationService {
         reservationUserRepository.saveAll(info);
 
         // 모든 참석자의 스케줄에 회의 일정 추가
-        List<Schedule> schedules = info.stream().map(x->new Schedule(x.getReservation(), x.getAttendee())).toList();
+        List<Schedule> schedules = info.stream().map(x -> new Schedule(x.getReservation(), x.getAttendee())).toList();
         scheduleRepository.saveAll(schedules);
         return new ReservationResponseDto(reservation, attendee.stream()
                 .map(x -> new UsernameResponseDto(x.getUsername())).toList());

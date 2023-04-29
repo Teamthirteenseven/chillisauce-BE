@@ -24,6 +24,9 @@ operation::get-all-reservations[]
 === 회의실 당일 예약 타임테이블 조회
 operation::get-all-reservations[]
 
+[[GET-User-Reservation]]
+=== 회원 개인의 전체 예약 조회
+operation::get-user-reservations[]
 
 [[PATCH-Reservation]]
 === 예약 수정
@@ -108,6 +111,10 @@ operation::patch-updateMr[]
 === Mr 삭제
 operation::delete-deleteMr[]
 
+[[GET-MR]]
+=== Mr 전체조회
+operation::get-mrlist[]
+
 [[MultiBox-API]]
 == MultiBox API
 
@@ -150,6 +157,13 @@ operation::patch-updateSpace[]
 === Space 삭제
 operation::delete-deleteSpace[]
 
+[[Location-API]]
+== Location API
+
+[[PATCH-Location]]
+=== Location 유저 이동
+operation::patch-moveWithUser[]
+
 [[User-API]]
 == User API
 [[POST-Admin]]
@@ -172,3 +186,20 @@ operation::post-users-signup-match[]
 === login
 operation::post-users-login[]
 
+[[Admin-API]]
+==Admin API
+[[GET-getAllUsers]]
+== 사원 목록 조회
+operation::get-all-userList[]
+
+[[GET-getUsers]]
+== 사원 선택 조회
+operation::get-user[]
+
+[[PATCH-editUser]]
+== 사원 권한 수정
+operation::patch-user-role[]
+
+[[DELETE-deleteUser]]
+== 사원 삭제
+operation::delete-user[]

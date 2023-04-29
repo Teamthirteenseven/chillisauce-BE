@@ -16,7 +16,6 @@ import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -42,8 +41,9 @@ public class SpaceService {
 
     //플로우 안에 공간 생성
     @Transactional
-    public SpaceResponseDto createSpaceinfloor(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details, Long floorId) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
+    public SpaceResponseDto createSpaceInFloor(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details, Long floorId) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Floor floor = floorRepository.findById(floorId).orElseThrow(
@@ -59,8 +59,9 @@ public class SpaceService {
 
     //공간생성
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto createSpace(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
 
@@ -73,7 +74,7 @@ public class SpaceService {
 
     //전체 공간 조회
     @Transactional
-//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
+    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -96,7 +97,7 @@ public class SpaceService {
 
     //공간 선택 조회
     @Transactional
-//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
+    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
     public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -120,25 +121,13 @@ public class SpaceService {
         return Collections.singletonList(responseDto);
     }
 
-//    @Transactional
-//    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
-//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
-//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
-//        }
-//        Space space = findCompanyNameAndSpaceId(companyName, spaceId);
-//        SpaceResponseDto responseDto;
-//        if (space.getFloor() != null) {
-//            responseDto = new SpaceResponseDto(space, space.getFloor().getId(), space.getFloor().getFloorName());
-//        } else {
-//            responseDto = new SpaceResponseDto(space, null, null);
-//        }
-//        return Collections.singletonList(responseDto);
-//    }
+
 
     //공간 개별 수정
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto updateSpace(String companyName, Long spaceId, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
@@ -157,8 +146,9 @@ public class SpaceService {
 
     //공간 삭제
     @Transactional
+    @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto deleteSpace(String companyName, Long spaceId, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
@@ -186,12 +176,6 @@ public class SpaceService {
                 () -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND)
         );
     }
-    //주어진 위치 ID에 해당하는 첫 번째 UserLocation 객체를 반환하는 메서드
-    private UserLocation getFirstUserLocation(Map<Long, List<UserLocation>> userLocationMap, Long locationId) {
-        List<UserLocation> userLocationsAtLocation = userLocationMap.getOrDefault(locationId, Collections.emptyList());
-        return userLocationsAtLocation.isEmpty() ? null : userLocationsAtLocation.get(0);
-        //userLocationMap 에서 locationId 사용하여 userLocation 객체 리스트를 검색 값이 없으면 null 값을 반환
-        // 리스트가 있으면 userLocationsAtLocation.get(0); 객체반환
-     }
+
 
 }

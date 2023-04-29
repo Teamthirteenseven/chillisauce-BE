@@ -27,7 +27,7 @@ public class BoxController {
         boxService.updateBox(companyName, boxId, boxRequestDto, details);
         return ResponseMessage.responseSuccess("박스 수정 성공","");
     }
-//
+
     @DeleteMapping("/boxes/{companyName}/{boxId}")
     public ResponseEntity<ResponseMessage<String>> deleteBox
             (@PathVariable("companyName") String companyName, @PathVariable("boxId") Long boxId, @AuthenticationPrincipal UserDetailsImpl details){
