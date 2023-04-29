@@ -10,30 +10,30 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-@Component
-@RequiredArgsConstructor
+//@Component
+//@RequiredArgsConstructor
 public class SuperuserInjector {
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
 //
 //    @Value("${spring.security.user.password}")
 //    String superuserPassword;
 
     // actuator 관리자 계정 생성 - 있으면 생성 X
-    @PostConstruct
-    public void injectSuperuser() throws UserException {
-
-        if(userRepository.findByEmail("systemAdmin").isPresent()){
-            return;
-        }
-
-        User superUser = User.builder()
-                .username("SYSADMIN")
-                .email("systemAdmin")
-//                .password(superuserPassword)
-                .role(UserRoleEnum.SUPERUSER)
-                .companies(null)
-                .build();
-
-        userRepository.save(superUser);
-    }
+//    @PostConstruct
+//    public void injectSuperuser() throws UserException {
+//
+//        if(userRepository.findByEmail("systemAdmin").isPresent()){
+//            return;
+//        }
+//
+//        User superUser = User.builder()
+//                .username("SYSADMIN")
+//                .email("systemAdmin")
+////                .password(superuserPassword)
+//                .role(UserRoleEnum.SUPERUSER)
+//                .companies(null)
+//                .build();
+//
+//        userRepository.save(superUser);
+//    }
 }
