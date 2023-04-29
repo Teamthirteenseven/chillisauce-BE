@@ -78,6 +78,7 @@ class ReservationControllerTest {
         @Test
         @WithMockUser
         void 전체_회의실_예약내역을_반환한다() throws Exception {
+            // given
             ReservationListResponseDto all = getAllReservationResponse();
             when(reservationService.getAllReservations(eq(companyName), any())).thenReturn(all);
 
@@ -99,6 +100,7 @@ class ReservationControllerTest {
                                     fieldWithPath("data.reservationList").type(JsonFieldType.ARRAY).description("예약리스트"),
                                     fieldWithPath("data.reservationList[].reservationId").type(JsonFieldType.NUMBER).description("예약 id"),
                                     fieldWithPath("data.reservationList[].mrId").type(JsonFieldType.NUMBER).description("회의실 id"),
+                                    fieldWithPath("data.reservationList[].mrName").type(JsonFieldType.STRING).description("회의실 이름"),
                                     fieldWithPath("data.reservationList[].username").type(JsonFieldType.STRING).description("예약자 이름"),
                                     fieldWithPath("data.reservationList[].start").type(JsonFieldType.STRING).description("예약 시작 시각"),
                                     fieldWithPath("data.reservationList[].end").type(JsonFieldType.STRING).description("예약 종료 시각")
@@ -112,6 +114,7 @@ class ReservationControllerTest {
                     .reservationId(1L)
                     .username("강백호")
                     .mrId(1L)
+                    .mrName("회의실1")
                     .start(LocalDateTime.of(2023, 4, 11, 15, 0))
                     .end(LocalDateTime.of(2023, 4, 11, 15, 59))
                     .build();
@@ -120,6 +123,7 @@ class ReservationControllerTest {
                     .reservationId(2L)
                     .username("윤대협")
                     .mrId(3L)
+                    .mrName("회의실2")
                     .start(LocalDateTime.of(2023, 4, 12, 17, 0))
                     .end(LocalDateTime.of(2023, 4, 12, 17, 59))
                     .build();
@@ -165,6 +169,7 @@ class ReservationControllerTest {
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
                                     fieldWithPath("data.mrId").type(JsonFieldType.NUMBER).description("회의실 id"),
+                                    fieldWithPath("data.mrName").type(JsonFieldType.STRING).description("회의실 이름"),
                                     fieldWithPath("data.timeList").type(JsonFieldType.ARRAY).description("타임테이블"),
                                     fieldWithPath("data.timeList[].isCheckOut").type(JsonFieldType.BOOLEAN).description("예약 여부"),
                                     fieldWithPath("data.timeList[].start").type(JsonFieldType.STRING).description("시작시각"),
@@ -175,7 +180,7 @@ class ReservationControllerTest {
 
         private ReservationTimetableResponseDto getReservationTimetable() {
             Long mrId = 1L;
-
+            String mrName = "testMeetingRoom";
             ReservationTimeResponseDto timeOne = ReservationTimeResponseDto.builder().isCheckOut(false)
                     .start(LocalTime.of(7, 0))
                     .end(LocalTime.of(7, 59))
@@ -192,7 +197,7 @@ class ReservationControllerTest {
                     .end(LocalTime.of(22, 59))
                     .build();
 
-            return new ReservationTimetableResponseDto(mrId, List.of(timeOne, timeTwo, timeLast));
+            return new ReservationTimetableResponseDto(mrId, mrName, List.of(timeOne, timeTwo, timeLast));
         }
     }
 

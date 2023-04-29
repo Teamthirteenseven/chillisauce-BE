@@ -3,6 +3,7 @@ package com.example.chillisauce.spaces.dto;
 import com.example.chillisauce.spaces.entity.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +67,7 @@ public class SpaceResponseDto {
                 })
                 .collect(Collectors.toList());
     }
+
 
     public SpaceResponseDto(Space space, Floor floor) {
         this.spaceId = space.getId();

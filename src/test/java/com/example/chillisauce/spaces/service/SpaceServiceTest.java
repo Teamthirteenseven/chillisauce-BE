@@ -5,6 +5,9 @@ import com.example.chillisauce.security.UserDetailsImpl;
 
 import com.example.chillisauce.spaces.dto.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
@@ -96,7 +99,7 @@ public class SpaceServiceTest {
             when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(Companies.builder().build()));
 
             //when
-            SpaceResponseDto spaceResponseDto = spaceService.createSpaceinfloor("testCompany", spaceRequestDto, details, 1L);
+            SpaceResponseDto spaceResponseDto = spaceService.createSpaceInFloor("testCompany", spaceRequestDto, details, 1L);
 
             //then
             assertNotNull(spaceResponseDto);
@@ -157,6 +160,7 @@ public class SpaceServiceTest {
                     .floor(floor)
                     .companies(companies)
                     .build();
+
             List<Object[]> mockLocationsWithUserLocations = new ArrayList<>();
             Location mockLocation1 = new Location(1L, "테스트 위치 1", "100", "100", space);
             UserLocation mockUserLocation1 = new UserLocation(1L, 1L, "사용자1", mockLocation1);
@@ -275,7 +279,7 @@ public class SpaceServiceTest {
             void Floor_안에_Space_생성_권한_없음() {
                 //When,Then
                 NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
-                    spaceService.createSpaceinfloor(companyName, requestDto, details, floorId);
+                    spaceService.createSpaceInFloor(companyName, requestDto, details, floorId);
                 });
             }
 
@@ -363,7 +367,7 @@ public class SpaceServiceTest {
                 when(floorRepository.findById(floorId)).thenReturn(Optional.of(floor));
                 //then
                 findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
-                    spaceService.createSpaceinfloor(companyName, requestDto, details, floorId);
+                    spaceService.createSpaceInFloor(companyName, requestDto, details, floorId);
                 });
             }
 
@@ -396,7 +400,7 @@ public class SpaceServiceTest {
                 SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
                 //when,then
                 SpaceException exception = assertThrows(SpaceException.class, () -> {
-                    spaceService.createSpaceinfloor(companyName, spaceRequestDto, details, floorId);
+                    spaceService.createSpaceInFloor(companyName, spaceRequestDto, details, floorId);
                 });
                 assertEquals(SpaceErrorCode.FLOOR_NOT_FOUND, exception.getErrorCode());
             }
@@ -440,6 +444,7 @@ public class SpaceServiceTest {
         }
     }
 }
+
 
 
 

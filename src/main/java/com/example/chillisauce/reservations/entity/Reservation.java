@@ -34,7 +34,7 @@ public class Reservation {
     @JoinColumn(name="meeting_room_id")
     Mr meetingRoom;
 
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ReservationUser> reservationUser;
 
     public void update(LocalDateTime startTime, LocalDateTime endTime) {

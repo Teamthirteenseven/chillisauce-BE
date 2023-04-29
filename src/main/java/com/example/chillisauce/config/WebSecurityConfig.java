@@ -3,6 +3,7 @@ package com.example.chillisauce.config;
 import com.example.chillisauce.jwt.JwtAuthFilter;
 import com.example.chillisauce.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,6 +65,7 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
+                .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("SUPERUSER")
                 .antMatchers("**").permitAll()
                 .anyRequest().authenticated()
                 .and().cors()
@@ -79,6 +81,7 @@ public class WebSecurityConfig {
 
 
         http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
+
 
         return http.build();
     }

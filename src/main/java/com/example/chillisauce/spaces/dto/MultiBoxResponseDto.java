@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class MultiBoxResponseDto {
     private Long multiBoxId;
     private String multiBoxName;
