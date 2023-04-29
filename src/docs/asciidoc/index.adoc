@@ -187,7 +187,7 @@ operation::post-users-signup-match[]
 operation::post-users-login[]
 
 [[Admin-API]]
-==Admin API
+== Admin API
 [[GET-getAllUsers]]
 == 사원 목록 조회
 operation::get-all-userList[]
