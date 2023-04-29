@@ -111,6 +111,10 @@ operation::patch-updateMr[]
 === Mr 삭제
 operation::delete-deleteMr[]
 
+[[GET-MR]]
+=== Mr 전체조회
+operation::get-mrlist[]
+
 [[MultiBox-API]]
 == MultiBox API
 
@@ -152,6 +156,13 @@ operation::patch-updateSpace[]
 [[DELETE-Space]]
 === Space 삭제
 operation::delete-deleteSpace[]
+
+[[Location-API]]
+== Location API
+
+[[PATCH-Location]]
+=== Location 유저 이동
+operation::patch-moveWithUser[]
 
 [[User-API]]
 == User API
