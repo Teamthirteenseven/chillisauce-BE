@@ -14,9 +14,9 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class SuperuserInjector {
     private final UserRepository userRepository;
-
-    @Value("${spring.security.user.password}")
-    String superuserPassword;
+//
+//    @Value("${spring.security.user.password}")
+//    String superuserPassword;
 
     // actuator 관리자 계정 생성 - 있으면 생성 X
     @PostConstruct
@@ -29,7 +29,7 @@ public class SuperuserInjector {
         User superUser = User.builder()
                 .username("SYSADMIN")
                 .email("systemAdmin")
-                .password(superuserPassword)
+//                .password(superuserPassword)
                 .role(UserRoleEnum.SUPERUSER)
                 .companies(null)
                 .build();
