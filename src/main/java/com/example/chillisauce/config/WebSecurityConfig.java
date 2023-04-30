@@ -65,7 +65,7 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
-                .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("SUPERUSER")
+                .requestMatchers(EndpointRequest.toAnyEndpoint()).access("hasIpAddress('127.0.0.1')")
                 .antMatchers("**").permitAll()
                 .anyRequest().authenticated()
                 .and().cors()
