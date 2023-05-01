@@ -3,8 +3,8 @@ package com.example.chillisauce.spaces.repository;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.users.entity.QCompanies;
+import com.example.chillisauce.users.entity.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
@@ -14,18 +14,20 @@ import java.util.stream.Collectors;
 
 import static com.example.chillisauce.spaces.entity.QFloor.floor;
 import static com.example.chillisauce.spaces.entity.QSpace.space;
-import static com.example.chillisauce.users.entity.QUser.user;
 
 
 public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements SpaceRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
-
-    public SpaceRepositoryImpl(JPAQueryFactory queryFactory) {
-        super(Space.class);
-        this.queryFactory = queryFactory;
+    private final EntityManager em;
+    public SpaceRepositoryImpl(EntityManager em) {
+        super(User.class);
+        this.em = em;
+        this.queryFactory = new JPAQueryFactory(em);
     }
-
+    /*
+    space 선택 조회
+     */
     public List<SpaceResponseDto> getSpacesWithLocations(Long spaceId) {
         return from(space)
                 .leftJoin(space.floor, floor)
@@ -38,6 +40,10 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                         (s, s.getFloor() != null ? s.getFloor().getId() : null, s.getFloor() != null ? s.getFloor().getFloorName() : null))
                 .collect(Collectors.toList());
     }
+
+    /*
+    space 전체 조회
+    */
     public List<SpaceResponseDto> getSpaceAllList(String companyName) {
         QCompanies company = QCompanies.companies;
         List<Space> spaces = from(space)
@@ -56,15 +62,5 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
     private BooleanExpression companyNameEquals(String companyName) {
         return space.companies.companyName.eq(companyName);
     }
-//    public List<SpaceResponseDto> getSpaceAllList() {
-//        List<Space> spaces = from(space)
-//                .leftJoin(space.floor, floor)
-//                .distinct()
-//                .fetch();
-//        return spaces.stream()
-//                .map(s -> new SpaceResponseDto
-//                        (s, s.getFloor() != null ? s.getFloor().getId() : null, s.getFloor() != null ? s.getFloor().getFloorName() : null))
-//                .collect(Collectors.toList());
-//    }
 
 }
