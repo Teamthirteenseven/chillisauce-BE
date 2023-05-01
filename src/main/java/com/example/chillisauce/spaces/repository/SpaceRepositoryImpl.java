@@ -27,24 +27,6 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
     }
 
     public List<SpaceResponseDto> getSpacesWithLocations(Long spaceId) {
-//        List<Space> spaces = from(space)
-//                .leftJoin(space.floor, floor)
-//                .leftJoin(space.locations)
-//                .where(space.id.eq(spaceId))
-//                .distinct()
-//                .fetch();
-//        return spaces.stream()
-//                .map(s -> {
-//                    Long floorId = null;
-//                    String fName = null;
-//                    if (s.getFloor() != null) {
-//                        floorId = s.getFloor().getId();
-//                        fName = s.getFloor().getFloorName();
-//                    }
-//                    return new SpaceResponseDto(s, floorId, fName);
-//                })
-//                .collect(Collectors.toList());
-//    }
         return from(space)
                 .leftJoin(space.floor, floor)
                 .leftJoin(space.locations)
@@ -63,6 +45,7 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .leftJoin(space.companies, company)
                 .where(companyNameEquals(companyName))
                 .distinct()
+                .fetchJoin()
                 .fetch();
         return spaces.stream()
                 .map(s -> new SpaceResponseDto
@@ -73,5 +56,15 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
     private BooleanExpression companyNameEquals(String companyName) {
         return space.companies.companyName.eq(companyName);
     }
+//    public List<SpaceResponseDto> getSpaceAllList() {
+//        List<Space> spaces = from(space)
+//                .leftJoin(space.floor, floor)
+//                .distinct()
+//                .fetch();
+//        return spaces.stream()
+//                .map(s -> new SpaceResponseDto
+//                        (s, s.getFloor() != null ? s.getFloor().getId() : null, s.getFloor() != null ? s.getFloor().getFloorName() : null))
+//                .collect(Collectors.toList());
+//    }
 
 }
