@@ -15,11 +15,11 @@ hooks:
   AfterInstall:
   ApplicationStart:
     - location: scripts/run.sh
-      timeout: 100
+      timeout: 300
       runas: ubuntu
     - location: scripts/healthcheck.sh
-      timeout: 100
+      timeout: 300
       runas: ubuntu
     - location: scripts/switch.sh
-      timeout: 100
+      timeout: 300
       runas: ubuntu
