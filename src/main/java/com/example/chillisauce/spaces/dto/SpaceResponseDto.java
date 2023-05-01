@@ -1,18 +1,14 @@
 package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.spaces.entity.*;
-import com.querydsl.core.Tuple;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.chillisauce.spaces.entity.QLocation.location;
 
 @Getter
 @NoArgsConstructor
@@ -27,7 +23,6 @@ public class SpaceResponseDto {
     private List<MrResponseDto> mrList = new ArrayList<>();
     private List<MultiBoxResponseDto> multiBoxList = new ArrayList<>();
 
-    
     public SpaceResponseDto(Space space) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
@@ -37,11 +32,13 @@ public class SpaceResponseDto {
         this.spaceId = id;
         this.spaceName = spaceName;
     }
+
     public SpaceResponseDto(Space space, Long floorId, String floorName) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
         this.floorId = floorId;
         this.floorName = floorName;
+
         this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> {
                     Box box = (Box) x;
                     UserLocation userLocation = box.getUserLocations().stream().findFirst().orElse(null);
@@ -64,4 +61,5 @@ public class SpaceResponseDto {
         this.floorId = floor.getId();
         this.floorName = floor.getFloorName();
     }
+
 }

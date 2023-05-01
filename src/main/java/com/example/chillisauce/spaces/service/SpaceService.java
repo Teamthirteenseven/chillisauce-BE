@@ -3,28 +3,31 @@ package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.*;
-import com.example.chillisauce.spaces.entity.*;
+import com.example.chillisauce.spaces.dto.SpaceRequestDto;
+import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Location;
+import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.*;
+import com.example.chillisauce.spaces.repository.FloorRepository;
+import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.util.function.Tuples;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.example.chillisauce.spaces.entity.QLocation.location;
-import static com.example.chillisauce.spaces.entity.QUserLocation.userLocation;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -53,7 +56,10 @@ public class SpaceService {
         Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
-        Space space = spaceRepository.save(new Space(spaceRequestDto, companies, floor));
+        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+        }
+        Space space = spaceRepository.save(new Space(spaceRequestDto,floor,companies));
         floor.getSpaces().add(space);
         return new SpaceResponseDto(space);
     }
@@ -69,6 +75,9 @@ public class SpaceService {
         Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
+        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+        }
         Space space = spaceRepository.save(new Space(spaceRequestDto, companies));
         return new SpaceResponseDto(space);
     }
@@ -80,21 +89,9 @@ public class SpaceService {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
-                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
-        );
-        List<Space> spaceList = spaceRepository.findAllByCompaniesId(companies.getId());
-        return spaceList.stream().map(space -> {
-            Long floorId = null;
-            String floorName = null;
-            if (space.getFloor() != null) {
-                floorId = space.getFloor().getId();
-                floorName = space.getFloor().getFloorName();
-            }
-            return new SpaceResponseDto(space, floorId, floorName);
-        }).collect(Collectors.toList());
+        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
+        return spaceResponseDto.isEmpty() ? Collections.emptyList() : Collections.singletonList(spaceResponseDto.get(0));
     }
-
 
     //공간 선택 조회
     @Transactional
@@ -110,7 +107,6 @@ public class SpaceService {
             SpaceResponseDto responseDto = spaceResponseDto.get(0);
             return Collections.singletonList(responseDto);
         }
-
         return Collections.emptyList();
     }
 
