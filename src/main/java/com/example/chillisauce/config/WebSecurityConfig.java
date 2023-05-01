@@ -65,8 +65,9 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
-                .requestMatchers(EndpointRequest.toAnyEndpoint()).access("hasIpAddress('127.0.0.1')")
-                .antMatchers("**").permitAll()
+                .requestMatchers(EndpointRequest.toAnyEndpoint()).access("hasIpAddress('127.0.0.1') or hasIpAddress('::1')")
+                .antMatchers("/users/signup/**").permitAll()
+                .antMatchers("/users/login").permitAll()
                 .anyRequest().authenticated()
                 .and().cors()
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
