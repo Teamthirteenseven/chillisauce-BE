@@ -1,6 +1,5 @@
 package com.example.chillisauce.users.controller;
 
-import com.example.chillisauce.jwt.JwtUtil;
 import com.example.chillisauce.users.dto.*;
 import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
@@ -251,126 +250,109 @@ class UserControllerTest {
                             )));
         }
 
-        @DisplayName("엑세스 토큰 재발급")
-        @Test
-        void success6() throws Exception{
-            //given
-            String refreshToken = "fakeToken";
 
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                    .get("/users/refresh")
-                    .header(JwtUtil.AUTHORIZATION_HEADER, refreshToken));
-
-            result.andExpect(status().isOk())
-                    .andDo(document("get-users-refresh",
-                            getDocumentRequest(),
-                            getDocumentResponse()));
-        }
-    }
-
-    @Nested
-    @DisplayName("유저 컨트롤러 실패 케이스")
-    class ControllerFailCase {
+        @Nested
+        @DisplayName("유저 컨트롤러 실패 케이스")
+        class ControllerFailCase {
 
 
-        @DisplayName("관리자 회원가입 실패 (잘못된 요청_이메일 형식 오류)")
-        @Test
-        void fail1() throws Exception {
-            //given
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .email("뽀로로")
-                    .password("1234qwer!")
-                    .passwordCheck("1234qwer!")
-                    .username("루피")
-                    .companyName("뽀로로랜드")
-                    .certification("1234")
-                    .build();
+            @DisplayName("관리자 회원가입 실패 (잘못된 요청_이메일 형식 오류)")
+            @Test
+            void fail1() throws Exception {
+                //given
+                SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+                        .email("뽀로로")
+                        .password("1234qwer!")
+                        .passwordCheck("1234qwer!")
+                        .username("루피")
+                        .companyName("뽀로로랜드")
+                        .certification("1234")
+                        .build();
 
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                    .post("/users/signup/admin")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(signupRequestDto)));
+                //when
+                ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users/signup/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupRequestDto)));
 
-            result.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("이메일 형식이 올바르지 않습니다."));
+                result.andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").value("이메일 형식이 올바르지 않습니다."));
 
-        }
+            }
 
-        @DisplayName("관리자 회원가입 실패 (잘못된 요청_비밀번호 형식 오류)")
-        @Test
-        void fail2() throws Exception {
-            //given
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .email("test@gmail.com")
-                    .password("1234")
-                    .passwordCheck("1234")
-                    .username("루피")
-                    .companyName("뽀로로랜드")
-                    .certification("1234")
-                    .build();
+            @DisplayName("관리자 회원가입 실패 (잘못된 요청_비밀번호 형식 오류)")
+            @Test
+            void fail2() throws Exception {
+                //given
+                SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+                        .email("test@gmail.com")
+                        .password("1234")
+                        .passwordCheck("1234")
+                        .username("루피")
+                        .companyName("뽀로로랜드")
+                        .certification("1234")
+                        .build();
 
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                    .post("/users/signup/admin")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(signupRequestDto)));
+                //when
+                ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users/signup/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupRequestDto)));
 
-            result.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("비밀번호는 8 ~ 16자리 영문, 숫자, 특수문자를 조합하여 입력하세요."));
+                result.andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").value("비밀번호는 8 ~ 16자리 영문, 숫자, 특수문자를 조합하여 입력하세요."));
 
-        }
+            }
 
-        @DisplayName("사원 회원가입 실패 (잘못된 요청_이메일 형식 오류)")
-        @Test
-        void fail3() throws Exception {
-            //given
-            UserSignupRequestDto signupRequestDto = UserSignupRequestDto.builder()
-                    .email("뽀로로")
-                    .password("1234qwer!")
-                    .passwordCheck("1234qwer!")
-                    .username("루피")
-                    .certification("1234")
-                    .build();
+            @DisplayName("사원 회원가입 실패 (잘못된 요청_이메일 형식 오류)")
+            @Test
+            void fail3() throws Exception {
+                //given
+                UserSignupRequestDto signupRequestDto = UserSignupRequestDto.builder()
+                        .email("뽀로로")
+                        .password("1234qwer!")
+                        .passwordCheck("1234qwer!")
+                        .username("루피")
+                        .certification("1234")
+                        .build();
 
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                    .post("/users/signup/user")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(signupRequestDto)));
+                //when
+                ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users/signup/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupRequestDto)));
 
-            result.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("이메일 형식이 올바르지 않습니다."));
+                result.andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").value("이메일 형식이 올바르지 않습니다."));
 
-        }
+            }
 
-        @DisplayName("사원 회원가입 실패 (잘못된 요청_비밀번호 형식 오류)")
-        @Test
-        void fail4() throws Exception {
-            //given
-            UserSignupRequestDto signupRequestDto = UserSignupRequestDto.builder()
-                    .email("test@gmail.com")
-                    .password("1234")
-                    .passwordCheck("1234")
-                    .username("루피")
-                    .certification("1234")
-                    .build();
+            @DisplayName("사원 회원가입 실패 (잘못된 요청_비밀번호 형식 오류)")
+            @Test
+            void fail4() throws Exception {
+                //given
+                UserSignupRequestDto signupRequestDto = UserSignupRequestDto.builder()
+                        .email("test@gmail.com")
+                        .password("1234")
+                        .passwordCheck("1234")
+                        .username("루피")
+                        .certification("1234")
+                        .build();
 
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                    .post("/users/signup/user")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(signupRequestDto)));
+                //when
+                ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users/signup/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupRequestDto)));
 
-            result.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("비밀번호는 8 ~ 16자리 영문, 숫자, 특수문자를 조합하여 입력하세요."));
+                result.andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").value("비밀번호는 8 ~ 16자리 영문, 숫자, 특수문자를 조합하여 입력하세요."));
 
-        }
+            }
 
 //        @DisplayName("로그인 실패 (잘못된 요청_이메일 형식 오류)")
 //        @Test
@@ -414,28 +396,29 @@ class UserControllerTest {
 //
 //        }
 
-        @DisplayName("인증번호 확인 실패 (유효하지 않은 인증번호)")
-        @Test
-        void failTest() throws Exception {
-            //given
-            HashMap<String, String> certification = new HashMap<>();
-            certification.put("certification", "1234");
+            @DisplayName("인증번호 확인 실패 (유효하지 않은 인증번호)")
+            @Test
+            void failTest() throws Exception {
+                //given
+                HashMap<String, String> certification = new HashMap<>();
+                certification.put("certification", "1234");
 
-            when(userService.checkCertification(certification.get("certification"))).thenThrow(new UserException(UserErrorCode.INVALID_CERTIFICATION));
+                when(userService.checkCertification(certification.get("certification"))).thenThrow(new UserException(UserErrorCode.INVALID_CERTIFICATION));
 
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                    .post("/users/signup/match")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(certification)));
+                //when
+                ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users/signup/match")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(certification)));
 
-            //then
-            result.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.statusCode").value(UserErrorCode.INVALID_CERTIFICATION.getHttpStatus().value()))
-                    .andExpect(jsonPath("$.message").value("인증번호가 유효하지 않습니다"));
+                //then
+                result.andExpect(status().isUnauthorized())
+                        .andExpect(jsonPath("$.statusCode").value(UserErrorCode.INVALID_CERTIFICATION.getHttpStatus().value()))
+                        .andExpect(jsonPath("$.message").value("인증번호가 유효하지 않습니다"));
+
+            }
 
         }
-
     }
 }

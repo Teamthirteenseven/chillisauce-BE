@@ -3,13 +3,10 @@ package com.example.chillisauce.users.service;
 import com.example.chillisauce.jwt.JwtUtil;
 import com.example.chillisauce.users.dto.*;
 import com.example.chillisauce.users.entity.Companies;
-import com.example.chillisauce.users.entity.RefreshToken;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
-import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.CompanyRepository;
-import com.example.chillisauce.users.repository.RefreshTokenRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import com.example.chillisauce.users.util.TestUserInjector;
 import org.junit.jupiter.api.DisplayName;
@@ -18,11 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
@@ -40,8 +34,6 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private CompanyRepository companyRepository;
-    @Mock
-    private RefreshTokenRepository refreshTokenRepository;
     @Mock
     private TestUserInjector testUserInjector;
     @Mock
@@ -143,7 +135,7 @@ class UserServiceTest {
                 String value = invocation.getArgument(1);
                 headers.put(key, value);
                 return null;
-            }).when(response).addHeader(anyString(), anyString());
+            }).when(response).setHeader(anyString(), anyString());
 
 
             //given
@@ -163,105 +155,17 @@ class UserServiceTest {
                     .build();
 
             String fakeAccess = "fakeAccess";
-            String fakeRefresh = "fakeRefresh";
-
-            TokenDto tokenDto = new TokenDto(fakeAccess, fakeRefresh);
 
             Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
-            Mockito.when(jwtUtil.createAllToken(loginRequestDto.getEmail())).thenReturn(tokenDto);
-            Mockito.when(refreshTokenRepository.findByEmail("123@123")).thenReturn(Optional.empty());
+            Mockito.when(jwtUtil.createToken(saveAdmin)).thenReturn(fakeAccess);
 
             //when
             String result = userService.Login(loginRequestDto, response);
-
-            //then
-            assertThat(saveAdmin).isNotNull();
-            assertThat("로그인 성공").isEqualTo(result);
-
             String accessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
-            String refreshToken = headers.get(JwtUtil.REFRESH_TOKEN);
-
-            assertThat(accessToken).isNotEmpty();
-            assertThat(refreshToken).isNotEmpty();
-
-        }
-
-        @DisplayName("리프레시토큰 저장 성공")
-        @Test
-        void refreshToken() {
-            //given
-            HttpServletResponse response = mock(HttpServletResponse.class);
-            LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-                    .email("123@123")
-                    .password("1234")
-                    .build();
-            User saveAdmin = User.builder()
-                    .email("123@123")
-                    .password(passwordEncoder.encode("1234"))
-                    .username("루피")
-                    .role(UserRoleEnum.ADMIN)
-                    .companies(Companies.builder()
-                            .companyName("원피스")
-                            .certification("1234")
-                            .build())
-                    .build();
-
-
-            TokenDto tokenDto = TokenDto.builder()
-                    .accessToken("fake")
-                    .refreshToken("fakeRefresh")
-                    .build();
-
-            RefreshToken refreshToken = RefreshToken.builder()
-                    .refreshToken(tokenDto.getRefreshToken())
-                    .email("123@123")
-                    .build();
-            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
-            Mockito.when(jwtUtil.createAllToken(loginRequestDto.getEmail())).thenReturn(tokenDto);
-            Mockito.when(refreshTokenRepository.findByEmail("123@123")).thenReturn(Optional.of(refreshToken));
-            Mockito.when(refreshTokenRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-
-            //when
-            String result = userService.Login(loginRequestDto, response);
-            System.out.println(tokenDto.getAccessToken());
-            System.out.println(tokenDto.getRefreshToken());
-
             //then
             assertThat(saveAdmin).isNotNull();
             assertThat("로그인 성공").isEqualTo(result);
-
-            //???????????????
-            ArgumentCaptor<RefreshToken> refreshTokenCaptor = ArgumentCaptor.forClass(RefreshToken.class);
-            Mockito.verify(refreshTokenRepository).save(refreshTokenCaptor.capture());
-            RefreshToken updatedRefreshToken = refreshTokenCaptor.getValue();
-
-            assertThat(updatedRefreshToken).isNotNull();
-            assertThat(updatedRefreshToken.getEmail()).isEqualTo(refreshToken.getEmail());
-            assertThat(updatedRefreshToken.getRefreshToken()).isEqualTo(tokenDto.getRefreshToken());
-
-        }
-
-        @DisplayName("새로운 엑세스토큰 발급 성공")
-        @Test
-        void newAccessToken() {
-            //given
-            HttpServletRequest request = mock(HttpServletRequest.class);
-            HttpServletResponse response = mock(HttpServletResponse.class);
-            String refreshToken = "fakeRefresh";
-            String email = "123@123";
-            String newAccessToken = "fakeNewAccess";
-
-            when(jwtUtil.getHeaderToken(request, "Refresh")).thenReturn(refreshToken);
-            when(jwtUtil.refreshTokenValidation(refreshToken)).thenReturn(true);
-            when(jwtUtil.getUserInfoFromToken(refreshToken)).thenReturn(email);
-            when(jwtUtil.createToken(email, "Access")).thenReturn(newAccessToken);
-
-            //when
-            userService.refresh(request, response);
-
-            //then
-            assertThat(newAccessToken).isNotNull();
-            verify(jwtUtil).setHeaderAccessToken(response, newAccessToken);
+            assertThat(accessToken).isNotEmpty();
 
         }
 
@@ -302,10 +206,6 @@ class UserServiceTest {
                     .build();
 
             when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
-            /**
-             * userRepository.findByEmail(email)메서드를 이용해 요청을 보내면,
-             * thenReturn(Optional.empty())을 통해 empty를 리턴한다.
-             */
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
@@ -505,42 +405,6 @@ class UserServiceTest {
             //then
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("인증번호가 유효하지 않습니다");
         }
-
-        @DisplayName("새로운 엑세스토큰 발급 실패")
-        @Test
-        void fail11() {
-            //given
-            HttpServletRequest request = mock(HttpServletRequest.class);
-            HttpServletResponse response = mock(HttpServletResponse.class);
-            String refreshToken = "fakeRefresh";
-
-            when(jwtUtil.getHeaderToken(request, "Refresh")).thenReturn(refreshToken);
-            when(jwtUtil.refreshTokenValidation(refreshToken)).thenReturn(false);   //검증을 통과하지 못한 상황
-
-            //when
-            UserException exception = assertThrows(UserException.class,
-                    () -> userService.refresh(request, response));
-
-            //then
-            assertThat(exception.getErrorCode().getMessage()).isEqualTo("리프레시 토큰이 유효하지 않습니다");
-        }
-
-//        @DisplayName("새로운 엑세스토큰 발급 실패(리프레시토큰이 Null 인 경우)")
-//        @Test
-//        void fail12() {
-//            //given
-//            HttpServletRequest request = mock(HttpServletRequest.class);
-//            HttpServletResponse response = mock(HttpServletResponse.class);
-//
-//            when(jwtUtil.getHeaderToken(request, JwtUtil.REFRESH_TOKEN)).thenReturn(String.valueOf(Optional.empty()));
-//
-//            //when
-//            UserException exception = assertThrows(UserException.class,
-//                    () -> userService.refresh(request, response));
-//
-//            //then
-//            assertThat(exception.getMessage()).isEqualTo("리프레시 토큰이 유효하지 않습니다");
-//        }
 
     }
 }

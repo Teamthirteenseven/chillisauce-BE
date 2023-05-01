@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -52,12 +51,6 @@ public class UserController {
     public ResponseEntity<ResponseMessage<String>> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
 
         return ResponseMessage.responseSuccess(userService.Login(loginRequestDto, response), "");
-    }
-
-    /* 토큰 재발급 */
-    @GetMapping("/users/refresh")
-    public void refresh(HttpServletRequest request, HttpServletResponse response) {
-        userService.refresh(request, response);
     }
 
     /* 인증번호 확인 */
