@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public interface SpaceRepository extends JpaRepository<Space, Long>, SpaceRepositorySupport{
     Optional<Space> findByIdAndCompanies(Long spaceId, Companies companies);
-    List<Space> findAllByCompaniesId(Long companiesId);
     List<SpaceResponseDto> getSpacesWithLocations(Long spaceId);
     List<SpaceResponseDto> getSpaceAllList(String companyName);
 

@@ -19,15 +19,14 @@ import static com.example.chillisauce.users.entity.QUser.user;
 
 public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements SpaceRepositorySupport {
 
-    private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
-    public SpaceRepositoryImpl(JPAQueryFactory queryFactory, EntityManager em) {
+    public SpaceRepositoryImpl(JPAQueryFactory queryFactory) {
         super(Space.class);
-        this.em = em;
+        this.queryFactory = queryFactory;
     }
 
     public List<SpaceResponseDto> getSpacesWithLocations(Long spaceId) {
-
         List<Space> spaces = from(space)
                 .leftJoin(space.floor, floor)
                 .leftJoin(space.locations)
