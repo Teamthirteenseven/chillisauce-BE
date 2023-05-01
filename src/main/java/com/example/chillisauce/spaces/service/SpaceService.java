@@ -7,22 +7,24 @@ import com.example.chillisauce.spaces.dto.*;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.BoxRepository;
-import com.example.chillisauce.spaces.repository.FloorRepository;
-import com.example.chillisauce.spaces.repository.MrRepository;
-import com.example.chillisauce.spaces.repository.SpaceRepository;
+import com.example.chillisauce.spaces.repository.*;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.util.function.Tuples;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.example.chillisauce.spaces.entity.QLocation.location;
+import static com.example.chillisauce.spaces.entity.QUserLocation.userLocation;
 
 
 @Service
@@ -36,7 +38,6 @@ public class SpaceService {
     private final ReservationService reservationService;
     private final MrRepository mrRepository;
 
-    private final BoxRepository boxRepository;
 
 
     //플로우 안에 공간 생성
@@ -102,23 +103,15 @@ public class SpaceService {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        Space space = findCompanyNameAndSpaceId(companyName, spaceId);
 
-        Map<Long, List<UserLocation>> userLocationMap = boxRepository.findAllLocationsWithUserLocations().stream()
-                .filter(obj -> ((Location) obj[0]).getSpace().getId().equals(space.getId())) //쿼리 결과를 필터링 각 위치에 ID에 대한 사용자 위치 목록을 맵으로
-                .collect(Collectors.groupingBy(obj -> ((Location) obj[0]).getId(),
-                        Collectors.mapping(obj -> (UserLocation) obj[1], Collectors.toList())));
+        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
 
-        List<Object[]> locationsWithUserLocations = space.getLocations().stream()
-                .map(location -> new Object[]{location, userLocationMap.get(location.getId())})
-                .collect(Collectors.toList());
+        if (!spaceResponseDto.isEmpty()) {
+            SpaceResponseDto responseDto = spaceResponseDto.get(0);
+            return Collections.singletonList(responseDto);
+        }
 
-
-        Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
-        String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
-
-        SpaceResponseDto responseDto = new SpaceResponseDto(space, floorId, floorName, locationsWithUserLocations);
-        return Collections.singletonList(responseDto);
+        return Collections.emptyList();
     }
 
 
