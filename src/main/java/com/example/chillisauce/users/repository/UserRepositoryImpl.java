@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +19,11 @@ import static com.example.chillisauce.users.entity.QUser.user;
 @Repository
 public class UserRepositoryImpl extends QuerydslRepositorySupport implements UserRepositorySupport{
     private final JPAQueryFactory queryFactory;
-    public UserRepositoryImpl(JPAQueryFactory queryFactory) {
+    private final EntityManager em;
+    public UserRepositoryImpl(EntityManager em) {
         super(User.class);
-        this.queryFactory = queryFactory;
+        this.em = em;
+        this.queryFactory = new JPAQueryFactory(em);
     }
     @Override
     public Optional<User> findByIdAndCompanies_CompanyName(Long id, String companyName) {

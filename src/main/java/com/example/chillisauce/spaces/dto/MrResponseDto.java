@@ -29,7 +29,6 @@ public class MrResponseDto {
         this.x = mr.getX();
         this.y = mr.getY();
         this.reservationList =mr.getReservations().stream().map(ReservationResponseDto::new).collect(Collectors.toList());
-
     }
 
     public MrResponseDto(Long id, String mrName, String x, String y) {
