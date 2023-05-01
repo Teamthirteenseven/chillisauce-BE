@@ -55,15 +55,8 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .distinct()
                 .fetch();
         return spaces.stream()
-                .map(s -> {
-                    Long floorId = null;
-                    String floorName = null;
-                    if (s.getFloor() != null) {
-                        floorId = s.getFloor().getId();
-                        floorName = s.getFloor().getFloorName();
-                    }
-                    return new SpaceResponseDto(s, floorId, floorName);
-                })
+                .map(s -> new SpaceResponseDto
+                        (s, s.getFloor() != null ? s.getFloor().getId() : null, s.getFloor() != null ? s.getFloor().getFloorName() : null))
                 .collect(Collectors.toList());
     }
 
