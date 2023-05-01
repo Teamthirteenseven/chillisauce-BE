@@ -71,7 +71,7 @@ class UserControllerTest {
         void success1() throws Exception {
             //given
             SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .email("123@123")
+                    .email("test@gmail.com")
                     .password("1234qwer!")
                     .passwordCheck("1234qwer!")
                     .username("루피")
@@ -119,7 +119,7 @@ class UserControllerTest {
             //given
             String answer = "일반 회원 가입 성공";
             UserSignupRequestDto requestDto = UserSignupRequestDto.builder()
-                    .email("123@123")
+                    .email("test@gmail.com")
                     .password("1234qwer!")
                     .passwordCheck("1234qwer!")
                     .username("루피")
@@ -304,7 +304,7 @@ class UserControllerTest {
         void fail2() throws Exception {
             //given
             SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .email("123@123")
+                    .email("test@gmail.com")
                     .password("1234")
                     .passwordCheck("1234")
                     .username("루피")
@@ -353,7 +353,7 @@ class UserControllerTest {
         void fail4() throws Exception {
             //given
             UserSignupRequestDto signupRequestDto = UserSignupRequestDto.builder()
-                    .email("뽀로로@뽀로로랜드")
+                    .email("test@gmail.com")
                     .password("1234")
                     .passwordCheck("1234")
                     .username("루피")

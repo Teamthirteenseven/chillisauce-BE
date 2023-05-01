@@ -33,11 +33,7 @@ public class UserController {
     /* 관리자 회원가입 */
     @PostMapping("/users/signup/admin")
     public ResponseEntity<ResponseMessage<AdminSignupResponseDto>> signupAdmin(@Valid @RequestBody SignupRequestDto request) {
-        /**
-         * 파라미터로 dto를 2개 사용이 안되기 때문에 트리구조를 빗대어 dto를 설계.
-         * 현재 SignupRequest라는 dto에서 필요한 모든 값을 입력 받고,
-         * AdminSignupRequestDto과 CompanyRequestDto에 각각 의존성을 생성자를 통해 주입해준다.
-         */
+
         AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(request);
         CompanyRequestDto companyRequestDto = new CompanyRequestDto(request);
 
