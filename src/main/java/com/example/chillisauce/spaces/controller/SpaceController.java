@@ -20,9 +20,9 @@ public class SpaceController {
 
     //플로우 안에 공간 생성
     @PostMapping("/spaces/{companyName}/{floorId}")
-    public ResponseEntity<ResponseMessage<String>> createSpaceinfloor
+    public ResponseEntity<ResponseMessage<String>> createSpaceInFloor
             (@PathVariable("companyName") String companyName, @RequestBody SpaceRequestDto spaceRequestDto, @AuthenticationPrincipal UserDetailsImpl details,@PathVariable("floorId") Long floorId) {
-        spaceService.createSpaceinfloor(companyName, spaceRequestDto, details, floorId);
+        spaceService.createSpaceInFloor(companyName, spaceRequestDto, details, floorId);
         return ResponseMessage.responseSuccess("공간 생성 성공","");
     }
     //공간 생성

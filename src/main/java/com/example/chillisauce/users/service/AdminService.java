@@ -41,7 +41,8 @@ public class AdminService {
     @Transactional(readOnly = true)
     public UserListResponseDto getAllUsers(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+        
+        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {    //어드민과 매니저 권한 동일하게
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
         List<User> allList = userRepository.findAllByCompanies_CompanyName(user.getCompanies().getCompanyName());
@@ -52,7 +53,7 @@ public class AdminService {
     @Transactional(readOnly = true)
     public UserDetailResponseDto getUsers(Long userId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {    //어드민과 매니저 권한 동일하게
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
         User getUser = userRepository.findByIdAndCompanies_CompanyName(userId, user.getCompanies().getCompanyName()).orElseThrow(
@@ -65,7 +66,7 @@ public class AdminService {
     @Transactional
     public UserDetailResponseDto editUser(Long userId, UserDetailsImpl userDetails, RoleDeptUpdateRequestDto requestDto) {
         User user = userDetails.getUser();
-        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
         User getUser = userRepository.findByIdAndCompanies_CompanyName(userId, user.getCompanies().getCompanyName()).orElseThrow(

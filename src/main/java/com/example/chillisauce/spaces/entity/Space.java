@@ -41,10 +41,10 @@ public class Space {
 
 
 
-    public Space(SpaceRequestDto spaceRequestDto, Companies companies, Floor floor) {
+    public Space(SpaceRequestDto spaceRequestDto, Floor floor, Companies companies) {
         this.spaceName = spaceRequestDto.getSpaceName();
-        this.companies = companies;
         this.floor = floor;
+        this.companies = companies;
     }
 
     public Space(SpaceRequestDto spaceRequestDto, Companies companies) {

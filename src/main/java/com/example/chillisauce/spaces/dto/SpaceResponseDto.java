@@ -22,7 +22,7 @@ public class SpaceResponseDto {
     private List<BoxResponseDto> boxList = new ArrayList<>();
     private List<MrResponseDto> mrList = new ArrayList<>();
     private List<MultiBoxResponseDto> multiBoxList = new ArrayList<>();
-    
+
     public SpaceResponseDto(Space space) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
@@ -32,40 +32,24 @@ public class SpaceResponseDto {
         this.spaceId = id;
         this.spaceName = spaceName;
     }
+
     public SpaceResponseDto(Space space, Long floorId, String floorName) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
         this.floorId = floorId;
         this.floorName = floorName;
-        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> new BoxResponseDto((Box) x)).toList();
-        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
-        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> new MultiBoxResponseDto((MultiBox) x)).toList();
-    }
-    public SpaceResponseDto(Space space, Long floorId, String floorName, List<Object[]> locationsWithUserLocations) {
-        this.spaceId = space.getId();
-        this.spaceName = space.getSpaceName();
-        this.floorId = floorId;
-        this.floorName = floorName;
-
-        this.boxList = locationsWithUserLocations.stream().filter(obj -> obj[0] instanceof Box).map(obj -> {
-                    Box box = (Box) obj[0];
-                    @SuppressWarnings("unchecked")
-                    List<UserLocation> userLocations = (List<UserLocation>) obj[1];
-                    UserLocation userLocation = userLocations != null ? userLocations.stream().findFirst().orElse(null) : null;
+        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> {
+                    Box box = (Box) x;
+                    UserLocation userLocation = box.getUserLocations().stream().findFirst().orElse(null);
                     return new BoxResponseDto(box, userLocation);
-                })
-                .collect(Collectors.toList());
-
+                }).toList();
 
         this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
-
-        this.multiBoxList = locationsWithUserLocations.stream().filter(obj -> obj[0] instanceof MultiBox).map(obj -> {
-                    MultiBox multiBox = (MultiBox) obj[0];
-                    @SuppressWarnings("unchecked")
-                    List<UserLocation> userLocations = (List<UserLocation>) obj[1];
-                    return new MultiBoxResponseDto(multiBox, userLocations != null ? userLocations : Collections.emptyList());
-                })
-                .collect(Collectors.toList());
+        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> {
+                    MultiBox multiBox = (MultiBox) x;
+                    List<UserLocation> userLocations = multiBox.getUserLocations();
+                    return new MultiBoxResponseDto(multiBox, userLocations);
+                }).toList();
     }
 
 
@@ -74,8 +58,6 @@ public class SpaceResponseDto {
         this.spaceName = space.getSpaceName();
         this.floorId = floor.getId();
         this.floorName = floor.getFloorName();
-        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> new BoxResponseDto((Box) x)).toList();
-        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
-        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> new MultiBoxResponseDto((MultiBox) x)).toList();
     }
+
 }

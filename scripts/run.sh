@@ -17,6 +17,9 @@ TARGET_PORT=0
 # 포트번호 변경
 if [ $CURRENT_PORT -eq 8081 ]; then
   TARGET_PORT=8082
+  DEPLOY_LOG="$PROJECT_ROOT/deploy2.log"
+  APP_LOG="$PROJECT_ROOT/application2.log"
+  ERROR_LOG="$PROJECT_ROOT/error2.log"
 elif [ $CURRENT_PORT -eq 8082 ]; then
   TARGET_PORT=8081
 else

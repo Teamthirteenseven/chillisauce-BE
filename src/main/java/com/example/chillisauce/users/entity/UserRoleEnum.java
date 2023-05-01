@@ -4,6 +4,7 @@ public enum UserRoleEnum {
     USER(Authority.USER),  // 사원 R
     ADMIN(Authority.ADMIN),  // 관리자 C.R.U.D
     MANAGER(Authority.MANAGER), //중간관리자 C.R.U
+
     ;  // 사업자 권한
 
     private final String authority;

@@ -3,6 +3,7 @@ package com.example.chillisauce.config;
 import com.example.chillisauce.jwt.JwtAuthFilter;
 import com.example.chillisauce.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,7 +65,9 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
-                .antMatchers("**").permitAll()
+                .requestMatchers(EndpointRequest.toAnyEndpoint()).access("hasIpAddress('127.0.0.1') or hasIpAddress('::1')")
+                .antMatchers("/users/signup/**").permitAll()
+                .antMatchers("/users/login").permitAll()
                 .anyRequest().authenticated()
                 .and().cors()
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
@@ -79,6 +82,7 @@ public class WebSecurityConfig {
 
 
         http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
+
 
         return http.build();
     }
@@ -96,7 +100,6 @@ public class WebSecurityConfig {
         // 특정 헤더를 클라이언트 측에서 사용할 수 있게 지정
         // 만약 지정하지 않는다면, Authorization 헤더 내의 토큰 값을 사용할 수 없음
         config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
-        config.addExposedHeader(JwtUtil.REFRESH_TOKEN);
 
         // 본 요청에 허용할 HTTP method(예비 요청에 대한 응답 헤더에 추가됨)
         config.addAllowedMethod("*");

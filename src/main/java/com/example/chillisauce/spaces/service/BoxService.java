@@ -32,7 +32,7 @@ public class BoxService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public BoxResponseDto createBox(String companyName, Long spaceId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
@@ -49,7 +49,7 @@ public class BoxService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public BoxResponseDto updateBox(String companyName, Long boxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Box box = findCompanyNameAndBoxId(companyName, boxId);
@@ -62,7 +62,7 @@ public class BoxService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public BoxResponseDto deleteBox(String companyName, Long boxId, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Box box = findCompanyNameAndBoxId(companyName, boxId);

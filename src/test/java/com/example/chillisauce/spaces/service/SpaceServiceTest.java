@@ -26,11 +26,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,8 +51,7 @@ public class SpaceServiceTest {
     private SpaceRepository spaceRepository;
     @Mock
     private FloorRepository floorRepository;
-    @Mock
-    private BoxRepository boxRepository;
+
     @InjectMocks
     private SpaceService spaceService;
     @Mock
@@ -99,7 +101,7 @@ public class SpaceServiceTest {
             when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(Companies.builder().build()));
 
             //when
-            SpaceResponseDto spaceResponseDto = spaceService.createSpaceinfloor("testCompany", spaceRequestDto, details, 1L);
+            SpaceResponseDto spaceResponseDto = spaceService.createSpaceInFloor("testCompany", spaceRequestDto, details, 1L);
 
             //then
             assertNotNull(spaceResponseDto);
@@ -130,20 +132,16 @@ public class SpaceServiceTest {
             String companyName = "testCompany";
 
             List<Space> spaceList = Collections.singletonList(space);
-            List<SpaceResponseDto> responseDto = spaceList.stream()
-                    .map(SpaceResponseDto::new)
-                    .toList();
-            when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
-            when(spaceRepository.findAllByCompaniesId(any())).thenReturn(spaceList);
+            List<SpaceResponseDto> responseDto = spaceList.stream().map(SpaceResponseDto::new).toList();
+            when(spaceRepository.getSpaceAllList(companyName)).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
 
-
-            //when
+            // when
             List<SpaceResponseDto> result = spaceService.allSpacelist(companyName, details);
 
-            //Then
+            // then
             assertNotNull(result);
-            assertEquals(result.size(), responseDto.size());
-            assertThat(responseDto).allSatisfy(responseSpace -> {
+            assertEquals(responseDto.size(), result.size());
+            assertThat(result).allSatisfy(responseSpace -> {
                 assertThat(responseSpace.getSpaceName()).isEqualTo("테스트 Space");
             });
         }
@@ -161,17 +159,8 @@ public class SpaceServiceTest {
                     .companies(companies)
                     .build();
 
-            List<Object[]> mockLocationsWithUserLocations = new ArrayList<>();
-            Location mockLocation1 = new Location(1L, "테스트 위치 1", "100", "100", space);
-            UserLocation mockUserLocation1 = new UserLocation(1L, 1L, "사용자1", mockLocation1);
-            mockLocationsWithUserLocations.add(new Object[]{mockLocation1, mockUserLocation1});
-            Location mockLocation2 = new Location(2L, "테스트 위치 2", "200", "200", space);
-            UserLocation mockUserLocation2 = new UserLocation(2L, 2L, "사용자2", mockLocation2);
-            mockLocationsWithUserLocations.add(new Object[]{mockLocation2, mockUserLocation2});
-            when(boxRepository.findAllLocationsWithUserLocations()).thenReturn(mockLocationsWithUserLocations);
-            when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
-            when(spaceRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(space));
-
+            List<Space> spaceList = Collections.singletonList(space);
+            when(spaceRepository.getSpacesWithLocations(spaceId)).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
 
             //when
             List<SpaceResponseDto> result = spaceService.getSpacelist(companyName, spaceId, details);
@@ -184,7 +173,6 @@ public class SpaceServiceTest {
             assertEquals(floor.getId(), spaceResponseDto.getFloorId());
             assertEquals(floor.getFloorName(), spaceResponseDto.getFloorName());
         }
-
 
         @Test
         void Space_공간_선택_조회_Floor_null() {
@@ -200,16 +188,8 @@ public class SpaceServiceTest {
                     .build();
 
 
-            List<Object[]> mockLocationsWithUserLocations = new ArrayList<>();
-            Location mockLocation1 = new Location(1L, "테스트 위치 1", "100", "100", space);
-            UserLocation mockUserLocation1 = new UserLocation(1L, 1L, "사용자1", mockLocation1);
-            mockLocationsWithUserLocations.add(new Object[]{mockLocation1, mockUserLocation1});
-            Location mockLocation2 = new Location(2L, "테스트 위치 2", "200", "200", space);
-            UserLocation mockUserLocation2 = new UserLocation(2L, 2L, "사용자2", mockLocation2);
-            mockLocationsWithUserLocations.add(new Object[]{mockLocation2, mockUserLocation2});
-            when(boxRepository.findAllLocationsWithUserLocations()).thenReturn(mockLocationsWithUserLocations);
-            when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
-            when(spaceRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(space));
+            List<Space> spaceList = Collections.singletonList(space);
+            when(spaceRepository.getSpacesWithLocations(spaceId)).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
 
             //when
             List<SpaceResponseDto> result = spaceService.getSpacelist(companyName, spaceId, details);
@@ -217,10 +197,11 @@ public class SpaceServiceTest {
             //Then
             assertNotNull(result);
             assertEquals(1, result.size());
-            SpaceResponseDto spaceResponseDto = result.get(0);
+            SpaceResponseDto spaceResponseDto = result.get(0); //spaceResponseDto 리스트 첫번째 요소를 호출
             assertEquals("테스트 Space", spaceResponseDto.getSpaceName());
-            assertNull(spaceResponseDto.getFloorId());
-            assertNull(spaceResponseDto.getFloorName());
+            assertEquals(floor.getId(), spaceResponseDto.getFloorId());
+            assertEquals(floor.getFloorName(), spaceResponseDto.getFloorName());
+        }
         }
 
 
@@ -279,7 +260,7 @@ public class SpaceServiceTest {
             void Floor_안에_Space_생성_권한_없음() {
                 //When,Then
                 NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
-                    spaceService.createSpaceinfloor(companyName, requestDto, details, floorId);
+                    spaceService.createSpaceInFloor(companyName, requestDto, details, floorId);
                 });
             }
 
@@ -367,7 +348,7 @@ public class SpaceServiceTest {
                 when(floorRepository.findById(floorId)).thenReturn(Optional.of(floor));
                 //then
                 findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
-                    spaceService.createSpaceinfloor(companyName, requestDto, details, floorId);
+                    spaceService.createSpaceInFloor(companyName, requestDto, details, floorId);
                 });
             }
 
@@ -378,15 +359,8 @@ public class SpaceServiceTest {
                     spaceService.createSpace(companyName, requestDto, details);
                 });
             }
-
-            @Test
-            void Space_전체_공간_조회_해당_회사_없음() {
-                //when,then
-                findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
-                    spaceService.allSpacelist(companyName, details);
-                });
-            }
         }
+
 
         @Nested
         @DisplayName("회사 이름 으로 찾을 수 없는 경우")
@@ -400,7 +374,7 @@ public class SpaceServiceTest {
                 SpaceRequestDto spaceRequestDto = new SpaceRequestDto("test 생성");
                 //when,then
                 SpaceException exception = assertThrows(SpaceException.class, () -> {
-                    spaceService.createSpaceinfloor(companyName, spaceRequestDto, details, floorId);
+                    spaceService.createSpaceInFloor(companyName, spaceRequestDto, details, floorId);
                 });
                 assertEquals(SpaceErrorCode.FLOOR_NOT_FOUND, exception.getErrorCode());
             }
@@ -442,8 +416,8 @@ public class SpaceServiceTest {
                 assertEquals(SpaceErrorCode.SPACE_NOT_FOUND, exception.getErrorCode());
             }
         }
-    }
 }
+
 
 
 

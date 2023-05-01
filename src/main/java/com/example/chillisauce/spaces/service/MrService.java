@@ -5,7 +5,6 @@ import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.spaces.dto.MrResponseDto;
-import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
@@ -36,7 +35,7 @@ public class MrService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto createMr (String companyName, Long spaceId, MrRequestDto mrRequestDto, UserDetailsImpl details){
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
@@ -50,7 +49,7 @@ public class MrService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto updateMr(String companyName, Long mrId, MrRequestDto mrRequestDto, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Mr mr = findCompanyNameAndMrId(companyName,mrId);
@@ -62,7 +61,7 @@ public class MrService {
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto deleteMr(String companyName, Long mrId, UserDetailsImpl details) {
-        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Mr mr = findCompanyNameAndMrId(companyName,mrId);
@@ -97,6 +96,7 @@ public class MrService {
         }
         return mrResponseDtoList;
     }
+
 
     //companyName find , MrId 두개 합쳐놓은 메서드
     public Mr findCompanyNameAndMrId(String companyName, Long mrId) {
