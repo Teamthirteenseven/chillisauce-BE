@@ -1,14 +1,8 @@
 package com.example.chillisauce.jwt;
 
 import com.example.chillisauce.security.UserDetailsServiceImpl;
-import com.example.chillisauce.users.dto.TokenDto;
-import com.example.chillisauce.users.entity.RefreshToken;
+
 import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.entity.UserRoleEnum;
-import com.example.chillisauce.users.exception.UserErrorCode;
-import com.example.chillisauce.users.exception.UserException;
-import com.example.chillisauce.users.repository.RefreshTokenRepository;
-import com.example.chillisauce.users.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -27,20 +21,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtUtil {
-    public static final String ACCESS_TOKEN = "Access_Token";   //헤더에 명시할 이름 기존 Authorization 에서 변경
-    public static final String REFRESH_TOKEN = "Refresh_Token"; //엑세스토큰과 같이 리프레시토큰을 보내기 때문에 헤더에 같이 추가됨.
+
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
 
     private final UserDetailsServiceImpl userDetailsService;       //스프링 시큐리티 의존성 주입
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
 
     @Value("${jwt.secret.key}") //절대 보여주지마...!
     private String secretKey;
@@ -54,42 +44,34 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // header 토큰 가져오기
-    public String getHeaderToken(HttpServletRequest request, String type) {
-        String bearerToken = type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) : request.getHeader(REFRESH_TOKEN);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
-            return bearerToken.substring(7);
-
-        return type.equals("Access") ? request.getHeader(AUTHORIZATION_HEADER) : request.getHeader(REFRESH_TOKEN);
+    /*  header 토큰 가져오기 */
+    public String getHeaderToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); {
+            if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+                return bearerToken.substring(7);
+        }
+        return null;
     }
 
-    // 토큰 생성
-    public TokenDto createAllToken(String email) {
-        return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
-    }
-
-    public String createToken(String email, String type) {
-        //토큰의 payload에 들어가는 유저정보가 많아서 유저의 정보를 간편하게 가져오기 위해 사용.
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+    /* 토큰 생성 */
+    public String createToken(User user) {
 
         Date date = new Date();
-        long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(email)
+                        .setSubject(user.getEmail())
                         .claim("userId", user.getId())
                         .claim("role", user.getRole())
                         .claim("username", user.getUsername())
                         .claim("companyName", user.getCompanies().getCompanyName())
-                        .setExpiration(new Date(date.getTime() + time))
+                        .setExpiration(new Date(date.getTime() + getAccessTime()))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
                         .compact();
     }
 
-    // 토큰 검증
+    /* 토큰 검증 */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -106,64 +88,24 @@ public class JwtUtil {
         return false;
     }
 
-    //리프레시 토큰 검증
-    public Boolean refreshTokenValidation(String token) {
-        //1차 토큰 검증
-        if (!validateToken(token)) return false;
 
-
-        //DB에 저장한 토큰 비교
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
-        log.info("DB에 저장된 리프레시토큰={}", refreshToken);
-        String checkedRefresh = refreshToken.get().getRefreshToken().substring(7);
-        log.info("DB에 저장된 리프레시토큰 Bearer 제거={}", checkedRefresh);
-        return token.equals(checkedRefresh);
-
-    }
-
-
-    //토큰의 정보를 추출(.getSubject()의 사용으로 반환타입을 Claims가 아닌 String으로 사용)
+    /* 토큰 정보 추출 */
     @Transactional
     public String getUserInfoFromToken(String token) {
 
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    //스프링 시큐리티 인증객체 생성
+    /* 스프링 시큐리티 인증객체 생성 */
     @Transactional
     public Authentication createAuthentication(String email) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-    //  토큰 헤더 설정
-    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-        response.setHeader(AUTHORIZATION_HEADER, accessToken);  //리프레시 토큰의 헤더와 일관성을 위해 사용
-    }
-
-    //토큰 만료시간 static변수 -> 메서드
+    /* 토큰 만료 시간 */
     public long getAccessTime() {
-        return 8 * 60 * 60 * 1000L; //2시간 -> 8시간으로 수정 오류 해결하면 다시 원복예정
-//        return 5 * 60 * 1000L; //5분
+        return 2 * 60 * 60 * 1000L; // 8시간
     }
 
-    public long getRefreshTime() {
-        return 60 * 60 * 24 * 7 * 1000L;    //7일
-//        return 60  * 10 * 1000L;    // 테스트 10분
-    }
-
-    public String createSuperuserToken(String username, String type) {
-        Date date = new Date();
-        long time = type.equals("Access") ? getAccessTime() : getRefreshTime();
-
-        return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username)
-                        .claim("username", username)
-                        .claim("role", UserRoleEnum.SUPERUSER)
-                        .setExpiration(new Date(date.getTime() + time))
-                        .setIssuedAt(date)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
-    }
 }
