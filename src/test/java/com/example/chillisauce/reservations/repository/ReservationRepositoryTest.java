@@ -64,7 +64,7 @@ class ReservationRepositoryTest {
     private MrRepository meetingRoomRepository;
 
     @Nested
-    @DisplayName("save 메서드를 호출할 때")
+    @DisplayName("save 메서드는")
     class SaveTestCase {
         @Test
         @Transactional
@@ -118,7 +118,7 @@ class ReservationRepositoryTest {
     }
 
     @Nested
-    @DisplayName("시간 중복 예약을 찾는 메서드를 호출할 때")
+    @DisplayName("findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan 메서드는")
     class FindDuplicatedTestCase {
         @Test
         public void 여러_스레드에서_접근() throws InterruptedException {
