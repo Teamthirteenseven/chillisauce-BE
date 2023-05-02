@@ -102,6 +102,7 @@ public class SpaceService {
         }
         List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
 
+
         return spaceResponseDto;
     }
 
