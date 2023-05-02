@@ -144,12 +144,13 @@ class ReservationControllerTest {
     @Nested
     @DisplayName("예약 타임테이블 GET 요청 시")
     class GetReservationTimeTableTestCase {
+        // given
+        String url = "/reservations/1";
+        ReservationTimetableResponseDto timeTable = getReservationTimetable();
         @Test
         @WithMockUser
         void 특정날짜_특정회의실의_예약테이블을_반환한다() throws Exception {
             // given
-            String url = "/reservations/1";
-            ReservationTimetableResponseDto timeTable = getReservationTimetable();
             when(reservationService.getReservationTimetable(any(), anyLong(), any())).thenReturn(timeTable);
 
             // when
