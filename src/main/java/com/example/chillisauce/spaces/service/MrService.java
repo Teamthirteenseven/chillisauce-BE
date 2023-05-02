@@ -41,7 +41,7 @@ public class MrService {
         Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
         Mr mr = new Mr(mrRequestDto);
         mrRepository.save(mr);
-        space.addLocation(mr);//mr.setSpace(space); 기존 set addMr 메서드로 교체, space 에 mr 연결
+        space.addLocation(mr);
         return new MrResponseDto(mr);
     }
 
@@ -82,19 +82,10 @@ public class MrService {
         );
 
         List<Mr> mrList = mrRepository.findAllByCompaniesId(companies.getId());
-        List<MrResponseDto> mrResponseDtoList = new ArrayList<>();
 
-        for (Mr mr : mrList) {
-            MrResponseDto mrResponseDto = MrResponseDto.builder()
-                    .mrId(mr.getId())
-                    .mrName(mr.getLocationName())
-                    .x(mr.getX())
-                    .y(mr.getY())
-                    .reservationList(mr.getReservations().stream().map(ReservationResponseDto::new).collect(Collectors.toList()))
-                    .build();
-            mrResponseDtoList.add(mrResponseDto);
-        }
-        return mrResponseDtoList;
+        return mrList.stream()
+                .map(MrResponseDto::new)
+                .collect(Collectors.toList());
     }
 
 

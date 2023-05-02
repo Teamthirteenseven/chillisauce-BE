@@ -100,15 +100,10 @@ public class SpaceService {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-
         List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
 
 
-        if (!spaceResponseDto.isEmpty()) {
-            SpaceResponseDto responseDto = spaceResponseDto.get(0);
-            return Collections.singletonList(responseDto);
-        }
-        return Collections.emptyList();
+        return spaceResponseDto;
     }
 
 
