@@ -5,6 +5,7 @@ import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.security.UserDetailsServiceImpl;
 import com.example.chillisauce.spaces.entity.UserLocation;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
@@ -21,7 +22,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +51,10 @@ class AdminServiceTest {
     private ReservationRepository reservationRepository;
     @Mock
     private UserLocationRepository userLocationRepository;
+    @Mock
+    CacheManager cacheManager;
+    @Mock
+    Cache userDetailsCache;
 
     @Nested
     @DisplayName("성공 케이스")
@@ -119,11 +128,13 @@ class AdminServiceTest {
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
+                    .updateRole(true)
                     .role(UserRoleEnum.MANAGER)
                     .build();
 
             User user = User.builder()
                     .id(2L)
+                    .email("123@123.com")
                     .role(UserRoleEnum.USER)
                     .username("손흥민")
                     .companies(Companies.builder()
@@ -135,11 +146,15 @@ class AdminServiceTest {
             when(userRepository.findByIdAndCompanies_CompanyName(2L, user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
             when(userRepository.save(any())).thenReturn(user);
             UserDetailResponseDto result = adminService.editUser(2L, details, requestDto);
+            when(cacheManager.getCache("UserDetails")).thenReturn(userDetailsCache);
 
             //then
             assertThat(result).isNotNull();
             assertThat(result.getRole()).isEqualTo(UserRoleEnum.MANAGER);
             assertThat(user.getRole()).isEqualTo(UserRoleEnum.MANAGER);
+
+            adminService.evictCacheByEmail(user.getEmail());
+            verify(userDetailsCache, times(1)).evict(user.getEmail());
 
         }
 
@@ -183,6 +198,7 @@ class AdminServiceTest {
             when(scheduleRepository.findAllByUserId(any())).thenReturn(List.of(schedule));
             when(reservationRepository.findAllByUserId(any())).thenReturn(List.of(reservation));
             when(userLocationRepository.findByUserId(any())).thenReturn(Optional.of(location));
+            when(cacheManager.getCache("UserDetails")).thenReturn(userDetailsCache);
 
             //when
             String result = adminService.deleteUser(2L, details);
@@ -194,6 +210,7 @@ class AdminServiceTest {
             verify(reservationRepository).deleteAll(List.of(reservation));
             verify(userLocationRepository).delete(location);
             verify(userRepository).delete(user);
+            verify(userDetailsCache, times(1)).evict(user.getEmail());
         }
 
     }
