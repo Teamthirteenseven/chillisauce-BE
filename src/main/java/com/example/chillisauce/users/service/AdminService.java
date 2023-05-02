@@ -19,6 +19,7 @@ import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.util.EnumUtils;
@@ -64,6 +65,9 @@ public class AdminService {
 
     /* 사원 권한 수정 */
     @Transactional
+    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
+    @CacheEvict(cacheNames = "UserDetails", allEntries = true)
+    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
     public UserDetailResponseDto editUser(Long userId, UserDetailsImpl userDetails, RoleDeptUpdateRequestDto requestDto) {
         User user = userDetails.getUser();
         if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {
@@ -87,6 +91,9 @@ public class AdminService {
 
     /* 사원 삭제 */
     @Transactional
+    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
+    @CacheEvict(cacheNames = "UserDetails", allEntries = true)
+    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
     public String deleteUser(Long userId,UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
