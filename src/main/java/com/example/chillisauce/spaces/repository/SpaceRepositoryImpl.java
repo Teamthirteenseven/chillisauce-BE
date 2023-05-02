@@ -40,7 +40,6 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                         (s, s.getFloor() != null ? s.getFloor().getId() : null, s.getFloor() != null ? s.getFloor().getFloorName() : null))
                 .collect(Collectors.toList());
     }
-
     /*
     space 전체 조회
     */
