@@ -12,7 +12,6 @@ public interface SpaceRepository extends JpaRepository<Space, Long>, SpaceReposi
     Optional<Space> findByIdAndCompanies(Long spaceId, Companies companies);
     List<SpaceResponseDto> getSpacesWithLocations(Long spaceId);
     List<SpaceResponseDto> getSpaceAllList(String companyName);
-//    List<SpaceResponseDto> getSpaceAllList();
 
 }
 

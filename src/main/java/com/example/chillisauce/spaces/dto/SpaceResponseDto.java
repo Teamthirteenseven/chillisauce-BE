@@ -58,6 +58,9 @@ public class SpaceResponseDto {
         this.spaceName = space.getSpaceName();
         this.floorId = floor.getId();
         this.floorName = floor.getFloorName();
+        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> new BoxResponseDto((Box) x)).toList();
+        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
+        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> new MultiBoxResponseDto((MultiBox) x)).toList();
     }
 
 }
