@@ -1,4 +1,4 @@
-package com.example.chillisauce.reservations.service;
+package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;

@@ -518,53 +518,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#POST-User">사원 회원 가입</a></li>
 <li><a href="#POST-Email">Email 발송</a></li>
 <li><a href="#GET-certification">인증번호 확인</a></li>
+<li><a href="#GET-User-Search-Result">유저 검색</a></li>
 <li><a href="#POST-login">login</a></li>
 </ul>
 </li>
-<li><a href="#Admin-API">Admin API</a></li>
-<li><a href="#GET-getAllUsers">사원 목록 조회</a>
+<li><a href="#Admin-API">Admin API</a>
 <ul class="sectlevel2">
-<li><a href="#GET-getAllUsers_curl_request">Curl request</a></li>
-<li><a href="#GET-getAllUsers_http_request">HTTP request</a></li>
-<li><a href="#GET-getAllUsers_http_response">HTTP response</a></li>
-<li><a href="#GET-getAllUsers_httpie_request">HTTPie request</a></li>
-<li><a href="#GET-getAllUsers_request_body">Request body</a></li>
-<li><a href="#GET-getAllUsers_response_body">Response body</a></li>
-<li><a href="#GET-getAllUsers_response_fields">Response fields</a></li>
-</ul>
-</li>
-<li><a href="#GET-getUsers">사원 선택 조회</a>
-<ul class="sectlevel2">
-<li><a href="#GET-getUsers_curl_request">Curl request</a></li>
-<li><a href="#GET-getUsers_http_request">HTTP request</a></li>
-<li><a href="#GET-getUsers_http_response">HTTP response</a></li>
-<li><a href="#GET-getUsers_httpie_request">HTTPie request</a></li>
-<li><a href="#GET-getUsers_request_body">Request body</a></li>
-<li><a href="#GET-getUsers_response_body">Response body</a></li>
-<li><a href="#GET-getUsers_response_fields">Response fields</a></li>
-</ul>
-</li>
-<li><a href="#PATCH-editUser">사원 권한 수정</a>
-<ul class="sectlevel2">
-<li><a href="#PATCH-editUser_curl_request">Curl request</a></li>
-<li><a href="#PATCH-editUser_http_request">HTTP request</a></li>
-<li><a href="#PATCH-editUser_http_response">HTTP response</a></li>
-<li><a href="#PATCH-editUser_httpie_request">HTTPie request</a></li>
-<li><a href="#PATCH-editUser_request_body">Request body</a></li>
-<li><a href="#PATCH-editUser_request_fields">Request fields</a></li>
-<li><a href="#PATCH-editUser_response_body">Response body</a></li>
-<li><a href="#PATCH-editUser_response_fields">Response fields</a></li>
-</ul>
-</li>
-<li><a href="#DELETE-deleteUser">사원 삭제</a>
-<ul class="sectlevel2">
-<li><a href="#DELETE-deleteUser_curl_request">Curl request</a></li>
-<li><a href="#DELETE-deleteUser_http_request">HTTP request</a></li>
-<li><a href="#DELETE-deleteUser_http_response">HTTP response</a></li>
-<li><a href="#DELETE-deleteUser_httpie_request">HTTPie request</a></li>
-<li><a href="#DELETE-deleteUser_request_body">Request body</a></li>
-<li><a href="#DELETE-deleteUser_response_body">Response body</a></li>
-<li><a href="#DELETE-deleteUser_response_fields">Response fields</a></li>
+<li><a href="#GET-getAllUsers">사원 목록 조회</a></li>
+<li><a href="#GET-getUsers">사원 선택 조회</a></li>
+<li><a href="#PATCH-editUser">사원 권한 수정</a></li>
+<li><a href="#DELETE-deleteUser">사원 삭제</a></li>
 </ul>
 </li>
 </ul>
@@ -607,7 +570,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 180
+Content-Length: 169
 Host: localhost:8080
 
 {
@@ -631,7 +594,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 175
+Content-Length: 167
 
 {
   "message" : "예약 등록 성공",
@@ -822,7 +785,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 506
+Content-Length: 486
 
 {
   "message" : "전체 예약 조회 성공",
@@ -996,7 +959,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 506
+Content-Length: 486
 
 {
   "message" : "전체 예약 조회 성공",
@@ -1170,7 +1133,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 741
+Content-Length: 711
 
 {
   "message" : "회원의 예약 조회 성공",
@@ -1376,7 +1339,7 @@ Content-Length: 741
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 180
+Content-Length: 169
 Host: localhost:8080
 
 {
@@ -1400,7 +1363,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 175
+Content-Length: 167
 
 {
   "message" : "예약 수정 성공",
@@ -1591,7 +1554,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "예약 삭제 성공",
@@ -1703,7 +1666,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 531
+Content-Length: 513
 
 {
   "message" : "개인 전체 스케줄 조회 성공",
@@ -1868,7 +1831,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 379
+Content-Length: 361
 
 {
   "message" : "당일 스케줄 조회 성공",
@@ -2022,7 +1985,7 @@ Content-Length: 379
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 180
+Content-Length: 172
 Host: localhost:8080
 
 {
@@ -2043,7 +2006,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 252
+Content-Length: 242
 
 {
   "message" : "스케줄 등록 성공",
@@ -2241,7 +2204,7 @@ Content-Length: 252
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 194
+Content-Length: 186
 Host: localhost:8080
 
 {
@@ -2262,7 +2225,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 266
+Content-Length: 256
 
 {
   "message" : "스케줄 수정 성공",
@@ -2461,7 +2424,7 @@ Content-Length: 266
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 74
+Content-Length: 70
 Host: localhost:8080
 
 {
@@ -2478,7 +2441,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "박스 생성 성공",
@@ -2622,7 +2585,7 @@ Content-Length: 81
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 74
+Content-Length: 70
 Host: localhost:8080
 
 {
@@ -2639,7 +2602,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "박스 수정 성공",
@@ -2788,7 +2751,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "박스 삭제 완료",
@@ -2893,7 +2856,7 @@ Content-Length: 81
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 46
+Content-Length: 44
 Host: localhost:8080
 
 {
@@ -2908,7 +2871,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 80
+Content-Length: 76
 
 {
   "message" : "Floor 생성 성공",
@@ -3036,7 +2999,7 @@ Content-Length: 80
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 46
+Content-Length: 44
 Host: localhost:8080
 
 {
@@ -3051,7 +3014,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 80
+Content-Length: 76
 
 {
   "message" : "Floor 수정 성공",
@@ -3186,7 +3149,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 80
+Content-Length: 76
 
 {
   "message" : "Floor 삭제 성공",
@@ -3286,7 +3249,7 @@ Content-Length: 80
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 46
+Content-Length: 44
 Host: localhost:8080
 
 {
@@ -3301,7 +3264,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 183
+Content-Length: 175
 
 {
   "message" : "해당 Floor 조회 성공",
@@ -3452,7 +3415,7 @@ Content-Length: 183
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 46
+Content-Length: 44
 Host: localhost:8080
 
 {
@@ -3467,7 +3430,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 176
+Content-Length: 168
 
 {
   "message" : "Floor 조회 성공",
@@ -3625,7 +3588,7 @@ Content-Length: 176
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 72
+Content-Length: 68
 Host: localhost:8080
 
 {
@@ -3642,7 +3605,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 84
+Content-Length: 80
 
 {
   "message" : "미팅룸 생성 성공",
@@ -3786,7 +3749,7 @@ Content-Length: 84
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 66
+Content-Length: 62
 Host: localhost:8080
 
 {
@@ -3803,7 +3766,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 84
+Content-Length: 80
 
 {
   "message" : "미팅룸 수정 성공",
@@ -3952,7 +3915,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 84
+Content-Length: 80
 
 {
   "message" : "미팅룸 삭제 완료",
@@ -4059,7 +4022,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 213
+Content-Length: 203
 
 {
   "message" : "미팅룸 조회 성공",
@@ -4203,7 +4166,7 @@ Content-Length: 213
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 84
+Content-Length: 80
 Host: localhost:8080
 
 {
@@ -4220,7 +4183,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 83
+Content-Length: 79
 
 {
   "message" : "MultiBox 생성 성공",
@@ -4364,7 +4327,7 @@ Content-Length: 83
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 80
+Content-Length: 76
 Host: localhost:8080
 
 {
@@ -4381,7 +4344,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 83
+Content-Length: 79
 
 {
   "message" : "MultiBox 수정 성공",
@@ -4530,7 +4493,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 83
+Content-Length: 79
 
 {
   "message" : "MultiBox 삭제 완료",
@@ -4636,7 +4599,7 @@ Content-Length: 83
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 56
+Content-Length: 53
 Host: localhost:8080
 
 {
@@ -4652,7 +4615,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "공간 생성 성공",
@@ -4788,7 +4751,7 @@ Content-Length: 81
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 56
+Content-Length: 53
 Host: localhost:8080
 
 {
@@ -4804,7 +4767,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "공간 생성 성공",
@@ -4946,7 +4909,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 260
+Content-Length: 248
 
 {
   "message" : "공간 조회 성공",
@@ -5104,7 +5067,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 260
+Content-Length: 248
 
 {
   "message" : "공간 조회 성공",
@@ -5256,7 +5219,7 @@ Content-Length: 260
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 68
+Content-Length: 65
 Host: localhost:8080
 
 {
@@ -5272,7 +5235,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "공간 수정 성공",
@@ -5414,7 +5377,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "공간 삭제 성공",
@@ -5521,7 +5484,7 @@ Content-Length: 81
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 63
+Content-Length: 59
 Host: localhost:8080
 
 {
@@ -5538,7 +5501,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 95
+Content-Length: 91
 
 {
   "message" : "사용자 등록 및 이동 완료",
@@ -5688,7 +5651,7 @@ Content-Length: 95
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/signup/admin HTTP/1.1
 Content-Type: application/json
 Accept: application/json
-Content-Length: 190
+Content-Length: 183
 Host: localhost:8080
 
 {
@@ -5708,7 +5671,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 124
+Content-Length: 118
 
 {
   "message" : "관리자 회원가입 성공",
@@ -5881,7 +5844,7 @@ Content-Length: 124
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/signup/user HTTP/1.1
 Content-Type: application/json
 Accept: application/json
-Content-Length: 152
+Content-Length: 146
 Host: localhost:8080
 
 {
@@ -5900,7 +5863,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 88
+Content-Length: 84
 
 {
   "message" : "일반 회원 가입 성공",
@@ -6053,7 +6016,7 @@ Content-Length: 88
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/signup/email HTTP/1.1
 Content-Type: application/json
 Accept: application/json
-Content-Length: 29
+Content-Length: 27
 Host: localhost:8080
 
 {
@@ -6068,7 +6031,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 115
+Content-Length: 111
 
 {
   "message" : "이메일을 발송하였습니다",
@@ -6193,7 +6156,7 @@ Content-Length: 115
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/signup/match HTTP/1.1
 Content-Type: application/json
 Accept: application/json
-Content-Length: 32
+Content-Length: 30
 Host: localhost:8080
 
 {
@@ -6208,7 +6171,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 100
+Content-Length: 96
 
 {
   "message" : "인증번호가 확인 되었습니다.",
@@ -6312,6 +6275,153 @@ Content-Length: 100
 </div>
 </div>
 <div class="sect2">
+<h3 id="GET-User-Search-Result"><a class="link" href="#GET-User-Search-Result">유저 검색</a></h3>
+<div class="sect3">
+<h4 id="GET-User-Search-Result_curl_request"><a class="link" href="#GET-User-Search-Result_curl_request">Curl request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/users/search?name=%ED%99%8D' -i -X GET \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer Token' \
+    -H 'Accept: application/json'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="GET-User-Search-Result_http_request"><a class="link" href="#GET-User-Search-Result_http_request">HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /users/search?name=%ED%99%8D HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer Token
+Accept: application/json
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="GET-User-Search-Result_http_response"><a class="link" href="#GET-User-Search-Result_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 293
+
+{
+  "message" : "유저 검색 성공",
+  "statusCode" : 200,
+  "data" : [ {
+    "userId" : 1,
+    "email" : "test1@test1.com",
+    "username" : "홍길동",
+    "role" : "USER"
+  }, {
+    "userId" : 2,
+    "email" : "test2@test2.com",
+    "username" : "안재홍",
+    "role" : "USER"
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="GET-User-Search-Result_httpie_request"><a class="link" href="#GET-User-Search-Result_httpie_request">HTTPie request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ http GET 'http://localhost:8080/users/search?name=%ED%99%8D' \
+    'Content-Type:application/json' \
+    'Authorization:Bearer Token' \
+    'Accept:application/json'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="GET-User-Search-Result_request_body"><a class="link" href="#GET-User-Search-Result_request_body">Request body</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="GET-User-Search-Result_response_body"><a class="link" href="#GET-User-Search-Result_response_body">Response body</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code>{
+  "message" : "유저 검색 성공",
+  "statusCode" : 200,
+  "data" : [ {
+    "userId" : 1,
+    "email" : "test1@test1.com",
+    "username" : "홍길동",
+    "role" : "USER"
+  }, {
+    "userId" : 2,
+    "email" : "test2@test2.com",
+    "username" : "안재홍",
+    "role" : "USER"
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="GET-User-Search-Result_response_fields"><a class="link" href="#GET-User-Search-Result_response_fields">Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>statusCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">결과메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">결과값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">권한</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
 <h3 id="POST-login"><a class="link" href="#POST-login">login</a></h3>
 <div class="sect3">
 <h4 id="POST-login_curl_request"><a class="link" href="#POST-login_curl_request">Curl request</a></h4>
@@ -6334,7 +6444,7 @@ Content-Length: 100
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/login HTTP/1.1
 Content-Type: application/json
 Accept: application/json
-Content-Length: 56
+Content-Length: 53
 Host: localhost:8080
 
 {
@@ -6350,7 +6460,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 77
+Content-Length: 73
 
 {
   "message" : "로그인 성공",
@@ -6465,14 +6575,10 @@ Content-Length: 77
 <div class="sect1">
 <h2 id="Admin-API"><a class="link" href="#Admin-API">Admin API</a></h2>
 <div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
-<h2 id="GET-getAllUsers"><a class="link" href="#GET-getAllUsers">사원 목록 조회</a></h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="GET-getAllUsers_curl_request"><a class="link" href="#GET-getAllUsers_curl_request">Curl request</a></h3>
+<h3 id="GET-getAllUsers"><a class="link" href="#GET-getAllUsers">사원 목록 조회</a></h3>
+<div class="sect3">
+<h4 id="GET-getAllUsers_curl_request"><a class="link" href="#GET-getAllUsers_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/admin/users' -i -X GET \
@@ -6482,8 +6588,8 @@ Content-Length: 77
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getAllUsers_http_request"><a class="link" href="#GET-getAllUsers_http_request">HTTP request</a></h3>
+<div class="sect3">
+<h4 id="GET-getAllUsers_http_request"><a class="link" href="#GET-getAllUsers_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /admin/users HTTP/1.1
@@ -6494,13 +6600,13 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getAllUsers_http_response"><a class="link" href="#GET-getAllUsers_http_response">HTTP response</a></h3>
+<div class="sect3">
+<h4 id="GET-getAllUsers_http_response"><a class="link" href="#GET-getAllUsers_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 376
+Content-Length: 360
 
 {
   "message" : "사원 전체 조회 성공",
@@ -6522,8 +6628,8 @@ Content-Length: 376
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getAllUsers_httpie_request"><a class="link" href="#GET-getAllUsers_httpie_request">HTTPie request</a></h3>
+<div class="sect3">
+<h4 id="GET-getAllUsers_httpie_request"><a class="link" href="#GET-getAllUsers_httpie_request">HTTPie request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ http GET 'http://localhost:8080/admin/users' \
@@ -6533,16 +6639,16 @@ Content-Length: 376
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getAllUsers_request_body"><a class="link" href="#GET-getAllUsers_request_body">Request body</a></h3>
+<div class="sect3">
+<h4 id="GET-getAllUsers_request_body"><a class="link" href="#GET-getAllUsers_request_body">Request body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code></code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getAllUsers_response_body"><a class="link" href="#GET-getAllUsers_response_body">Response body</a></h3>
+<div class="sect3">
+<h4 id="GET-getAllUsers_response_body"><a class="link" href="#GET-getAllUsers_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -6565,8 +6671,8 @@ Content-Length: 376
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getAllUsers_response_fields"><a class="link" href="#GET-getAllUsers_response_fields">Response fields</a></h3>
+<div class="sect3">
+<h4 id="GET-getAllUsers_response_fields"><a class="link" href="#GET-getAllUsers_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -6625,12 +6731,10 @@ Content-Length: 376
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="GET-getUsers"><a class="link" href="#GET-getUsers">사원 선택 조회</a></h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="GET-getUsers_curl_request"><a class="link" href="#GET-getUsers_curl_request">Curl request</a></h3>
+<h3 id="GET-getUsers"><a class="link" href="#GET-getUsers">사원 선택 조회</a></h3>
+<div class="sect3">
+<h4 id="GET-getUsers_curl_request"><a class="link" href="#GET-getUsers_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/admin/users/2' -i -X GET \
@@ -6640,8 +6744,8 @@ Content-Length: 376
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getUsers_http_request"><a class="link" href="#GET-getUsers_http_request">HTTP request</a></h3>
+<div class="sect3">
+<h4 id="GET-getUsers_http_request"><a class="link" href="#GET-getUsers_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /admin/users/2 HTTP/1.1
@@ -6652,13 +6756,13 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getUsers_http_response"><a class="link" href="#GET-getUsers_http_response">HTTP response</a></h3>
+<div class="sect3">
+<h4 id="GET-getUsers_http_response"><a class="link" href="#GET-getUsers_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 202
+Content-Length: 193
 
 {
   "message" : "사원 조회 성공",
@@ -6673,8 +6777,8 @@ Content-Length: 202
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getUsers_httpie_request"><a class="link" href="#GET-getUsers_httpie_request">HTTPie request</a></h3>
+<div class="sect3">
+<h4 id="GET-getUsers_httpie_request"><a class="link" href="#GET-getUsers_httpie_request">HTTPie request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ http GET 'http://localhost:8080/admin/users/2' \
@@ -6684,16 +6788,16 @@ Content-Length: 202
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getUsers_request_body"><a class="link" href="#GET-getUsers_request_body">Request body</a></h3>
+<div class="sect3">
+<h4 id="GET-getUsers_request_body"><a class="link" href="#GET-getUsers_request_body">Request body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code></code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getUsers_response_body"><a class="link" href="#GET-getUsers_response_body">Response body</a></h3>
+<div class="sect3">
+<h4 id="GET-getUsers_response_body"><a class="link" href="#GET-getUsers_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -6709,8 +6813,8 @@ Content-Length: 202
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GET-getUsers_response_fields"><a class="link" href="#GET-getUsers_response_fields">Response fields</a></h3>
+<div class="sect3">
+<h4 id="GET-getUsers_response_fields"><a class="link" href="#GET-getUsers_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -6764,12 +6868,10 @@ Content-Length: 202
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="PATCH-editUser"><a class="link" href="#PATCH-editUser">사원 권한 수정</a></h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="PATCH-editUser_curl_request"><a class="link" href="#PATCH-editUser_curl_request">Curl request</a></h3>
+<h3 id="PATCH-editUser"><a class="link" href="#PATCH-editUser">사원 권한 수정</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_curl_request"><a class="link" href="#PATCH-editUser_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/admin/users/2' -i -X PATCH \
@@ -6783,15 +6885,15 @@ Content-Length: 202
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="PATCH-editUser_http_request"><a class="link" href="#PATCH-editUser_http_request">HTTP request</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_http_request"><a class="link" href="#PATCH-editUser_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /admin/users/2 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer Token
 Accept: application/json
-Content-Length: 50
+Content-Length: 47
 Host: localhost:8080
 
 {
@@ -6801,13 +6903,13 @@ Host: localhost:8080
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="PATCH-editUser_http_response"><a class="link" href="#PATCH-editUser_http_response">HTTP response</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_http_response"><a class="link" href="#PATCH-editUser_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 205
+Content-Length: 196
 
 {
   "message" : "정보 수정 성공",
@@ -6822,8 +6924,8 @@ Content-Length: 205
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="PATCH-editUser_httpie_request"><a class="link" href="#PATCH-editUser_httpie_request">HTTPie request</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_httpie_request"><a class="link" href="#PATCH-editUser_httpie_request">HTTPie request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
@@ -6836,8 +6938,8 @@ Content-Length: 205
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="PATCH-editUser_request_body"><a class="link" href="#PATCH-editUser_request_body">Request body</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_request_body"><a class="link" href="#PATCH-editUser_request_body">Request body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -6847,8 +6949,8 @@ Content-Length: 205
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="PATCH-editUser_request_fields"><a class="link" href="#PATCH-editUser_request_fields">Request fields</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_request_fields"><a class="link" href="#PATCH-editUser_request_fields">Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -6876,8 +6978,8 @@ Content-Length: 205
 </tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="PATCH-editUser_response_body"><a class="link" href="#PATCH-editUser_response_body">Response body</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_response_body"><a class="link" href="#PATCH-editUser_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -6893,8 +6995,8 @@ Content-Length: 205
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="PATCH-editUser_response_fields"><a class="link" href="#PATCH-editUser_response_fields">Response fields</a></h3>
+<div class="sect3">
+<h4 id="PATCH-editUser_response_fields"><a class="link" href="#PATCH-editUser_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -6948,12 +7050,10 @@ Content-Length: 205
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="DELETE-deleteUser"><a class="link" href="#DELETE-deleteUser">사원 삭제</a></h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="DELETE-deleteUser_curl_request"><a class="link" href="#DELETE-deleteUser_curl_request">Curl request</a></h3>
+<h3 id="DELETE-deleteUser"><a class="link" href="#DELETE-deleteUser">사원 삭제</a></h3>
+<div class="sect3">
+<h4 id="DELETE-deleteUser_curl_request"><a class="link" href="#DELETE-deleteUser_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/admin/users/1' -i -X DELETE \
@@ -6963,8 +7063,8 @@ Content-Length: 205
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="DELETE-deleteUser_http_request"><a class="link" href="#DELETE-deleteUser_http_request">HTTP request</a></h3>
+<div class="sect3">
+<h4 id="DELETE-deleteUser_http_request"><a class="link" href="#DELETE-deleteUser_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /admin/users/1 HTTP/1.1
@@ -6975,13 +7075,13 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="DELETE-deleteUser_http_response"><a class="link" href="#DELETE-deleteUser_http_response">HTTP response</a></h3>
+<div class="sect3">
+<h4 id="DELETE-deleteUser_http_response"><a class="link" href="#DELETE-deleteUser_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 81
+Content-Length: 77
 
 {
   "message" : "사원 삭제 성공",
@@ -6991,8 +7091,8 @@ Content-Length: 81
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="DELETE-deleteUser_httpie_request"><a class="link" href="#DELETE-deleteUser_httpie_request">HTTPie request</a></h3>
+<div class="sect3">
+<h4 id="DELETE-deleteUser_httpie_request"><a class="link" href="#DELETE-deleteUser_httpie_request">HTTPie request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ http DELETE 'http://localhost:8080/admin/users/1' \
@@ -7002,16 +7102,16 @@ Content-Length: 81
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="DELETE-deleteUser_request_body"><a class="link" href="#DELETE-deleteUser_request_body">Request body</a></h3>
+<div class="sect3">
+<h4 id="DELETE-deleteUser_request_body"><a class="link" href="#DELETE-deleteUser_request_body">Request body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code></code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="DELETE-deleteUser_response_body"><a class="link" href="#DELETE-deleteUser_response_body">Response body</a></h3>
+<div class="sect3">
+<h4 id="DELETE-deleteUser_response_body"><a class="link" href="#DELETE-deleteUser_response_body">Response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
@@ -7022,8 +7122,8 @@ Content-Length: 81
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="DELETE-deleteUser_response_fields"><a class="link" href="#DELETE-deleteUser_response_fields">Response fields</a></h3>
+<div class="sect3">
+<h4 id="DELETE-deleteUser_response_fields"><a class="link" href="#DELETE-deleteUser_response_fields">Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -7059,10 +7159,11 @@ Content-Length: 81
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-04-30 00:23:45 +0900
+Last updated 2023-05-02 22:55:16 +0900
 </div>
 </div>
 </body>
