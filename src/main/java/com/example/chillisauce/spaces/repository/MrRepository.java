@@ -20,7 +20,6 @@ public interface MrRepository extends JpaRepository <Mr, Long>{
     @Query("SELECT m FROM Mr m JOIN m.reservations r JOIN m.space s WHERE s.companies.id = :companiesId")
     List<Mr> findAllByCompaniesId (@Param("companiesId") Long companiesId);
 
-//    @Query("SELECT m FROM Mr m JOIN m.reservations r WHERE m.space.companies.id = :companiesId")
-//    List<Mr> findAllByCompaniesId (@Param("companiesId") Long companiesId); // 원래코드
+
 
 }
