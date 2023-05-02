@@ -1,7 +1,7 @@
-package com.example.chillisauce.reservations.controller;
+package com.example.chillisauce.users.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
-import com.example.chillisauce.reservations.service.SearchService;
+import com.example.chillisauce.users.service.SearchService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.UserDetailResponseDto;
 import lombok.RequiredArgsConstructor;
