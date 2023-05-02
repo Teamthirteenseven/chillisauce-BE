@@ -7,5 +7,4 @@ import java.util.List;
 public interface SpaceRepositorySupport {
     List<SpaceResponseDto> getSpacesWithLocations(Long spaceId);
     List<SpaceResponseDto> getSpaceAllList(String companyName);
-//    List<SpaceResponseDto> getSpaceAllList();
 }

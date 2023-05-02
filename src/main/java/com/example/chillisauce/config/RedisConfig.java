@@ -1,9 +1,13 @@
 package com.example.chillisauce.config;
 
+import com.example.chillisauce.security.GrantedAuthorityDeserializer;
+import com.example.chillisauce.security.GrantedAuthoritySerializer;
+import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.FloorResponseDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -16,6 +20,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.Duration;
 import java.util.List;
@@ -50,6 +55,16 @@ public class RedisConfig {
                 (objectMapper.getTypeFactory().constructCollectionType(List.class, SpaceResponseDto.class));
         spaceSerializer.setObjectMapper(objectMapper);
 
+        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
+        Jackson2JsonRedisSerializer<UserDetailsImpl> userDetailsSerializer = new Jackson2JsonRedisSerializer<>
+                (objectMapper.getTypeFactory().constructType(UserDetailsImpl.class));
+        userDetailsSerializer.setObjectMapper(objectMapper);
+        SimpleModule grantedAuthorityModule = new SimpleModule();
+        grantedAuthorityModule.addSerializer(GrantedAuthority.class, new GrantedAuthoritySerializer());
+        grantedAuthorityModule.addDeserializer(GrantedAuthority.class, new GrantedAuthorityDeserializer());
+        objectMapper.registerModule(grantedAuthorityModule);
+        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
+
         RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory);
 
         builder.withCacheConfiguration("FloorResponseDtoList",
@@ -66,6 +81,14 @@ public class RedisConfig {
                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(spaceSerializer))
         );
 
+        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
+        builder.withCacheConfiguration("UserDetails",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(120))
+                        .disableCachingNullValues()
+                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(userDetailsSerializer))
+        );
+        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
 
         return builder.build();
     }

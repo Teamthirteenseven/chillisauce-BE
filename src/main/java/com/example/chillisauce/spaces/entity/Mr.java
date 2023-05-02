@@ -44,4 +44,5 @@ public class Mr extends Location{
         this.setY(mrRequestDto.getY());
     }
 
+
 }

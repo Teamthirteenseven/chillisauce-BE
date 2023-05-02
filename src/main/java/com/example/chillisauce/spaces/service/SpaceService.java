@@ -90,7 +90,7 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
-        return spaceResponseDto.isEmpty() ? Collections.emptyList() : Collections.singletonList(spaceResponseDto.get(0));
+        return spaceResponseDto;
     }
 
     //공간 선택 조회
@@ -100,14 +100,10 @@ public class SpaceService {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-
         List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
 
-        if (!spaceResponseDto.isEmpty()) {
-            SpaceResponseDto responseDto = spaceResponseDto.get(0);
-            return Collections.singletonList(responseDto);
-        }
-        return Collections.emptyList();
+
+        return spaceResponseDto;
     }
 
 
