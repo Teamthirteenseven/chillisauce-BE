@@ -21,15 +21,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    // jwt토큰 발급절차에서 subject의 내용이 달라질 경우 이 로직에서도 수정이 필요
     @Override
-    /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
     @Cacheable(cacheNames = {"UserDetails"}, key = "#email")
-    /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        log.info("@@@@@@@@@@@유저 인증객체 생성={}", user);
         return new UserDetailsImpl(user, user.getUsername());
     }
 

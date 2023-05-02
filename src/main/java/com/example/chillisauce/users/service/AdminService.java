@@ -19,6 +19,8 @@ import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,12 +39,13 @@ public class AdminService {
     private final ScheduleRepository scheduleRepository;
     private final ReservationRepository reservationRepository;
     private final UserLocationRepository userLocationRepository;
+    private final CacheManager cacheManager;
 
     /* 사원 목록 전체 조회 */
     @Transactional(readOnly = true)
     public UserListResponseDto getAllUsers(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        
+
         if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {    //어드민과 매니저 권한 동일하게
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
@@ -57,24 +60,21 @@ public class AdminService {
         if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {    //어드민과 매니저 권한 동일하게
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
-        User getUser = userRepository.findByIdAndCompanies_CompanyName(userId, user.getCompanies().getCompanyName()).orElseThrow(
-                () -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        User getUser = findOneUser(userId, user);
 
         return new UserDetailResponseDto(getUser);
     }
 
     /* 사원 권한 수정 */
     @Transactional
-    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
-    @CacheEvict(cacheNames = "UserDetails", allEntries = true)
-    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
     public UserDetailResponseDto editUser(Long userId, UserDetailsImpl userDetails, RoleDeptUpdateRequestDto requestDto) {
         User user = userDetails.getUser();
         if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
-        User getUser = userRepository.findByIdAndCompanies_CompanyName(userId, user.getCompanies().getCompanyName()).orElseThrow(
-                () -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        User getUser = findOneUser(userId, user);
+        String userEmail = getUser.getEmail();
+        evictCacheByEmail(userEmail);   //Evicting user from cache
 
         if (requestDto.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.UNABLE_MODIFY_PERMISSION_FOR_ADMIN);
@@ -89,19 +89,24 @@ public class AdminService {
         return new UserDetailResponseDto(getUser);
     }
 
+    private User findOneUser(Long userId, User user) {
+        return userRepository.findByIdAndCompanies_CompanyName(userId, user.getCompanies().getCompanyName()).orElseThrow(
+                () -> new UserException(UserErrorCode.USER_NOT_FOUND));
+    }
+
     /* 사원 삭제 */
     @Transactional
-    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
-    @CacheEvict(cacheNames = "UserDetails", allEntries = true)
-    /* 테스트1. 캐싱이 된 유저 인증객체의 수정이 생기는 경우 저장되어있는 캐시를 삭제한다. */
     public String deleteUser(Long userId,UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
         //퇴사처리 하려는 사원 찾기
-        User findUser = userRepository.findById(userId).orElseThrow(
+        User getUser = userRepository.findById(userId).orElseThrow(
                 () -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        String userEmail = getUser.getEmail();
+        evictCacheByEmail(userEmail);   //Evicting user from cache
 
         //사원의 스케줄 삭제
         List<Schedule> schedules = scheduleRepository.findAllByUserId(userId);
@@ -116,8 +121,19 @@ public class AdminService {
         userLocation.ifPresent(userLocationRepository::delete);
 
         //회원 삭제
-        userRepository.delete(findUser);
+        userRepository.delete(getUser);
         return "사원 삭제 성공";
+    }
+
+
+    /* 캐시 삭제용 메서드 */
+    @CacheEvict(cacheNames = "UserDetails", key = "#email")
+    public void evictCacheByEmail(String email) {
+        log.info("Evicting user from cache={}", email);
+        Cache userDetailsCache = cacheManager.getCache("UserDetails");
+        if (userDetailsCache != null) {
+            userDetailsCache.evict(email);
+        }
     }
 
 }
