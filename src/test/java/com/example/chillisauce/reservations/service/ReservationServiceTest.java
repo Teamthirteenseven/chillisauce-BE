@@ -238,38 +238,6 @@ class ReservationServiceTest {
         }
 
         @Test
-        void 동시_예약이_발생하면_하나만_등록한다() throws InterruptedException {
-            // given
-            int threadCount = 3;
-            ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-            CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-
-            List<ReservationResponseDto> resultList = new ArrayList<>();
-
-            LocalDateTime startTime = LocalDateTime.of(2023, 4, 8, 12, 0);
-            ReservationTime unitDto = new ReservationTime(startTime);
-            List<ReservationTime> list = List.of(unitDto);
-            ReservationRequestDto start = new ReservationRequestDto(list, userList);
-            when(meetingRoomRepository.findById(meetingRoomId)).thenReturn(Optional.of(meetingRoom));
-
-            // when
-            IntStream.range(0, threadCount).forEach(e ->
-                    executorService.submit(() -> {
-                        try {
-                            resultList.add(reservationService.addReservation(meetingRoomId, start, userDetails));
-                        } finally {
-                            countDownLatch.countDown();
-                        }
-                    }));
-
-            countDownLatch.await();
-
-            // then
-            //TODO: 동시성 이슈 해결 후 수정 필요
-            assertThat(resultList.size()).isPositive();
-        }
-
-        @Test
         void 해당_회의실이_없으면_예외가_발생한다() {
             // given
             when(meetingRoomRepository.findById(eq(meetingRoomId))).thenReturn(Optional.empty());

@@ -43,6 +43,7 @@ public class WebSecurityConfig {
         // 로컬 환경 개발 : h2-console 사용 및 resources 접근 허용 설정
         return (web) -> web.ignoring()
                 .requestMatchers(new AntPathRequestMatcher("/server/healthcheck"))
+                .requestMatchers(new AntPathRequestMatcher("/docs/index.html"))
                 .requestMatchers(PathRequest.toH2Console())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
@@ -53,6 +54,7 @@ public class WebSecurityConfig {
         // mysql 배포 환경 : resources 접근 허용 설정
         return (web) -> web.ignoring()
                 .requestMatchers(new AntPathRequestMatcher("/server/healthcheck"))
+                .requestMatchers(new AntPathRequestMatcher("/docs/index.html"))
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -65,7 +67,8 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
-                .requestMatchers(EndpointRequest.toAnyEndpoint()).access("hasIpAddress('127.0.0.1') or hasIpAddress('::1')")
+                .requestMatchers(EndpointRequest.toAnyEndpoint())
+                .access("hasIpAddress('127.0.0.1') or hasIpAddress('::1')")
                 .antMatchers("/users/signup/**").permitAll()
                 .antMatchers("/users/login").permitAll()
                 .anyRequest().authenticated()
