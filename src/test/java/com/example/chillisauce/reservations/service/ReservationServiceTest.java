@@ -11,13 +11,13 @@ import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.reservations.repository.ReservationUserRepository;
 import com.example.chillisauce.reservations.vo.ReservationTimetable;
+import com.example.chillisauce.schedules.exception.ScheduleException;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -31,17 +31,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -69,44 +67,31 @@ class ReservationServiceTest {
     class GetAllReservationsTestCase {
         // given
         int size = 2;
-        Mr meetingRoom = Mr.builder()
-                .id(1L)
-                .build();
-        User userOne = User.builder().username("testUser1").build();
-        User userTwo = User.builder().username("testUser2").build();
-        UserDetailsImpl userDetails = new UserDetailsImpl(new User(), "user");
-        Reservation reservationOne = Reservation.builder()
-                .id(1L)
-                .meetingRoom(meetingRoom)
-                .user(userOne)
-                .startTime(LocalDateTime.of(2023, 4, 11, 15, 0))
-                .endTime(LocalDateTime.of(2023, 4, 11, 15, 59))
-                .build();
+        Companies company = Company_생성();
+        Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
+        User user = User_USER권한_생성(company);
+        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
+        Reservation reservationOne = Reservation_생성_아이디_지정(1L, user, meetingRoom,
+                LocalDateTime.of(2023, 4, 11, 15, 0),
+                LocalDateTime.of(2023, 4, 11, 15, 59));
 
-        Reservation reservationTwo = Reservation.builder()
-                .id(2L)
-                .meetingRoom(meetingRoom)
-                .user(userTwo)
-                .startTime(LocalDateTime.of(2023, 4, 11, 17, 0))
-                .endTime(LocalDateTime.of(2023, 4, 11, 17, 59))
-                .build();
+        Reservation reservationTwo = Reservation_생성_아이디_지정(2L, user, meetingRoom,
+                LocalDateTime.of(2023, 4, 11, 17, 0),
+                LocalDateTime.of(2023, 4, 11, 17, 59));
 
         @Test
         void 회사_전체_예약내역을_조회한다() {
             // given
-            String companyName = "testCompany";
-            when(companyRepository.findByCompanyName(eq(companyName)))
+            when(companyRepository.findByCompanyName(eq(company.getCompanyName())))
                     .thenReturn(Optional.of(Companies.builder().build()));
             when(reservationRepository.findAll()).thenReturn(List.of(reservationOne, reservationTwo));
 
             // when
-            ReservationListResponseDto result = reservationService
-                    .getAllReservations(companyName, userDetails);
+            ReservationListResponseDto result = reservationService.getAllReservations(company.getCompanyName(), userDetails);
 
             // then
             assertThat(result.getReservationList().size()).isEqualTo(size);
-            assertThat(result.getReservationList()).extracting("reservationId", Long.class)
-                    .contains(1L, 2L);
+            assertThat(result.getReservationList()).extracting("reservationId", Long.class).contains(1L, 2L);
         }
     }
 
@@ -114,46 +99,54 @@ class ReservationServiceTest {
     @DisplayName("getReservationTimetable 메서드는")
     class GetReservationTimetableTestCase {
         // given
-        LocalDate selDate = LocalDate.of(2023, 4, 13);
-        Mr meetingRoom = Mr.builder().id(1L).build();
-        User user = User.builder()
-                .username("testUser")
-                .build();
-        Reservation reservationOne = Reservation.builder()
-                .id(1L)
-                .meetingRoom(meetingRoom)
-                .user(user)
-                .startTime(LocalDateTime.of(2023, 4, 13, 15, 0))
-                .endTime(LocalDateTime.of(2023, 4, 13, 15, 59))
-                .build();
-
-        Reservation reservationTwo = Reservation.builder()
-                .id(2L)
-                .meetingRoom(meetingRoom)
-                .user(user)
-                .startTime(LocalDateTime.of(2023, 4, 13, 17, 0))
-                .endTime(LocalDateTime.of(2023, 4, 13, 17, 59))
-                .build();
-
+        Companies company = Company_생성();
+        Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
+        User user = User_USER권한_생성(company);
         UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getUsername());
 
         @Test
         void 특정_회의실_특정_날짜의_예약타임테이블을_조회한다() {
             // given
+            LocalDate selDate = LocalDateTime.now().toLocalDate().plusDays(1L);
+            Reservation reservationOne = Reservation_생성_아이디_지정(1L, user, meetingRoom,
+                    LocalDateTime.of(selDate, LocalTime.of(15, 0, 0)),
+                    LocalDateTime.of(selDate, LocalTime.of(15, 59, 0)));
+
+            Reservation reservationTwo = Reservation_생성_아이디_지정(2L, user, meetingRoom,
+                    LocalDateTime.of(selDate, LocalTime.of(17, 0, 0)),
+                    LocalDateTime.of(selDate, LocalTime.of(17, 59, 0)));
+
             when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
-//            when(reservationRepository.findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
-//                    selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX))).thenReturn(List.of(reservationOne, reservationTwo));
+            when(reservationRepository
+                    .findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
+                            selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX)))
+                    .thenReturn(List.of(reservationOne, reservationTwo));
 
             // when
-            ReservationTimetableResponseDto result = reservationService
-                    .getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
+            ReservationTimetableResponseDto result =
+                    reservationService.getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
+
+            // then
+            assertThat(result.getTimeList()).isNotEmpty()
+                    .hasSize(ReservationTimetable.CLOSE_HOUR - ReservationTimetable.OPEN_HOUR + 1)
+                    .filteredOn(x -> x.getIsCheckOut().equals(true))
+                    .hasSize(2);
+        }
+
+        @Test
+        void 오늘_이전의_날짜를_고르면_예약할수없다() {
+            // given
+            LocalDate selDate = LocalDateTime.now().toLocalDate().minusDays(1L);
+
+            when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
+
+            // when
+            ReservationTimetableResponseDto result = reservationService.getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
 
             // then
             assertThat(result.getTimeList())
-                    .isNotEmpty()
-                    .hasSize(ReservationTimetable.CLOSE_HOUR - ReservationTimetable.OPEN_HOUR + 1)
                     .filteredOn(x -> x.getIsCheckOut().equals(true))
-                    .isNotEmpty();
+                    .hasSize(ReservationTimetable.CLOSE_HOUR - ReservationTimetable.OPEN_HOUR + 1);
         }
     }
 
@@ -161,30 +154,14 @@ class ReservationServiceTest {
     @DisplayName("addReservation 메서드는")
     class AddReservationTestCase {
         // given
-        Long meetingRoomId = 1L;
-        User organizer = User.builder()
-                .id(1L)
-                .email("test@email.com")
-                .username("tester")
-                .password("12345678")
-                .companies(Companies.builder().build())
-                .role(UserRoleEnum.USER)
-                .build();
-
-        User attendee = User.builder().id(2L).build();
-
-        Mr meetingRoom = Mr.builder()
-                .id(meetingRoomId)
-                .build();
+        Companies company = Company_생성();
+        User organizer = User_USER권한_생성_아이디지정(1L, company);
+        User attendee = User_USER권한_생성_아이디_이메일_지정(2L, company, "test2@test.com");
         UserDetailsImpl userDetails = new UserDetailsImpl(organizer, organizer.getEmail());
-        LocalDate startDate = LocalDate.of(2023, 4, 8);
-        LocalTime startTime = LocalTime.of(12, 0);
-        LocalDateTime start = LocalDateTime.of(startDate, startTime);
-        ReservationTime unitDto = new ReservationTime(start);
-        List<ReservationTime> startList = List.of(unitDto);
-        ReservationAttendee userOne = new ReservationAttendee(1L);
-        ReservationAttendee userTwo = new ReservationAttendee(2L);
-        List<ReservationAttendee> userList = List.of(userOne, userTwo);
+        Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
+        ReservationTime selectTime = new ReservationTime(LocalDateTime.of(2023, 4, 8, 12, 0));
+        List<ReservationTime> startList = List.of(selectTime);
+        List<ReservationAttendee> userList = List.of(new ReservationAttendee(organizer.getId()), new ReservationAttendee(attendee.getId()));
         ReservationRequestDto requestDto = new ReservationRequestDto(startList, userList);
 
         @Test
@@ -193,62 +170,54 @@ class ReservationServiceTest {
             when(userRepository.findAllByIdInAndCompanies_CompanyName(any(), any())).thenReturn(List.of(organizer, attendee));
 
             // when
-            when(meetingRoomRepository.findById(eq(meetingRoomId))).thenReturn(Optional.of(meetingRoom));
+            when(meetingRoomRepository.findById(eq(meetingRoom.getId()))).thenReturn(Optional.of(meetingRoom));
 
-            ReservationResponseDto result = reservationService.addReservation(meetingRoomId, requestDto, userDetails);
+            ReservationResponseDto result = reservationService.addReservation(meetingRoom.getId(), requestDto, userDetails);
 
             // then
             assertThat(result).isNotNull();
-            assertThat(result.getStart()).isEqualTo(start);
-            assertThat(result.getEnd()).isEqualTo(LocalDateTime.of(startDate, startTime).plusMinutes(59));
+            assertThat(result.getStart()).isEqualTo(selectTime.getStart());
+            assertThat(result.getEnd()).isEqualTo(selectTime.getStart().plusMinutes(59));
         }
 
 
         @Test
         void 중복되는_시간이_있으면_예외가_발생한다() {
             // given
-            LocalDate secondDate = LocalDate.of(2023, 4, 8);
-            LocalTime secondTime = LocalTime.of(12, 0);
-            LocalDateTime secondStart = LocalDateTime.of(secondDate, secondTime);
-            ReservationTime secondUnitDto = new ReservationTime(secondStart);
-            List<ReservationTime> list = List.of(secondUnitDto);
-            Reservation firstReservation = Reservation.builder()
-                    .startTime(start)
-                    .endTime(start.plusMinutes(59))
-                    .build();
+            ReservationTime secondSelectTime = new ReservationTime(LocalDateTime.of(2023, 4, 8, 12, 0));
+            List<ReservationTime> list = List.of(secondSelectTime);
+            Reservation firstReservation = Reservation_생성(organizer, meetingRoom,
+                    secondSelectTime.getStart(), secondSelectTime.getStart().plusMinutes(59));
 
             ReservationRequestDto secondReservationDto = new ReservationRequestDto(list, userList);
 
-            when(meetingRoomRepository.findById(any(Long.class)))
-                    .thenReturn(Optional.of(meetingRoom)).thenThrow(ReservationException.class);
+            when(meetingRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(meetingRoom));
 
             doReturn(Optional.of(firstReservation)).when(reservationRepository)
-                    .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(
-                            meetingRoomId, secondStart, secondStart.plusMinutes(59));
+                    .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(meetingRoom.getId(),
+                            selectTime.getStart(), selectTime.getStart().plusMinutes(59));
 
             // when
-            final ReservationException exception =
-                    assertThrows(ReservationException.class,
-                            () -> reservationService.addReservation(meetingRoomId, secondReservationDto, userDetails));
+            final ReservationException exception = assertThrows(ReservationException.class,
+                    () -> reservationService.addReservation(meetingRoom.getId(), secondReservationDto, userDetails));
 
             // then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isNotNull();
-            assertThat(exception.getErrorCode().getMessage()).isEqualTo("해당 시간대에 이미 등록된 예약이 있습니다.");
+            assertThat(exception.getMessage()).isEqualTo("해당 시간대에 이미 등록된 예약이 있습니다.");
         }
 
         @Test
         void 해당_회의실이_없으면_예외가_발생한다() {
             // given
-            when(meetingRoomRepository.findById(eq(meetingRoomId))).thenReturn(Optional.empty());
+            when(meetingRoomRepository.findById(eq(meetingRoom.getId()))).thenReturn(Optional.empty());
 
             // when
             ReservationException exception = assertThrows(ReservationException.class,
-                    () -> reservationService.addReservation(meetingRoomId, requestDto, userDetails));
+                    () -> reservationService.addReservation(meetingRoom.getId(), requestDto, userDetails));
 
             // then
             assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 회의실이 없습니다.");
+            assertThat(exception.getMessage()).isEqualTo("등록된 회의실이 없습니다.");
         }
     }
 
@@ -256,49 +225,33 @@ class ReservationServiceTest {
     @DisplayName("editReservation 메서드는")
     class EditReservationTestCase {
         // given
-        User user = User.builder()
-                .id(1L)
-                .email("test@email.com")
-                .username("tester")
-                .password("12345678")
-                .role(UserRoleEnum.USER)
-                .build();
+        Companies company = Company_생성();
+        User user = User_USER권한_생성_아이디지정(1L, company);
         UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
-        Long meetingRoomId = 1L;
-        Mr meetingRoom = Mr.builder()
-                .id(meetingRoomId)
-                .build();
-        Long reservationId = 1L;
-        LocalDateTime targetStartTime = LocalDateTime.of(2023, 4, 8, 11, 0);
-        LocalDateTime targetEndTime = LocalDateTime.of(2023, 4, 8, 13, 59);
-        Reservation target = Reservation.builder()
-                .id(reservationId)
-                .user(user)
-                .meetingRoom(meetingRoom)
-                .startTime(targetStartTime)
-                .endTime(targetEndTime)
-                .build();
-        LocalDate editDate = LocalDate.of(2023, 4, 8);
-        LocalTime editTime = LocalTime.of(12, 0);
-        LocalDateTime editStart = LocalDateTime.of(editDate, editTime);
-        ReservationTime unitDto = new ReservationTime(editStart);
-        List<ReservationTime> startList = List.of(unitDto);
-        ReservationAttendee userOne = new ReservationAttendee(1L);
-        ReservationAttendee userTwo = new ReservationAttendee(2L);
-        List<ReservationAttendee> userList = List.of(userOne, userTwo);
-        ReservationRequestDto requestDto = new ReservationRequestDto(startList, userList);
+        Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
+        Reservation before = Reservation_생성_아이디_지정(1L, user, meetingRoom,
+                LocalDateTime.of(2023,4,8,11,0),
+                LocalDateTime.of(2023,4,8,13,59));
 
         @Test
         void 예약을_수정한다() {
-            // when
-            when(reservationRepository.findById(eq(reservationId))).thenReturn(Optional.of(target));
+            // given
+            ReservationTime selectTime = new ReservationTime(LocalDateTime.of(2023, 4,8,12,0));
+            List<ReservationTime> startList = List.of(selectTime);
+            ReservationAttendee userOne = new ReservationAttendee(1L);
+            ReservationAttendee userTwo = new ReservationAttendee(2L);
+            List<ReservationAttendee> userList = List.of(userOne, userTwo);
+            ReservationRequestDto request = new ReservationRequestDto(startList, userList);
 
-            ReservationResponseDto result = reservationService.editReservation(reservationId, requestDto, userDetails);
+            // when
+            when(reservationRepository.findById(eq(before.getId()))).thenReturn(Optional.of(before));
+
+            ReservationResponseDto result = reservationService.editReservation(before.getId(), request, userDetails);
 
             // then
             assertThat(result).isNotNull();
-            assertThat(result.getStart()).isEqualTo(editStart);
-            assertThat(result.getEnd()).isEqualTo(editStart.plusMinutes(59));
+            assertThat(result.getStart()).isEqualTo(selectTime.getStart());
+            assertThat(result.getEnd()).isEqualTo(selectTime.getStart().plusMinutes(59));
         }
     }
 
@@ -306,34 +259,45 @@ class ReservationServiceTest {
     @DisplayName("deleteReservation 메서드는")
     class DeleteReservationTestCase {
         // given
-        User user = User.builder()
-                .id(1L)
-                .email("test@email.com")
-                .username("tester")
-                .password("12345678")
-                .role(UserRoleEnum.USER)
-                .build();
+        Companies company = Company_생성();
+        User user = User_USER권한_생성_아이디지정(1L, company);
         UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
-        Long meetingRoomId = 1L;
-        Mr meetingRoom = Mr.builder()
-                .id(meetingRoomId)
-                .build();
-        Long reservationId = 1L;
-        Reservation target = Reservation.builder()
-                .id(reservationId)
-                .user(user)
-                .meetingRoom(meetingRoom)
-                .build();
+        Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
+        Reservation target = Reservation_생성_아이디_지정(1L, user, meetingRoom,
+                LocalDateTime.of(2023, 5, 3, 17, 0),
+                LocalDateTime.of(2023,5,3,17,59));
 
         @Test
         void 예약을_삭제한다() {
             // when
-            when(reservationRepository.findById(eq(reservationId))).thenReturn(Optional.of(target));
+            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.of(target));
 
-            String result = reservationService.deleteReservation(reservationId, userDetails);
+            String result = reservationService.deleteReservation(target.getId(), userDetails);
 
             // then
             assertThat(result).isEqualTo("success");
+        }
+
+        @Test
+        void 예약이_없으면_예외가_발생한다(){
+            // given
+            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.empty());
+
+            // when, then
+            assertThatThrownBy(()-> reservationService.deleteReservation(target.getId(), userDetails))
+                    .isInstanceOf(ReservationException.class).hasMessage("예약을 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 다른_유저가_요청하면_권한_예외가_발생한다(){
+            // given
+            User another = User_USER권한_생성_아이디_이메일_지정(2L, company, "test2@test.com");
+            UserDetailsImpl anotherDetails = new UserDetailsImpl(another, another.getEmail());
+            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.empty());
+
+            // when, then
+            assertThatThrownBy(()->reservationService.deleteReservation(target.getId(), anotherDetails))
+                    .isInstanceOf(ReservationException.class).hasMessage("예약을 찾을 수 없습니다.");
         }
     }
 }

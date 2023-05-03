@@ -1,5 +1,6 @@
 package com.example.chillisauce.schedules.service;
 
+import com.example.chillisauce.fixture.FixtureFactory;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.vo.ReservationTimetable;
 import com.example.chillisauce.schedules.dto.*;
@@ -7,6 +8,7 @@ import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.exception.ScheduleException;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import org.assertj.core.api.Assertions;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -271,12 +274,8 @@ class ScheduleServiceTest {
         @Test
         void 다른_유저가_요청하면_예외가_발생한다() {
             // given
-            User another = User.builder()
-                    .id(2L)
-                    .email("test2@test.com")
-                    .username("anotherUser")
-                    .role(UserRoleEnum.USER)
-                    .build();
+            Companies company = Company_생성();
+            User another = User_USER권한_생성_아이디_이메일_지정(2L, company, "test2@test.com");
 
             UserDetailsImpl anotherDetails = new UserDetailsImpl(another, another.getUsername());
 
@@ -289,7 +288,12 @@ class ScheduleServiceTest {
 
         @Test
         void 스케줄이_없으면_예외가_발생한다() {
+            // when
+            when(scheduleRepository.findById(eq(scheduleId))).thenReturn(Optional.empty());
 
+            // then
+            assertThatThrownBy(() -> scheduleService.deleteSchedule(scheduleId, userDetails))
+                    .isInstanceOf(ScheduleException.class).hasMessage("스케줄을 찾을 수 없습니다.");
         }
     }
 }

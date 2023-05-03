@@ -219,7 +219,7 @@ public class ReservationService {
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
         User user = userDetails.getUser();
-        if (!reservation.getUser().getEmail().equals(user.getEmail())) {
+        if (!reservation.getUser().getId().equals(user.getId())) {
             throw new ReservationException(ReservationErrorCode.INVALID_USER_RESERVATION_UPDATE);
         }
 

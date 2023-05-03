@@ -21,22 +21,8 @@ import java.util.Collection;
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails, Serializable {
 
-//    private final User user;
-//    private final String username;
-
-    /* 테스트 ServiceImpl에서 리턴으로 데이터가 넘어오기 때문에 이쪽에서 수정해준다.*/
     private User user;
     private String username;
-    /* 테스트 ServiceImpl에서 리턴으로 데이터가 넘어오기 때문에 이쪽에서 수정해준다.*/
-
-//    public UserDetailsImpl(User user, String username) {
-//        this.user = user;
-//        this.username = username;
-//    }
-//
-//    public User getUser() {
-//        return user;
-//    }
 
     @JsonSerialize(contentUsing = GrantedAuthoritySerializer.class)
     @JsonDeserialize(contentUsing = GrantedAuthorityDeserializer.class)
@@ -51,8 +37,6 @@ public class UserDetailsImpl implements UserDetails, Serializable {
 
         return authorities;
     }
-
-
 
     @JsonIgnore
     @Override

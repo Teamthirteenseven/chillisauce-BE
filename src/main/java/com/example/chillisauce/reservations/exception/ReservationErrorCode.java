@@ -17,7 +17,7 @@ public enum ReservationErrorCode implements ErrorStatusMessage {
 
     /* 404 */
     MEETING_ROOM_NOT_FOUND(NOT_FOUND, "등록된 회의실이 없습니다."),
-    RESERVATION_NOT_FOUND(NOT_FOUND, "예약이 없습니다."),
+    RESERVATION_NOT_FOUND(NOT_FOUND, "예약을 찾을 수 없습니다."),
     COMPANY_NOT_FOUND(NOT_FOUND, "회사를 찾을 수 없습니다");
 
     private final HttpStatus httpStatus;
