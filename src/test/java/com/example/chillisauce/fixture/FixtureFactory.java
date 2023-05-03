@@ -1,6 +1,7 @@
 package com.example.chillisauce.fixture;
 
 import com.example.chillisauce.reservations.entity.Reservation;
+import com.example.chillisauce.reservations.entity.ReservationUser;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
@@ -89,6 +90,21 @@ public class FixtureFactory {
                 .meetingRoom(mr)
                 .startTime(start)
                 .endTime(end)
+                .build();
+    }
+
+    public static ReservationUser ReservationUser_생성(Reservation reservation, User attendee) {
+        return ReservationUser.builder()
+                .reservation(reservation)
+                .attendee(attendee)
+                .build();
+    }
+
+    public static ReservationUser ReservationUser_생성_아이디_지정(Reservation reservation, User attendee, Long id) {
+        return ReservationUser.builder()
+                .id(id)
+                .reservation(reservation)
+                .attendee(attendee)
                 .build();
     }
 }
