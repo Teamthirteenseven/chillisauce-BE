@@ -301,9 +301,10 @@ public class SpaceServiceTest {
                     .companyName(differentCompanyName)
                     .build();
             User user = User.builder()
-                    .role(UserRoleEnum.ADMIN)
+                    .role(UserRoleEnum.USER)
                     .companies(companies)
                     .build();
+
 
             UserDetailsImpl details = new UserDetailsImpl(user, null);
 
@@ -414,6 +415,45 @@ public class SpaceServiceTest {
                     spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
                 });
                 assertEquals(SpaceErrorCode.SPACE_NOT_FOUND, exception.getErrorCode());
+            }
+        }
+
+        @Nested
+        @DisplayName("유저 회사와 생성하려는 회사가 일치하지 않을때")
+        class CompaniesPermissionException {
+            //given
+            String companyName = "missingCompany";
+
+            String differentCompanyName = "differentCompany";
+            Long floorId = 1L;
+            Companies companies = Companies.builder()
+                    .companyName(differentCompanyName)
+                    .build();
+
+
+            SpaceRequestDto requestDto = new SpaceRequestDto("SpaceTest");
+            public static void COMPANIES_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
+                SpaceException exception = assertThrows(SpaceException.class, executable);
+                assertEquals(expectedErrorCode, exception.getErrorCode());
+            }
+            //when, then
+            @Test
+            void 플로우_안에_공간_생성_권한_없음() {
+                // when & then
+                when(floorRepository.findById(floorId)).thenReturn(Optional.ofNullable(floor));
+                when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.ofNullable(companies));
+                CompaniesPermissionException.COMPANIES_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
+                    spaceService.createSpaceInFloor(companyName, requestDto,details, floorId);
+                });
+            }
+            @Test
+            void 공간_생성_권한_없음() {
+                // when & then
+                when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.ofNullable(companies));
+                CompaniesPermissionException.COMPANIES_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
+                    spaceService.createSpace(companyName, requestDto,details);
+                });
+
             }
         }
 }
