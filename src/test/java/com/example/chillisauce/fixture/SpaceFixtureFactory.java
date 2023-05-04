@@ -1,10 +1,14 @@
 package com.example.chillisauce.fixture;
 
+import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpaceFixtureFactory {
 
@@ -21,21 +25,10 @@ public class SpaceFixtureFactory {
                 .build();
     }
 
-    public static Floor Floor_생성() {
-        return Floor.builder()
-                .floorName("testFloor")
-                .build();
-    }
     public static Floor Floor_생성_아이디_지정(Long id) {
         return Floor.builder()
                 .id(id)
                 .floorName("testFloor")
-                .build();
-    }
-
-    public static Space Space_생성() {
-        return Space.builder()
-                .spaceName("testSpace")
                 .build();
     }
 
@@ -45,23 +38,6 @@ public class SpaceFixtureFactory {
                 .spaceName("testSpace")
                 .build();
     }
-
-    public static Space Space_생성_아이디_지정_플로우_존재(Long id, Floor floor) {
-        return Space.builder()
-                .id(id)
-                .spaceName("testSpace")
-                .floor(floor)
-                .build();
-    }
-
-    public static Space Space_생성_아이디_지정_플로우_NULL(Long id) {
-        return Space.builder()
-                .id(id)
-                .spaceName("testSpace")
-                .floor(null)
-                .build();
-    }
-
 
 
     public static Box Box_생성() {
@@ -77,6 +53,25 @@ public class SpaceFixtureFactory {
                 .x("111").y("222")
                 .build();
     }
+
+    public static Mr Mr_생성_아이디_지정(Long id) {
+        return Mr.builder()
+                .id(id)
+                .locationName("testMr")
+                .x("111").y("222")
+                .build();
+    }
+
+    public static Mr Mr_생성_예약_추가(Reservation reservation) {
+        List<Reservation> reservations = new ArrayList<>();
+        reservations.add(reservation);
+        return Mr.builder()
+                .locationName("testMr")
+                .x("111").y("222")
+                .reservation(reservations)
+                .build();
+    }
+
 
     public static MultiBox MultiBox_생성() {
         return MultiBox.builder()
@@ -101,8 +96,9 @@ public class SpaceFixtureFactory {
                 (User.builder().role(UserRoleEnum.ADMIN).companies(company).build(), "null");
     }
 
-    public static UserDetailsImpl details_권한_ADMIN(Companies company) {
-        return new UserDetailsImpl
-                (User.builder().role(UserRoleEnum.ADMIN).companies(company).build(), "test");
+
+    public static Reservation Reservation_생성() {
+        return Reservation.builder()
+                .build();
     }
 }
