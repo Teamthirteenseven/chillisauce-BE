@@ -22,29 +22,30 @@ public class TestUserInjector {
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
-    private final PasswordEncoder passwordEncoder;
 
     // 관리자 가입 시 해당 회사에 5명의 테스트 유저 가입시키기
     public void injectUsers(String companyName) throws UserException {
         Companies company = companyRepository.findByCompanyName(companyName)
                 .orElseThrow(() -> new UserException(UserErrorCode.COMPANY_NOT_FOUND));
 
-        List<String> userInformationList = List.of("홍길동 test1@test" + company.getId() + ".com",
-                "채소연 test2@test" + company.getId() + ".com",
-                "김철수 test3@test" + company.getId() + ".com",
-                "윤대협 test4@test" + company.getId() + ".com",
-                "성춘향 test5@test" + company.getId() + ".com");
-        List<User> userList = userInformationList.stream().map(x -> {
-                    String[] str = x.split(" ");
-                    return User.builder()
-                            .username(str[0])
-                            .role(UserRoleEnum.USER)
-                            .companies(company)
-                            .password(passwordEncoder.encode("1q2w3e4r!"))
-                            .email(str[1])
-                            .build();
-                }
-        ).toList();
-        userRepository.saveAll(userList);
+        /* 테스트 1. 관리자 회원가입 시, 유저 100만명을 추가 생성한다. */
+        List<User> testUserList = new ArrayList<>();
+        for (int i = 1; i <= 1000000; i++) {
+            String username = i + "번 사용자";
+            String email = "test" + i + "@test" + company.getId() + ".com";
+
+            User user = User.builder()
+                    .email(email)
+                    .username(username)
+                    .role(UserRoleEnum.USER)
+                    .password("1234qwer!")
+                    .companies(company)
+                    .build();
+
+            testUserList.add(user);
+        }
+
+        userRepository.saveAll(testUserList);
     }
+
 }
