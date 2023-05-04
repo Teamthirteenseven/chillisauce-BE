@@ -90,6 +90,7 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
+
         return spaceResponseDto;
     }
 
