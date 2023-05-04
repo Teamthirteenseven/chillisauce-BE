@@ -1,9 +1,9 @@
 package com.example.chillisauce.reservations.service;
 
 import com.example.chillisauce.reservations.dto.ReservationUserWrapper;
-import com.example.chillisauce.reservations.dto.response.UserReservationListResponseDto;
-import com.example.chillisauce.reservations.dto.response.UserReservationResponseDto;
-import com.example.chillisauce.reservations.dto.response.UsernameResponseDto;
+import com.example.chillisauce.reservations.dto.response.UserReservationListResponse;
+import com.example.chillisauce.reservations.dto.response.UserReservationResponse;
+import com.example.chillisauce.reservations.dto.response.UsernameResponse;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.reservations.repository.ReservationUserRepository;
@@ -28,21 +28,21 @@ public class UserReservationService {
      * 특정 유저의 예약 내역 조회
      */
     @Transactional(readOnly = true)
-    public UserReservationListResponseDto getUserReservations(UserDetailsImpl userDetails) {
+    public UserReservationListResponse getUserReservations(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<Reservation> reservations = reservationRepository.findAllByUserId(user.getId());
         List<Long> ids = reservations.stream().mapToLong(Reservation::getId).boxed().toList();
 
         List<ReservationUserWrapper> linkList = reservationUserRepository.findReservationUserByReservationIdIn(ids);
 
-        return new UserReservationListResponseDto(reservations.stream().map(x -> {
+        return new UserReservationListResponse(reservations.stream().map(x -> {
             Mr m = x.getMeetingRoom();
             User u = x.getUser();
             Long mrId = m == null ? 0 : m.getId();
             String username = u == null ? "탈퇴한 유저" : user.getUsername();
-            List<UsernameResponseDto> userList = linkList.stream().filter(y -> y.getReservationId().equals(x.getId()))
-                    .map(UsernameResponseDto::new).toList();
-            return new UserReservationResponseDto(x, mrId, username, userList);
+            List<UsernameResponse> userList = linkList.stream().filter(y -> y.getReservationId().equals(x.getId()))
+                    .map(UsernameResponse::new).toList();
+            return new UserReservationResponse(x, mrId, username, userList);
         }).toList());
     }
 }
