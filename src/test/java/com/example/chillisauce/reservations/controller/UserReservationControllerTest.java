@@ -1,10 +1,9 @@
 package com.example.chillisauce.reservations.controller;
 
-import com.example.chillisauce.reservations.dto.response.UserReservationListResponseDto;
-import com.example.chillisauce.reservations.dto.response.UserReservationResponseDto;
-import com.example.chillisauce.reservations.dto.response.UsernameResponseDto;
+import com.example.chillisauce.reservations.dto.response.UserReservationListResponse;
+import com.example.chillisauce.reservations.dto.response.UserReservationResponse;
+import com.example.chillisauce.reservations.dto.response.UsernameResponse;
 import com.example.chillisauce.reservations.exception.ReservationExceptionHandler;
-import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.reservations.service.UserReservationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -31,7 +30,6 @@ import java.util.List;
 
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentRequest;
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentResponse;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -68,22 +66,22 @@ class UserReservationControllerTest {
         // given
         String url = "/users/reservations";
 
-        UserReservationResponseDto reservationOne = UserReservationResponseDto.builder()
+        UserReservationResponse reservationOne = UserReservationResponse.builder()
                 .mrId(1L)
                 .mrName("회의실1")
                 .reservationId(1L)
                 .username("김철수")
-                .userList(List.of(new UsernameResponseDto("홍길동"), new UsernameResponseDto("임꺽정")))
+                .userList(List.of(new UsernameResponse("홍길동"), new UsernameResponse("임꺽정")))
                 .start(LocalDateTime.of(2023, 4, 28, 15, 0))
                 .end(LocalDateTime.of(2023, 4, 28, 15, 59))
                 .build();
 
-        UserReservationResponseDto reservationTwo = UserReservationResponseDto.builder()
+        UserReservationResponse reservationTwo = UserReservationResponse.builder()
                 .mrId(2L)
                 .mrName("회의실2")
                 .reservationId(2L)
                 .username("김철수")
-                .userList(List.of(new UsernameResponseDto("채소연"), new UsernameResponseDto("성춘향")))
+                .userList(List.of(new UsernameResponse("채소연"), new UsernameResponse("성춘향")))
                 .start(LocalDateTime.of(2023, 4, 29, 16, 0))
                 .end(LocalDateTime.of(2023, 4, 29, 16, 59))
                 .build();
@@ -92,7 +90,7 @@ class UserReservationControllerTest {
         @WithMockUser
         void 회원의_회의실_예약내역을_반환한다() throws Exception {
             // given
-            UserReservationListResponseDto response = new UserReservationListResponseDto(List.of(reservationOne, reservationTwo));
+            UserReservationListResponse response = new UserReservationListResponse(List.of(reservationOne, reservationTwo));
             when(userReservationService.getUserReservations(any())).thenReturn(response);
 
             // when

@@ -1,6 +1,6 @@
 package com.example.chillisauce.reservations.service;
 
-import com.example.chillisauce.reservations.dto.response.UserReservationListResponseDto;
+import com.example.chillisauce.reservations.dto.response.UserReservationListResponse;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.entity.ReservationUser;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
@@ -68,7 +68,7 @@ class UserReservationServiceTest {
                     .thenReturn(List.of(reservationOne, reservationTwo));
 
             // when
-            UserReservationListResponseDto result = userReservationService.getUserReservations(userDetails);
+            UserReservationListResponse result = userReservationService.getUserReservations(userDetails);
 
             // then
             assertThat(result.getReservationList().size()).isEqualTo(2);

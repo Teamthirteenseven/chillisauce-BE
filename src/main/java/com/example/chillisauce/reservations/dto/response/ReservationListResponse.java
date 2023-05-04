@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReservationListResponseDto {
-    List<ReservationDetailResponseDto> reservationList;
+public class ReservationListResponse {
+    List<ReservationDetailResponse> reservationList;
 }

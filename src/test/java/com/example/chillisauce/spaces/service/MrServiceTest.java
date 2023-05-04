@@ -11,10 +11,7 @@ import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.users.entity.Companies;
-import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,15 +21,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+
+import static com.example.chillisauce.fixture.SpaceFixtureFactory.*;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 public class MrServiceTest {
 
@@ -47,60 +45,25 @@ public class MrServiceTest {
     @Mock
     private ReservationService reservationService;
 
-    private Companies companies;
 
-    private UserDetailsImpl details;
-
-    private Space space;
-    private Mr mr;
-    private Reservation reservation;
-
-
-    @BeforeEach
-    void setup() {
-        companies = Companies.builder()
-                .build();
-        space = Space.builder()
-                .spaceName("testSpace")
-                .companies(companies)
-                .build();
-        User user = User.builder()
-                .role(UserRoleEnum.ADMIN)
-                .companies(companies)
-                .build();
-        details = new UserDetailsImpl(user, null);
-
-        reservation = Reservation.builder()
-                // 필요한 Reservation 필드를 여기에 설정하세요.
-                .build();
-        List<Reservation> reservations = new ArrayList<>();
-        reservations.add(reservation);
-        mr = Mr.builder()
-                .locationName("MrTest")
-                .x("200")
-                .y("300")
-                .reservation(reservations)
-                .build();
-
-
-    }
 
     @Nested
     @DisplayName("Mr 성공 케이스")
     class SuccessCase {
-
+        Companies companies = Company_생성();
+        Space space = Space_생성_아이디_지정(1L);
+        UserDetailsImpl details = details_권한_ADMIN_유저_네임_NULL(companies);
+        Reservation reservation = Reservation_생성();
+        Mr mr = Mr_생성_아이디_지정(1L);
         @Test
-        void Mr_생성() {
+        void 미팅룸_생성() {
             //given
-            String companyName = "testCompany";
-            Long spaceId = 1L;
-
             MrRequestDto requestDto = new MrRequestDto("MrTest", "200","300");
-            when(spaceService.findCompanyNameAndSpaceId(companyName,spaceId)).thenReturn(space);
+            when(spaceService.findCompanyNameAndSpaceId(companies.getCompanyName(),space.getId())).thenReturn(space);
             when(mrRepository.save(any(Mr.class))).thenReturn(mr);
 
             //when
-            MrResponseDto mrResponseDto = mrService.createMr(companyName,spaceId,requestDto,details);
+            MrResponseDto mrResponseDto = mrService.createMr(companies.getCompanyName(),space.getId(),requestDto,details);
 
             //then
             assertNotNull(mrResponseDto);
@@ -113,15 +76,13 @@ public class MrServiceTest {
         @Test
         void Mr_수정() {
             //given
-            String companyName = "testCompany";
-            Long mrId = 1L;
-
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(mrRepository.findByIdAndSpaceCompanies(mrId,companies)).thenReturn(Optional.of(mr));
+            Mr mr = Mr_생성_예약_추가(reservation);
+            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
+            when(mrRepository.findByIdAndSpaceCompanies(mr.getId(),companies)).thenReturn(Optional.of(mr));
             MrRequestDto requestDto = new MrRequestDto("MrTest", "200","300");
 
             //when
-            MrResponseDto mrResponseDto = mrService.updateMr(companyName,mrId,requestDto,details);
+            MrResponseDto mrResponseDto = mrService.updateMr(companies.getCompanyName(),mr.getId(),requestDto,details);
 
             //Then
             assertNotNull(mrResponseDto);
@@ -133,21 +94,19 @@ public class MrServiceTest {
         @Test
         void Mr_삭제() {
             //given
-            String companyName = "testCompany";
-            Long mrId = 1L;
-
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(mrRepository.findByIdAndSpaceCompanies(mrId,companies)).thenReturn(Optional.of(mr));
-            doNothing().when(mrRepository).deleteById(mrId);
+            Mr mr = Mr_생성_예약_추가(reservation);
+            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
+            when(mrRepository.findByIdAndSpaceCompanies(mr.getId(),companies)).thenReturn(Optional.of(mr));
+            doNothing().when(mrRepository).deleteById(mr.getId());
             //when
-            when(reservationService.deleteMeetingRoomInReservations(mrId, null)).thenReturn(String.valueOf(reservation));
-            MrResponseDto mrResponseDto = mrService.deleteMr(companyName,mrId,details);
+            when(reservationService.deleteMeetingRoomInReservations(mr.getId(), null)).thenReturn(String.valueOf(reservation));
+            MrResponseDto mrResponseDto = mrService.deleteMr(companies.getCompanyName(),mr.getId(),details);
 
             //Then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getMrName());
-            assertEquals("200",mrResponseDto.getX());
-            assertEquals("300",mrResponseDto.getY());
+            assertEquals("testMr",mrResponseDto.getMrName());
+            assertEquals("111",mrResponseDto.getX());
+            assertEquals("222",mrResponseDto.getY());
         }
     }
 
@@ -155,10 +114,10 @@ public class MrServiceTest {
     @DisplayName("Mr 권한 없음 예외 케이스")
     class NotPermissionExceptionCase {
         // given
-        String companyName = "testCompany";
-        Long spaceId = 1L;
-        UserDetailsImpl details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
+        Companies companies = Company_생성();
+        UserDetailsImpl details = details_권한_USER_유저_네임_NULL(companies);
         MrRequestDto requestDto = new MrRequestDto("MrTest", "200", "300");
+        Space space = Space_생성_아이디_지정(1L);
 
         public static void NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
             SpaceException exception = assertThrows(SpaceException.class, executable);
@@ -169,7 +128,7 @@ public class MrServiceTest {
         void Mr_생성_권한_예외_테스트() {
             // when & then
             NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
-                mrService.createMr(companyName, spaceId, requestDto, details);
+                mrService.createMr(companies.getCompanyName(),space.getId() , requestDto, details);
             });
         }
 
@@ -177,7 +136,7 @@ public class MrServiceTest {
         void Mr_수정_권한_예외_테스트() {
             // when & then
             NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
-                mrService.updateMr(companyName, spaceId, requestDto, details);
+                mrService.updateMr(companies.getCompanyName(), space.getId(), requestDto, details);
             });
         }
 
@@ -185,7 +144,7 @@ public class MrServiceTest {
         void Mr_삭제_권한_예외_테스트() {
             // when & then
             NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
-                mrService.deleteMr(companyName, spaceId, details);
+                mrService.deleteMr(companies.getCompanyName(), space.getId(), details);
             });
         }
     }
@@ -195,13 +154,13 @@ public class MrServiceTest {
         @Test
         void 해당_회사_없음() {
             //given
-            String companyName = "testCompany";
-            Long mrId = 1L;
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.empty());
+            Mr mr = Mr_생성_아이디_지정(1L);
+            Companies companies = Different_Company_생성();
+            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.empty());
 
             //When,Then
             SpaceException exception = assertThrows(SpaceException.class, () -> {
-                mrService.findCompanyNameAndMrId(companyName, mrId);
+                mrService.findCompanyNameAndMrId(companies.getCompanyName(), mr.getId());
             });
             assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
         }
@@ -209,18 +168,15 @@ public class MrServiceTest {
         @Test
         void 해당_회사_아이디_없음() {
             //given
-            String companyName = "testCompany";
-            Long mrId = 1L;
-            Companies companies = Companies.builder()
-                    .companyName("testCompany")
-                    .build();
+            Companies companies = Different_Company_생성();
+            Mr mr = Mr_생성_아이디_지정(1L);
 
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(mrRepository.findByIdAndSpaceCompanies(mrId, companies)).thenReturn(Optional.empty());
+            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
+            when(mrRepository.findByIdAndSpaceCompanies(mr.getId(), companies)).thenReturn(Optional.empty());
 
             //when,Then
             SpaceException exception = assertThrows(SpaceException.class, () -> {
-                mrService.findCompanyNameAndMrId(companyName, mrId);
+                mrService.findCompanyNameAndMrId(companies.getCompanyName(), mr.getId());
             });
             assertEquals(SpaceErrorCode.MR_NOT_FOUND, exception.getErrorCode());
         }
