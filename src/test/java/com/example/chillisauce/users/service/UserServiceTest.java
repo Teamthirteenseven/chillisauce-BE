@@ -4,7 +4,6 @@ import com.example.chillisauce.jwt.JwtUtil;
 import com.example.chillisauce.users.dto.*;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
@@ -20,12 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
+import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("UserService 클래스")
 class UserServiceTest {
 
     @InjectMocks
@@ -41,6 +42,9 @@ class UserServiceTest {
     @Spy
     private BCryptPasswordEncoder passwordEncoder;
 
+    private Companies company = Company_생성();
+    private User user = User_USER권한_생성(company);
+    private User admin = User_ADMIN권한_생성(company, "gurwlstm1210@gmail.com");
 
     @Nested
     @DisplayName("성공 케이스")
@@ -57,68 +61,38 @@ class UserServiceTest {
                     .companyName("원피스")
                     .certification("123")
                     .build();
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String password = encoder.encode(signupRequestDto.getPassword());
-            //mocking company save
-            Companies company = Companies.builder()
-                    .companyName(signupRequestDto.getCompanyName())
-                    .certification(signupRequestDto.getCertification())
-                    .build();
-            Mockito.lenient().when(companyRepository.save(Mockito.any(Companies.class))).thenReturn(company);
-
-            //mocking user save
-            User saveAdmin = User.builder()
-                    .email(signupRequestDto.getEmail())
-                    .password(password)
-                    .username(signupRequestDto.getUsername())
-                    .role(UserRoleEnum.ADMIN)
-                    .companies(company)
-                    .build();
-            Mockito.lenient().when(userRepository.save(Mockito.any(User.class))).thenReturn(saveAdmin);
 
             //when
+            when(companyRepository.save(any())).thenReturn(company);
             AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
             CompanyRequestDto companyRequestDto = new CompanyRequestDto(signupRequestDto);
-            AdminSignupResponseDto responseDto = userService.signupAdmin(adminSignupRequestDto, companyRequestDto);
+            AdminSignupResponseDto result = userService.signupAdmin(adminSignupRequestDto, companyRequestDto);
 
             //then
-            assertThat(responseDto).isNotNull();
-            assertThat(responseDto.getCertification()).isEqualTo(company.getCertification());
+            assertThat(result).isNotNull();
+            assertThat(result.getCertification()).isEqualTo(company.getCertification());
 
-            //verify
             verify(userRepository, times(1)).save(any(User.class));
-            verify(passwordEncoder, times(1)).encode(any(String.class));
         }
 
         @DisplayName("사원 회원 가입")
         @Test
         void signupUser() {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             //given
-            Companies company = Companies.builder()
-                    .companyName("원피스")
-                    .certification("123")
-                    .build();
-            Mockito.when(companyRepository.findByCertification("123")).thenReturn(Optional.of(company));
-
             UserSignupRequestDto requestDto = UserSignupRequestDto.builder()
                     .email("123@123")
-                    .password("1234")
-                    .passwordCheck("1234")
+                    .password("12345678")
+                    .passwordCheck("12345678")
                     .username("루피")
-                    .certification("123")
+                    .certification(Company_생성().getCertification())
                     .build();
 
-            String password = encoder.encode(requestDto.getPassword());
-
-            User user = new User(requestDto, password, UserRoleEnum.USER, company);
-            Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
-
             //when
+            Mockito.when(companyRepository.findByCertification(requestDto.getCertification())).thenReturn(Optional.of(company));
             String result = userService.signupUser(requestDto);
 
             //then
-            assertThat(userService.signupUser(requestDto)).isNotNull();
+            assertThat(result).isNotNull();
             assertThat("일반 회원 가입 성공").isEqualTo(result);
 
         }
@@ -139,31 +113,21 @@ class UserServiceTest {
 
 
             //given
-            User saveAdmin = User.builder()
-                    .email("123@123")
-                    .password(passwordEncoder.encode("1234qwer!"))
-                    .username("루피")
-                    .role(UserRoleEnum.ADMIN)
-                    .companies(Companies.builder()
-                            .companyName("원피스")
-                            .certification("1234")
-                            .build())
-                    .build();
             LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-                    .email("123@123")
-                    .password("1234qwer!")
+                    .email(user.getEmail())
+                    .password("12345678")
                     .build();
 
             String fakeAccess = "fakeAccess";
 
-            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin));
-            Mockito.when(jwtUtil.createToken(saveAdmin)).thenReturn(fakeAccess);
+            Mockito.when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            Mockito.when(jwtUtil.createToken(user)).thenReturn(fakeAccess);
 
             //when
             String result = userService.Login(loginRequestDto, response);
             String accessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
             //then
-            assertThat(saveAdmin).isNotNull();
+            assertThat(user).isNotNull();
             assertThat("로그인 성공").isEqualTo(result);
             assertThat(accessToken).isNotEmpty();
 
@@ -173,23 +137,17 @@ class UserServiceTest {
         @Test
         void certification() {
             //given
-            String certification = "1234";
-
-            Companies companies = Companies.builder()
-                    .companyName("원피스")
-                    .certification("1234")
-                    .build();
-
-            when(companyRepository.findByCertification("1234")).thenReturn(Optional.of(companies));
+            when(companyRepository.findByCertification(company.getCertification())).thenReturn(Optional.of(company));
 
             //when
-            userService.checkCertification(certification);
+            userService.checkCertification(company.getCertification());
 
             //then
-            assertThat(companies).isNotNull();
-            assertThat(companies.getCertification()).isEqualTo(certification);
+            assertThat(company).isNotNull();
+            assertThat(company.getCertification()).isEqualTo(company.getCertification());
         }
     }
+
     @Nested
     @DisplayName("실패 케이스")
     class FailCase {
@@ -198,14 +156,13 @@ class UserServiceTest {
         void fail1() {
             //given
             HttpServletResponse response = mock(HttpServletResponse.class);
-            String email = "123@123";
 
             LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-                    .email(email)
+                    .email("123@123")
                     .password("1234")
                     .build();
 
-            when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+            when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
@@ -222,24 +179,13 @@ class UserServiceTest {
         void fail2() {
             //given
             HttpServletResponse response = mock(HttpServletResponse.class);
-            String email = "123@123";
-            String password = "1234";
+
             LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-                    .email(email)
+                    .email(admin.getEmail())
                     .password("5678")
                     .build();
 
-            User saveAdmin = User.builder()
-                    .email("123@123")
-                    .password(passwordEncoder.encode(password))
-                    .username("루피")
-                    .role(UserRoleEnum.ADMIN)
-                    .companies(Companies.builder()
-                            .companyName("원피스")
-                            .certification("1234")
-                            .build())
-                    .build();
-            Mockito.when(userRepository.findByEmail("123@123")).thenReturn(Optional.of(saveAdmin)); //가짜 저장
+            when(userRepository.findByEmail(any())).thenReturn(Optional.of(admin)); //가짜 저장
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
@@ -251,7 +197,6 @@ class UserServiceTest {
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
 
         }
-
 
 
         @DisplayName("관리자 회원가입 실패(중복된 이메일)")
@@ -266,21 +211,8 @@ class UserServiceTest {
                     .companyName("원피스")
                     .certification("123")
                     .build();
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String password = encoder.encode(signupRequestDto.getPassword());
 
-            User saveAdmin = User.builder()
-                    .email("123@123")
-                    .password(passwordEncoder.encode(password))
-                    .username("루피")
-                    .role(UserRoleEnum.ADMIN)
-                    .companies(Companies.builder()
-                            .companyName("원피스")
-                            .certification("1234")
-                            .build())
-                    .build();
-
-            when(userRepository.findByEmail(signupRequestDto.getEmail())).thenReturn(Optional.of(saveAdmin));
+            when(userRepository.findByEmail(signupRequestDto.getEmail())).thenReturn(Optional.of(admin));
 
             //when
             AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
@@ -406,5 +338,48 @@ class UserServiceTest {
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("인증번호가 유효하지 않습니다");
         }
 
+        @DisplayName("관리자 회원가입 실패(중복된 인증번호 사용)")
+        @Test
+        void fail10() {
+            //given
+            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+                    .email("123@123")
+                    .password("1234")
+                    .passwordCheck("1234")
+                    .username("루피")
+                    .companyName("원피스")
+                    .certification("testCert")
+                    .build();
+            String cert = "testCert";
+            when(companyRepository.findByCertification(cert)).thenReturn(Optional.of(company));
+            //when
+            AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
+            CompanyRequestDto companyRequestDto = new CompanyRequestDto(signupRequestDto);
+            UserException exception = assertThrows(UserException.class, () -> {
+                userService.signupAdmin(adminSignupRequestDto, companyRequestDto);
+            });
+            //then
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("이미 사용중인 인증번호 입니다.");
+        }
+
+        @DisplayName("사원 회원가입 실패(유효하지 않은 인증번호)")
+        @Test
+        void fail11() {
+            //given
+            UserSignupRequestDto requestDto = UserSignupRequestDto.builder()
+                    .email("123@123")
+                    .password("1234")
+                    .passwordCheck("1234")
+                    .username("루피")
+                    .certification("123")
+                    .build();
+            when(companyRepository.findByCertification(requestDto.getCertification())).thenReturn(Optional.empty());
+            //when
+            UserException exception = assertThrows(UserException.class, () -> {
+                userService.signupUser(requestDto);
+            });
+            //then
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("인증번호가 유효하지 않습니다");
+        }
     }
 }
