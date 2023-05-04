@@ -1,17 +1,16 @@
 package com.example.chillisauce.reservations.service;
 
 import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
-import com.example.chillisauce.reservations.dto.request.ReservationRequestDto;
+import com.example.chillisauce.reservations.dto.request.ReservationRequest;
 import com.example.chillisauce.reservations.dto.request.ReservationTime;
-import com.example.chillisauce.reservations.dto.response.ReservationListResponseDto;
-import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
-import com.example.chillisauce.reservations.dto.response.ReservationTimetableResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationListResponse;
+import com.example.chillisauce.reservations.dto.response.ReservationResponse;
+import com.example.chillisauce.reservations.dto.response.ReservationTimetableResponse;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.reservations.repository.ReservationUserRepository;
 import com.example.chillisauce.reservations.vo.ReservationTimetable;
-import com.example.chillisauce.schedules.exception.ScheduleException;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.Mr;
@@ -87,7 +86,7 @@ class ReservationServiceTest {
             when(reservationRepository.findAll()).thenReturn(List.of(reservationOne, reservationTwo));
 
             // when
-            ReservationListResponseDto result = reservationService.getAllReservations(company.getCompanyName(), userDetails);
+            ReservationListResponse result = reservationService.getAllReservations(company.getCompanyName(), userDetails);
 
             // then
             assertThat(result.getReservationList().size()).isEqualTo(size);
@@ -123,7 +122,7 @@ class ReservationServiceTest {
                     .thenReturn(List.of(reservationOne, reservationTwo));
 
             // when
-            ReservationTimetableResponseDto result =
+            ReservationTimetableResponse result =
                     reservationService.getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
 
             // then
@@ -141,7 +140,7 @@ class ReservationServiceTest {
             when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
 
             // when
-            ReservationTimetableResponseDto result = reservationService.getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
+            ReservationTimetableResponse result = reservationService.getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
 
             // then
             assertThat(result.getTimeList())
@@ -162,7 +161,7 @@ class ReservationServiceTest {
         ReservationTime selectTime = new ReservationTime(LocalDateTime.of(2023, 4, 8, 12, 0));
         List<ReservationTime> startList = List.of(selectTime);
         List<ReservationAttendee> userList = List.of(new ReservationAttendee(organizer.getId()), new ReservationAttendee(attendee.getId()));
-        ReservationRequestDto requestDto = new ReservationRequestDto(startList, userList);
+        ReservationRequest requestDto = new ReservationRequest(startList, userList);
 
         @Test
         void 예약을_등록한다() {
@@ -172,7 +171,7 @@ class ReservationServiceTest {
             // when
             when(meetingRoomRepository.findById(eq(meetingRoom.getId()))).thenReturn(Optional.of(meetingRoom));
 
-            ReservationResponseDto result = reservationService.addReservation(meetingRoom.getId(), requestDto, userDetails);
+            ReservationResponse result = reservationService.addReservation(meetingRoom.getId(), requestDto, userDetails);
 
             // then
             assertThat(result).isNotNull();
@@ -189,7 +188,7 @@ class ReservationServiceTest {
             Reservation firstReservation = Reservation_생성(organizer, meetingRoom,
                     secondSelectTime.getStart(), secondSelectTime.getStart().plusMinutes(59));
 
-            ReservationRequestDto secondReservationDto = new ReservationRequestDto(list, userList);
+            ReservationRequest secondReservationDto = new ReservationRequest(list, userList);
 
             when(meetingRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(meetingRoom));
 
@@ -241,12 +240,12 @@ class ReservationServiceTest {
             ReservationAttendee userOne = new ReservationAttendee(1L);
             ReservationAttendee userTwo = new ReservationAttendee(2L);
             List<ReservationAttendee> userList = List.of(userOne, userTwo);
-            ReservationRequestDto request = new ReservationRequestDto(startList, userList);
+            ReservationRequest request = new ReservationRequest(startList, userList);
 
             // when
             when(reservationRepository.findById(eq(before.getId()))).thenReturn(Optional.of(before));
 
-            ReservationResponseDto result = reservationService.editReservation(before.getId(), request, userDetails);
+            ReservationResponse result = reservationService.editReservation(before.getId(), request, userDetails);
 
             // then
             assertThat(result).isNotNull();

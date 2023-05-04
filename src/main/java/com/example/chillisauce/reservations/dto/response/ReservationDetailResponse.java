@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservationDetailResponseDto {
+public class ReservationDetailResponse {
     Long reservationId;
     Long mrId;
     String mrName;
@@ -24,16 +24,7 @@ public class ReservationDetailResponseDto {
     LocalDateTime end;
 //    List<String> userList;
 
-    public ReservationDetailResponseDto(Reservation reservation) {
-        this.reservationId= reservation.getId();
-        this.mrName=reservation.getMeetingRoom().getLocationName();
-        this.mrId=reservation.getMeetingRoom().getId();
-        this.username=reservation.getUser().getUsername();
-        this.start=reservation.getStartTime();
-        this.end=reservation.getEndTime();
-    }
-
-    public ReservationDetailResponseDto(Reservation reservation, Long mrId, String username) {
+    public ReservationDetailResponse(Reservation reservation, Long mrId, String username) {
         this.reservationId= reservation.getId();
         this.mrId=mrId;
         this.mrName=reservation.getMeetingRoom().getLocationName();

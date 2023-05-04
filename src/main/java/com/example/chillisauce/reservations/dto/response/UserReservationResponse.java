@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "유저 예약 정보 응답 DTO")
-public class UserReservationResponseDto {
+public class UserReservationResponse {
     @Schema(description = "예약 id")
     Long reservationId;
     @Schema(description = "회의실 id")
@@ -35,9 +35,9 @@ public class UserReservationResponseDto {
     LocalDateTime end;
 
     @Schema(description = "참석자 목록")
-    List<UsernameResponseDto> userList;
+    List<UsernameResponse> userList;
 
-    public UserReservationResponseDto(Reservation reservation) {
+    public UserReservationResponse(Reservation reservation) {
         this.reservationId = reservation.getId();
         this.mrId = reservation.getMeetingRoom().getId();
         this.mrName=reservation.getMeetingRoom().getLocationName();
@@ -46,7 +46,7 @@ public class UserReservationResponseDto {
         this.end = reservation.getEndTime();
     }
 
-    public UserReservationResponseDto(Reservation reservation, Long mrId, String username, List<UsernameResponseDto> userList) {
+    public UserReservationResponse(Reservation reservation, Long mrId, String username, List<UsernameResponse> userList) {
         this.reservationId = reservation.getId();
         this.mrId = mrId;
         this.mrName=reservation.getMeetingRoom().getLocationName();

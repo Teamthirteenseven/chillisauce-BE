@@ -6,6 +6,7 @@ import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -18,10 +19,11 @@ public class FixtureFactory {
     }
 
     public static User User_USER권한_생성(Companies company) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return User.builder()
                 .companies(company)
                 .email("test@test.com")
-                .password("12345678")
+                .password(passwordEncoder.encode("12345678"))
                 .username("testUser")
                 .role(UserRoleEnum.USER)
                 .build();

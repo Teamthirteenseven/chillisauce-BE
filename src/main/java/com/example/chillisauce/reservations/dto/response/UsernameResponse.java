@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsernameResponseDto {
+public class UsernameResponse {
     String username;
 
-    public UsernameResponseDto(ReservationUserWrapper dto){
+    public UsernameResponse(ReservationUserWrapper dto){
         username = dto.getUsername();
     }
 }

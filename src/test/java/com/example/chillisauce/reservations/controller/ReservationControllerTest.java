@@ -1,7 +1,7 @@
 package com.example.chillisauce.reservations.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
-import com.example.chillisauce.reservations.dto.request.ReservationRequestDto;
+import com.example.chillisauce.reservations.dto.request.ReservationRequest;
 import com.example.chillisauce.reservations.dto.request.ReservationTime;
 import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
 import com.example.chillisauce.reservations.dto.response.*;
@@ -79,7 +79,7 @@ class ReservationControllerTest {
         @WithMockUser
         void 전체_회의실_예약내역을_반환한다() throws Exception {
             // given
-            ReservationListResponseDto all = getAllReservationResponse();
+            ReservationListResponse all = getAllReservationResponse();
             when(reservationService.getAllReservations(eq(companyName), any())).thenReturn(all);
 
             // when
@@ -108,9 +108,9 @@ class ReservationControllerTest {
                     ));
         }
 
-        private ReservationListResponseDto getAllReservationResponse() {
-            List<ReservationDetailResponseDto> responseList = new ArrayList<>();
-            ReservationDetailResponseDto reservationOne = ReservationDetailResponseDto.builder()
+        private ReservationListResponse getAllReservationResponse() {
+            List<ReservationDetailResponse> responseList = new ArrayList<>();
+            ReservationDetailResponse reservationOne = ReservationDetailResponse.builder()
                     .reservationId(1L)
                     .username("강백호")
                     .mrId(1L)
@@ -119,7 +119,7 @@ class ReservationControllerTest {
                     .end(LocalDateTime.of(2023, 4, 11, 15, 59))
                     .build();
 
-            ReservationDetailResponseDto reservationTwo = ReservationDetailResponseDto.builder()
+            ReservationDetailResponse reservationTwo = ReservationDetailResponse.builder()
                     .reservationId(2L)
                     .username("윤대협")
                     .mrId(3L)
@@ -130,7 +130,7 @@ class ReservationControllerTest {
 
             responseList.add(reservationOne);
             responseList.add(reservationTwo);
-            return new ReservationListResponseDto(responseList);
+            return new ReservationListResponse(responseList);
         }
 
         @Test
@@ -146,7 +146,7 @@ class ReservationControllerTest {
     class GetReservationTimeTableTestCase {
         // given
         String url = "/reservations/1";
-        ReservationTimetableResponseDto timeTable = getReservationTimetable();
+        ReservationTimetableResponse timeTable = getReservationTimetable();
         @Test
         @WithMockUser
         void 특정날짜_특정회의실의_예약테이블을_반환한다() throws Exception {
@@ -179,26 +179,26 @@ class ReservationControllerTest {
                     ));
         }
 
-        private ReservationTimetableResponseDto getReservationTimetable() {
+        private ReservationTimetableResponse getReservationTimetable() {
             Long mrId = 1L;
             String mrName = "testMeetingRoom";
-            ReservationTimeResponseDto timeOne = ReservationTimeResponseDto.builder().isCheckOut(false)
+            ReservationTimeResponse timeOne = ReservationTimeResponse.builder().isCheckOut(false)
                     .start(LocalTime.of(7, 0))
                     .end(LocalTime.of(7, 59))
                     .build();
 
-            ReservationTimeResponseDto timeTwo = ReservationTimeResponseDto.builder().isCheckOut(true)
+            ReservationTimeResponse timeTwo = ReservationTimeResponse.builder().isCheckOut(true)
                     .start(LocalTime.of(8, 0))
                     .end(LocalTime.of(8, 59))
                     .build();
 
-            ReservationTimeResponseDto timeLast = ReservationTimeResponseDto.builder()
+            ReservationTimeResponse timeLast = ReservationTimeResponse.builder()
                     .isCheckOut(false)
                     .start(LocalTime.of(22, 0))
                     .end(LocalTime.of(22, 59))
                     .build();
 
-            return new ReservationTimetableResponseDto(mrId, mrName, List.of(timeOne, timeTwo, timeLast));
+            return new ReservationTimetableResponse(mrId, mrName, List.of(timeOne, timeTwo, timeLast));
         }
     }
 
@@ -215,8 +215,8 @@ class ReservationControllerTest {
         ReservationAttendee userOne = new ReservationAttendee(1L);
         ReservationAttendee userTwo = new ReservationAttendee(2L);
         List<ReservationAttendee> userList = List.of(userOne, userTwo);
-        ReservationRequestDto requestBody = new ReservationRequestDto(List.of(requestOne, requestTwo), userList);
-        ReservationResponseDto response = new ReservationResponseDto(startOne, end, new ArrayList<>());
+        ReservationRequest requestBody = new ReservationRequest(List.of(requestOne, requestTwo), userList);
+        ReservationResponse response = new ReservationResponse(startOne, end, new ArrayList<>());
 
         @Test
         @WithMockUser
@@ -297,8 +297,8 @@ class ReservationControllerTest {
         ReservationAttendee userOne = new ReservationAttendee(1L);
         ReservationAttendee userTwo = new ReservationAttendee(2L);
         List<ReservationAttendee> userList = List.of(userOne, userTwo);
-        ReservationRequestDto requestBody = new ReservationRequestDto(List.of(requestOne, requestTwo), userList);
-        ReservationResponseDto response = new ReservationResponseDto(startOne, end, new ArrayList<>());
+        ReservationRequest requestBody = new ReservationRequest(List.of(requestOne, requestTwo), userList);
+        ReservationResponse response = new ReservationResponse(startOne, end, new ArrayList<>());
 
         @Test
         @WithMockUser

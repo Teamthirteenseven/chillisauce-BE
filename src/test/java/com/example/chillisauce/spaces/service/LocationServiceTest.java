@@ -1,9 +1,9 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.LocationDto;
-import com.example.chillisauce.spaces.entity.*;
+import com.example.chillisauce.spaces.entity.Location;
+import com.example.chillisauce.spaces.entity.UserLocation;
 import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.entity.Companies;
@@ -19,9 +19,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +47,6 @@ public class LocationServiceTest {
 
     private Companies companies;
 
-    private Location location;
 
 
 

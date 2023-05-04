@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class UserReservationListResponseDto {
-    List<UserReservationResponseDto> reservationList;
+public class UserReservationListResponse {
+    List<UserReservationResponse> reservationList;
 }
