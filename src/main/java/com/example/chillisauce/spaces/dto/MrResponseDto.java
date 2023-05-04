@@ -1,11 +1,9 @@
 package com.example.chillisauce.spaces.dto;
 
-import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationResponse;
 import com.example.chillisauce.spaces.entity.Mr;
-import com.example.chillisauce.spaces.entity.UserLocation;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,14 +19,14 @@ public class MrResponseDto {
 
     private String y;
 
-    private List<ReservationResponseDto> reservationList;
+    private List<ReservationResponse> reservationList;
 
     public MrResponseDto(Mr mr) {
         this.mrId = mr.getId();
         this.mrName = mr.getLocationName();
         this.x = mr.getX();
         this.y = mr.getY();
-        this.reservationList =mr.getReservations().stream().map(ReservationResponseDto::new).collect(Collectors.toList());
+        this.reservationList =mr.getReservations().stream().map(ReservationResponse::new).collect(Collectors.toList());
     }
 
     public MrResponseDto(Long id, String mrName, String x, String y) {

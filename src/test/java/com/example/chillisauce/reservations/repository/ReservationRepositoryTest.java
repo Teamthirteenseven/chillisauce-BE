@@ -1,9 +1,6 @@
 package com.example.chillisauce.reservations.repository;
 
 import com.example.chillisauce.config.TestConfig;
-import com.example.chillisauce.reservations.dto.request.ReservationRequestDto;
-import com.example.chillisauce.reservations.dto.request.ReservationTime;
-import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
@@ -14,26 +11,18 @@ import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -41,7 +30,6 @@ import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

@@ -1,8 +1,6 @@
 package com.example.chillisauce.spaces.controller;
 
-import com.example.chillisauce.reservations.dto.response.ReservationResponseDto;
-import com.example.chillisauce.spaces.dto.BoxRequestDto;
-import com.example.chillisauce.spaces.dto.BoxResponseDto;
+import com.example.chillisauce.reservations.dto.response.ReservationResponse;
 import com.example.chillisauce.spaces.dto.MrRequestDto;
 import com.example.chillisauce.spaces.dto.MrResponseDto;
 import com.example.chillisauce.spaces.service.MrService;
@@ -178,7 +176,7 @@ public class MrControllerTest {
             String companyName = "testCompany";
             String url = "/mr/" + companyName;
             List<MrResponseDto> mrResponseDtoList = new ArrayList<>();
-            List<ReservationResponseDto> reservationList = new ArrayList<>();
+            List<ReservationResponse> reservationList = new ArrayList<>();
             mrResponseDtoList.add(new MrResponseDto(1L,"Mr 테스트 생성", "777" , "888", reservationList));
 
             when(mrService.mrlist(eq(companyName), any())).thenReturn(mrResponseDtoList);

@@ -12,20 +12,20 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReservationResponseDto {
+public class ReservationResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime start;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     LocalDateTime end;
-    List<UsernameResponseDto> userList;
+    List<UsernameResponse> userList;
 
-    public ReservationResponseDto(Reservation reservation){
+    public ReservationResponse(Reservation reservation){
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
     }
 
-    public ReservationResponseDto(Reservation reservation, List<UsernameResponseDto> userList) {
+    public ReservationResponse(Reservation reservation, List<UsernameResponse> userList) {
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
         this.userList = userList;
