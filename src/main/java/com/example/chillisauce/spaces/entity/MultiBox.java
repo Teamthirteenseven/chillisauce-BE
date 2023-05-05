@@ -27,6 +27,13 @@ public class MultiBox extends Location {
         super(locationName, x, y);
     }
 
+    public MultiBox(String multiBoxName, String x, String y, Space space) {
+        this.setLocationName(multiBoxName);
+        this.setX(x);
+        this.setY(y);
+        this.setSpace(space);
+    }
+
 
     public void updateMultiBox(MultiBoxRequestDto multiBoxRequestDto) {
         this.setLocationName(multiBoxRequestDto.getMultiBoxName());
