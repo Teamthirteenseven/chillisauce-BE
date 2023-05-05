@@ -35,7 +35,7 @@ public class PerformanceService {
                 .certification("testCert")
                 .companyName("testCompany")
                 .build());
-        Integer count = request.getCount();
+        Integer count = request.count();
 
         // request 카운트만큼 유저 생성
         List<User> testUserList = new ArrayList<>();
