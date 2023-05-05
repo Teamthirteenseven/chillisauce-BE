@@ -46,10 +46,7 @@ public class PerformanceService {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
 
-        Companies company = companyRepository.save(Companies.builder()
-                .certification("testCert")
-                .companyName("testCompany")
-                .build());
+        Companies company = userDetails.getUser().getCompanies();
 
         Integer count = request.getCount();
 
@@ -79,10 +76,7 @@ public class PerformanceService {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
 
-        Companies company = companyRepository.save(Companies.builder()
-                .certification("testCert")
-                .companyName("testCompany")
-                .build());
+        Companies company = userDetails.getUser().getCompanies();
         Integer count = request.getCount();
 
         Space space = Space.builder()
