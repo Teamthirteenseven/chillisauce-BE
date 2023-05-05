@@ -43,7 +43,7 @@ class SearchServiceTest {
         @Test
         void 문자열에_포함된_유저를_반환한다() {
             // given
-            when(userRepository.findAllByUsernameContainingAndCompanies_CompanyName(eq(query), any()))
+            when(userRepository.findAllByUsernameContainingAndCompanies(eq(query)))
                     .thenReturn(List.of(findOne, findTwo));
 
             // when

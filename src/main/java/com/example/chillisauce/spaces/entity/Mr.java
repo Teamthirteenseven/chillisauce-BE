@@ -36,6 +36,12 @@ public class Mr extends Location{
         this.reservations = reservation;
     }
 
+    public Mr(String mrName, String x, String y, Space space) {
+        this.setLocationName(mrName);
+        this.setX(x);
+        this.setY(y);
+        this.setSpace(space);
+    }
 
 
     public void updateMr(MrRequestDto mrRequestDto) {

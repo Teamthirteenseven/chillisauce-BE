@@ -28,7 +28,12 @@ public class Box extends Location {
         super(locationName, x, y);
     }
 
-
+    public Box(String boxName, String x, String y, Space space) {
+        this.setLocationName(boxName);
+        this.setX(x);
+        this.setY(y);
+        this.setSpace(space);
+    }
 
 
     public void updateBox(BoxRequestDto boxRequestDto) {
