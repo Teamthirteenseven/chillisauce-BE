@@ -5,7 +5,6 @@ import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.security.UserDetailsServiceImpl;
 import com.example.chillisauce.spaces.entity.UserLocation;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
@@ -22,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -32,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,6 +54,11 @@ class AdminServiceTest {
     @Mock
     Cache userDetailsCache;
 
+    private Companies company = Company_생성();
+    private User user = User_USER권한_생성(company);
+    private User admin = User_ADMIN권한_생성(company, "gurwlstm1210@gmail.com");
+    private User user2 = User_USER권한_생성_아이디지정(3L, company);
+
     @Nested
     @DisplayName("성공 케이스")
     class SuccessCase {
@@ -63,15 +66,6 @@ class AdminServiceTest {
         @Test
         void success1() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
             when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.of(admin));
 
@@ -80,7 +74,7 @@ class AdminServiceTest {
 
             //then
             assertThat(result).isNotNull();
-            assertThat(result.getUsername()).isEqualTo("뽀로로");
+            assertThat(result.getUsername()).isEqualTo("testAdminUser");
 
         }
 
@@ -88,15 +82,6 @@ class AdminServiceTest {
         @Test
         void success2() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
             List<User> allUsers = List.of(
@@ -116,15 +101,6 @@ class AdminServiceTest {
         @Test
         void success3() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
@@ -132,15 +108,7 @@ class AdminServiceTest {
                     .role(UserRoleEnum.MANAGER)
                     .build();
 
-            User user = User.builder()
-                    .id(2L)
-                    .email("123@123.com")
-                    .role(UserRoleEnum.USER)
-                    .username("손흥민")
-                    .companies(Companies.builder()
-                            .companyName("뽀로로랜드")
-                            .build())
-                    .build();
+
 
             //when
             when(userRepository.findByIdAndCompanies_CompanyName(2L, user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
@@ -162,25 +130,8 @@ class AdminServiceTest {
         @Test
         void success4() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
-            User user = User.builder()
-                    .id(2L)
-                    .role(UserRoleEnum.USER)
-                    .username("손흥민")
-                    .companies(Companies.builder()
-                            .companyName("뽀로로랜드")
-                            .build())
-                    .build();
 
             Schedule schedule = Schedule.builder()
                     .user(user)
@@ -222,16 +173,12 @@ class AdminServiceTest {
         @Test
         void fail1() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.USER)
-                    .username("뽀로로")
-                    .build();
-            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+
+            UserDetailsImpl details = new UserDetailsImpl(user, user.getUsername());
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
-                adminService.getUsers(admin.getId(), details);
+                adminService.getUsers(user.getId(), details);
             });
 
             //then
@@ -271,12 +218,7 @@ class AdminServiceTest {
         @Test
         void fail3() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.USER)
-                    .username("뽀로로")
-                    .build();
-            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+            UserDetailsImpl details = new UserDetailsImpl(user, user.getUsername());
 
             //when
             UserException exception = assertThrows(UserException.class, () -> {
@@ -292,24 +234,13 @@ class AdminServiceTest {
         @Test
         void fail4() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
-//            List<User> allUsers = List.of(
-//                    User.builder().id(1L).email("123@123").build(),
-//                    User.builder().id(1L).email("123@123").build(),
-//                    User.builder().id(1L).email("123@123").build());
             when(userRepository.findAllByCompanies_CompanyName(admin.getCompanies().getCompanyName())).thenReturn(Collections.emptyList());
+
             //when
             UserListResponseDto result = adminService.getAllUsers(details);
+
             //then
             assertThat(result).isNotNull();
             assertThat(result.getUserList().size()).isEqualTo(0);
@@ -319,12 +250,7 @@ class AdminServiceTest {
         @Test
         void fail5() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.USER)
-                    .username("뽀로로")
-                    .build();
-            UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
+            UserDetailsImpl details = new UserDetailsImpl(user, user.getUsername());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
                     .role(UserRoleEnum.MANAGER)
@@ -343,15 +269,6 @@ class AdminServiceTest {
         @Test
         void fail6() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
             when(userRepository.findByIdAndCompanies_CompanyName(2L, admin.getCompanies().getCompanyName())).thenReturn(Optional.empty());
 
@@ -374,35 +291,20 @@ class AdminServiceTest {
         @Test
         void fail7() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
+
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
                     .role(UserRoleEnum.ADMIN)
                     .build();
 
-            User user = User.builder()
-                    .id(2L)
-                    .role(UserRoleEnum.USER)
-                    .username("손흥민")
-                    .companies(Companies.builder()
-                            .companyName("뽀로로랜드")
-                            .build())
-                    .build();
+
 
             //when
-            when(userRepository.findByIdAndCompanies_CompanyName(2L, user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
+            when(userRepository.findByIdAndCompanies_CompanyName(user.getId(), user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
 
             UserException exception = assertThrows(UserException.class, () -> {
-                adminService.editUser(2L, details, requestDto);
+                adminService.editUser(user.getId(), details, requestDto);
             });
 
             //then
@@ -415,15 +317,7 @@ class AdminServiceTest {
         @Test
         void fail8() {
             //given
-            User admin = User.builder()
-                    .id(2L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
+
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
@@ -447,15 +341,7 @@ class AdminServiceTest {
         @Test
         void fail9() {
             //given
-            User admin = User.builder()
-                    .id(1L)
-                    .role(UserRoleEnum.ADMIN)
-                    .username("뽀로로")
-                    .companies(
-                            Companies.builder()
-                                    .companyName("뽀로로랜드")
-                                    .build())
-                    .build();
+
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
             when(userRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -468,6 +354,21 @@ class AdminServiceTest {
             assertThat(exception).isNotNull();
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 사용자가 없습니다");
 
+        }
+
+        @DisplayName("사원 삭제 실패(권한 없음)")
+        @Test
+        void A() {
+        //given
+            UserDetailsImpl details = new UserDetailsImpl(user, user.getUsername());
+
+        //when
+            UserException exception = assertThrows(UserException.class, () -> {
+                adminService.deleteUser(user2.getId(), details);
+            });
+        //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("권한이 없습니다.");
         }
 
     }
