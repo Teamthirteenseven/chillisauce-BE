@@ -5,7 +5,7 @@ public enum UserRoleEnum {
     ADMIN(Authority.ADMIN),  // 관리자 C.R.U.D
     MANAGER(Authority.MANAGER), //중간관리자 C.R.U
 
-    ;  // 사업자 권한
+    SUPERUSER(Authority.SUPERUSER);  // 개발자용
 
     private final String authority;
 
@@ -21,5 +21,6 @@ public enum UserRoleEnum {
         public static final String USER = "ROLE_USER";
         public static final String ADMIN = "ROLE_ADMIN";
         public static final String MANAGER = "ROLE_MANAGER";
+        public static final String SUPERUSER = "ROLE_SUPERUSER";
     }
 }
