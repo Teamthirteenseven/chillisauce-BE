@@ -6,9 +6,5 @@ import lombok.Getter;
 @Builder
 @Getter
 public class UserInjectRequest {
-    String email;
-    String password;
-    String passwordCheck;
-    String username;
     Integer count;
 }
