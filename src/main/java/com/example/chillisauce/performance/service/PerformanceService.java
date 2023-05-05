@@ -5,6 +5,7 @@ import com.example.chillisauce.performance.dto.ScheduleInjectRequest;
 import com.example.chillisauce.performance.dto.SpaceInjectRequest;
 import com.example.chillisauce.performance.dto.UserInjectRequest;
 import com.example.chillisauce.security.UserDetailsImpl;
+
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.MultiBox;
@@ -33,6 +34,7 @@ import java.util.List;
 public class PerformanceService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
+
     private final SpaceRepository spaceRepository;
     private final BoxRepository boxRepository;
 
@@ -48,6 +50,7 @@ public class PerformanceService {
                 .certification("testCert")
                 .companyName("testCompany")
                 .build());
+
         Integer count = request.getCount();
 
         // request 카운트만큼 유저 생성
@@ -70,7 +73,6 @@ public class PerformanceService {
         userRepository.saveAll(testUserList);
         return "success";
     }
-
 
     public String injectSpaces(SpaceInjectRequest request, UserDetailsImpl userDetails) {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){

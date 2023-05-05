@@ -5,11 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
+/**
+ * @param count 생성할 유저 수
+ */
 @Builder
-@AllArgsConstructor
-public class UserInjectRequest {
-    // 생성할 유저 수
-    Integer count;
-}
+public record UserInjectRequest(String email, String password, String passwordCheck, String username, Integer count) {
