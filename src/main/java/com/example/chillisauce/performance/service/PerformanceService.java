@@ -6,15 +6,11 @@ import com.example.chillisauce.performance.dto.SpaceInjectRequest;
 import com.example.chillisauce.performance.dto.UserInjectRequest;
 import com.example.chillisauce.reservations.dto.request.ReservationTime;
 import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.reservations.exception.ReservationErrorCode;
-import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
-import com.example.chillisauce.schedules.dto.ScheduleTime;
 import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.schedules.vo.ScheduleTimeTable;
 import com.example.chillisauce.security.UserDetailsImpl;
-
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.MultiBox;
@@ -61,7 +57,7 @@ public class PerformanceService {
         }
 
         Companies company = userDetails.getUser().getCompanies();
-
+        companyRepository.saveAndFlush(company);
         Integer count = request.getCount();
 
         // request 카운트만큼 유저 생성
@@ -81,7 +77,7 @@ public class PerformanceService {
             testUserList.add(user);
         }
 
-        userRepository.saveAll(testUserList);
+        userRepository.saveAllAndFlush(testUserList);
         return "success";
     }
 
@@ -93,44 +89,51 @@ public class PerformanceService {
         Companies company = userDetails.getUser().getCompanies();
         Integer count = request.getCount();
 
-        Space space = Space.builder()
-                .companies(company)
-                .spaceName("testSpace")
-                .build();
-        spaceRepository.save(space);
+
+        List<Space> spaceList = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            String spaceName = i + "번 공간";
+            Space space = Space.builder()
+                    .companies(company)
+                    .spaceName(spaceName)
+                    .build();
+            spaceList.add(space);
+        }
+        spaceRepository.saveAll(spaceList);
 
         List<Box> boxList = new ArrayList<>();
-        for (int i = 1; i <= count; i++) {
+        for (int i = 1; i <= 5; i++) {
             String boxName = i + "번 박스";
             String x = i + "";
             String y = i + "";
-            Box box = new Box(boxName, x , y ,space);
+            Box box = new Box(boxName, x , y ,spaceList.get(0));
             boxList.add(box);
         }
         boxRepository.saveAll(boxList);
 
         List<MultiBox> multiBoxList = new ArrayList<>();
-        for (int i = 1; i <= count; i++) {
+        for (int i = 1; i <= 5; i++) {
             String multiBoxName = i + "번 멀티박스";
             String x = i + "";
             String y = i + "";
-            MultiBox multiBox = new MultiBox(multiBoxName, x, y, space);
+            MultiBox multiBox = new MultiBox(multiBoxName, x, y, spaceList.get(0));
             multiBoxList.add(multiBox);
         }
         multiBoxRepository.saveAll(multiBoxList);
 
         List<Mr> meetingRoomList = new ArrayList<>();
-        for (int i = 1; i <= count; i++) {
+        for (int i = 1; i <= 5; i++) {
             String mrName = i + "번 회의실";
             String x = i + "";
             String y = i + "";
-            Mr mr = new Mr(mrName, x, y, space);
+            Mr mr = new Mr(mrName, x, y, spaceList.get(0));
             meetingRoomList.add(mr);
         }
         mrRepository.saveAll(meetingRoomList);
 
         return "success";
     }
+
 
     public String injectReservations(ReservationInjectRequest request, Long mrId, UserDetailsImpl userDetails) {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){
