@@ -60,6 +60,15 @@ public class PerformanceService {
         companyRepository.saveAndFlush(company);
         Integer count = request.getCount();
 
+        User admin = User.builder()
+                .email("admin@test" + company.getId() + ".com")
+                .username("testAdmin")
+                .role(UserRoleEnum.ADMIN)
+                .password("1234qwer!")
+                .companies(company)
+                .build();
+        userRepository.save(admin);
+
         // request 카운트만큼 유저 생성
         List<User> testUserList = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
