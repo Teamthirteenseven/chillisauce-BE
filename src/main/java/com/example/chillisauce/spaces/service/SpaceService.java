@@ -162,6 +162,7 @@ public class SpaceService {
 
 
 
+
     //공간 개별 수정
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
