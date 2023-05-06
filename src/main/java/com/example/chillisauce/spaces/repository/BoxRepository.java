@@ -10,4 +10,10 @@ import java.util.Optional;
 public interface BoxRepository extends JpaRepository<Box, Long> {
     Optional<Box> findByIdAndSpaceCompanies(Long boxId, Companies companies);
 
+    /**
+     *개선 전 코드
+     */
+    @Query("SELECT ul.location, ul FROM UserLocation ul")
+    List<Object[]> findAllLocationsWithUserLocations();
+
 }

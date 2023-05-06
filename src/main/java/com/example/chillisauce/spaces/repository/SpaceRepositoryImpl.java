@@ -62,7 +62,7 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
     }
 
     /**
-     * 해당하는 space 전체 삭제
+     * 해당하는 space 전체 삭제 2차 개선
      */
     public void clearAllReservationsForSpace(Long spaceId) {
         List<Long> meetingRoomList = queryFactory
@@ -77,7 +77,7 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .execute();
     }
     /**
-     * 해당하는 floor 전체 삭제
+     * 해당하는 floor 전체 삭제 2차 개선
      */
     public void clearAllReservationsForFloor(Long floorId) {
         List<Long> meetingRoomList = queryFactory
