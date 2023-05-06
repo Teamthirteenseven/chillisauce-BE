@@ -5,6 +5,7 @@ import com.example.chillisauce.security.GrantedAuthoritySerializer;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.FloorResponseDto;
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.users.dto.UserListResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -55,7 +56,12 @@ public class RedisConfig {
                 (objectMapper.getTypeFactory().constructCollectionType(List.class, SpaceResponseDto.class));
         spaceSerializer.setObjectMapper(objectMapper);
 
-        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
+        /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+//        Jackson2JsonRedisSerializer<List<UserListResponseDto>> userSerializer = new Jackson2JsonRedisSerializer<>
+//                (objectMapper.getTypeFactory().constructCollectionType(List.class, UserListResponseDto.class));
+//        userSerializer.setObjectMapper(objectMapper);
+        /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+
         Jackson2JsonRedisSerializer<UserDetailsImpl> userDetailsSerializer = new Jackson2JsonRedisSerializer<>
                 (objectMapper.getTypeFactory().constructType(UserDetailsImpl.class));
         userDetailsSerializer.setObjectMapper(objectMapper);
@@ -63,7 +69,6 @@ public class RedisConfig {
         grantedAuthorityModule.addSerializer(GrantedAuthority.class, new GrantedAuthoritySerializer());
         grantedAuthorityModule.addDeserializer(GrantedAuthority.class, new GrantedAuthorityDeserializer());
         objectMapper.registerModule(grantedAuthorityModule);
-        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
 
         RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory);
 
@@ -81,14 +86,21 @@ public class RedisConfig {
                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(spaceSerializer))
         );
 
-        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
+        /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+//        builder.withCacheConfiguration("UserResponseDtoList",
+//                RedisCacheConfiguration.defaultCacheConfig()
+//                        .entryTtl(Duration.ofMinutes(60))
+//                        .disableCachingNullValues()
+//                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(userSerializer))
+//        );
+        /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+
         builder.withCacheConfiguration("UserDetails",
                 RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofMinutes(120))
                         .disableCachingNullValues()
                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(userDetailsSerializer))
         );
-        /* 테스트1. 유저 인증객체인 UserDetailsImpl을 캐싱한다. */
 
         return builder.build();
     }
