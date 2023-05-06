@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -37,11 +34,12 @@ public class PerformanceController {
                 .responseSuccess("성능 테스트용 스페이스 생성 성공", performanceService.injectSpaces(request, userDetails));
     }
 
-    @PostMapping("/reservations/inject")
+    @PostMapping("/reservations/inject/{mrId}")
     public ResponseEntity<ResponseMessage<String>> injectReservations(@RequestBody ReservationInjectRequest request,
+                                                                      @PathVariable Long mrId,
                                                                       @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseMessage
-                .responseSuccess("성능 테스트용 예약 생성 성공", performanceService.injectReservations(request, userDetails));
+                .responseSuccess("성능 테스트용 예약 생성 성공", performanceService.injectReservations(request, mrId, userDetails));
     }
 
     @PostMapping("/schedules/inject")

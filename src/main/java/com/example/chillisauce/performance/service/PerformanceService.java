@@ -4,6 +4,11 @@ import com.example.chillisauce.performance.dto.ReservationInjectRequest;
 import com.example.chillisauce.performance.dto.ScheduleInjectRequest;
 import com.example.chillisauce.performance.dto.SpaceInjectRequest;
 import com.example.chillisauce.performance.dto.UserInjectRequest;
+import com.example.chillisauce.reservations.dto.request.ReservationTime;
+import com.example.chillisauce.reservations.entity.Reservation;
+import com.example.chillisauce.reservations.exception.ReservationErrorCode;
+import com.example.chillisauce.reservations.exception.ReservationException;
+import com.example.chillisauce.reservations.repository.ReservationRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
 
 import com.example.chillisauce.spaces.entity.Box;
@@ -25,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +46,7 @@ public class PerformanceService {
 
     private final MultiBoxRepository multiBoxRepository;
     private final MrRepository mrRepository;
+    private final ReservationRepository reservationRepository;
 
     public String injectUsers(UserInjectRequest request, UserDetailsImpl userDetails) {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){
@@ -118,11 +125,34 @@ public class PerformanceService {
         return "success";
     }
 
-    public String injectReservations(ReservationInjectRequest request, UserDetailsImpl userDetails) {
+    public String injectReservations(ReservationInjectRequest request, Long mrId, UserDetailsImpl userDetails) {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
+        Integer count = request.getCount();
+        Mr meetingRoom = mrRepository.findById(mrId).orElseThrow(
+                () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
 
+        User organizer = userDetails.getUser(); // 회의 주최자
+
+        List<LocalDateTime> list = request.getStartList().stream().map(ReservationTime::getStart)
+                .sorted().toList();
+        LocalDateTime start = list.get(0);
+        LocalDateTime end = list.get(list.size() - 1).plusMinutes(59);
+
+        List<Reservation> reservationList = new ArrayList<>();
+        for (Long i = meetingRoom.getId(); i <= 30L; i++) {
+            for (int j = 1; j <= count; j++) {
+                Reservation reservation = Reservation.builder()
+                        .user(organizer)
+                        .meetingRoom(meetingRoom)
+                        .startTime(start)
+                        .endTime(end)
+                        .build();
+                reservationList.add(reservation);
+            }
+        }
+        reservationRepository.saveAll(reservationList);
         return "success";
     }
 
