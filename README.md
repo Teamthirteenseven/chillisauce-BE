@@ -1,36 +1,27 @@
+## 소개
+
+
+## 서비스 화면
+![img1](https://user-images.githubusercontent.com/77224652/236627905-1ace59f6-afba-41e6-94e2-97472f0f64be.png)
+![img2](https://user-images.githubusercontent.com/77224652/236627934-acd70dcb-a258-4ba5-8ea6-8847861f61a8.png)
+![img3](https://user-images.githubusercontent.com/77224652/236627951-c19b8593-286b-40bf-8bde-43129860c292.png)
+
+## Tech Stacks
+
+### Front-End
+
+### Back-End
+![backend](https://user-images.githubusercontent.com/77224652/236628171-45b953cb-e5d3-4eac-ac9e-fd969f302565.png)
+
+### Infrastructure
+<img width="1621" alt="infra" src="https://user-images.githubusercontent.com/77224652/236628036-555f3f20-bf31-4376-b8f9-80bce9844b01.png">
+
 ## Architecture
 
-## Ground Rule
+![architecture](https://user-images.githubusercontent.com/77224652/236628256-ea2cde32-ec3c-49ae-a7ea-4124ad945a6c.png)
 
-### 1. 코드 컨벤션
+## CI/CD
 
-### 2. Branch 전략
+![backend-ci-cd](https://user-images.githubusercontent.com/77224652/236628330-641ad8a3-0bdc-4988-888c-fa349ada96b3.png)
 
-### 3. Commit 메시지 컨벤션
-
-- feat : 새로운 기능 추가, 기존 기능을 요구 사항에 맞추어 수정  
-  ex) git commit -m "feat : 대댓글 CRUD 구현"
-
-- fix : 버그 수정  
-  ex) git commit -m "fix : cors 관련 config 클래스 수정"
-
-- build : 빌드 관련 수정
-
-- chore : 패키지 매니저 수정, 그 외 기타 수정  
-  ex) .gitignore
-
-- ci : CI 관련 설정 수정  
-
-- docs : 문서(주석) 수정  
-  ex) git commit -m "docs : README.md 규칙 추가"
-
-- style : 코드 스타일, 포맷팅에 대한 수정
-
-- refactor : 기능의 변화가 아닌 코드 리팩터링  
-  ex) git commit -m "refactor : 변수 이름 변경"
-
-- test : 테스트 코드 추가/수정
-
-- release : 버전 릴리즈  
-
-- push용 작성
+## 팀원
