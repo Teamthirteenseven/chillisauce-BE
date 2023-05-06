@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
+/* 성능테스트 1. 인덱싱 / 논인덱싱 비교*/
+//@Table(name = "companies", indexes = {
+//        @Index(name = "idx_companyName", columnList = "companyName", unique = true)
+//})
+/* 성능테스트 1. 인덱싱 / 논인덱싱 비교*/
 @Getter
 @Builder
 @NoArgsConstructor
