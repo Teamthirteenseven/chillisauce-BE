@@ -9,6 +9,10 @@ import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.exception.ReservationErrorCode;
 import com.example.chillisauce.reservations.exception.ReservationException;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
+import com.example.chillisauce.schedules.dto.ScheduleTime;
+import com.example.chillisauce.schedules.entity.Schedule;
+import com.example.chillisauce.schedules.repository.ScheduleRepository;
+import com.example.chillisauce.schedules.vo.ScheduleTimeTable;
 import com.example.chillisauce.security.UserDetailsImpl;
 
 import com.example.chillisauce.spaces.entity.Box;
@@ -30,7 +34,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +53,7 @@ public class PerformanceService {
     private final MultiBoxRepository multiBoxRepository;
     private final MrRepository mrRepository;
     private final ReservationRepository reservationRepository;
+    private final ScheduleRepository scheduleRepository;
 
     public String injectUsers(UserInjectRequest request, UserDetailsImpl userDetails) {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){
@@ -129,25 +136,25 @@ public class PerformanceService {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
-        Integer count = request.getCount();
-        Mr meetingRoom = mrRepository.findById(mrId).orElseThrow(
-                () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
 
+        // 데이터 개수 : 회의실 10개 * 풀타임(7~22) = 160개 데이터
+        Integer count = request.getCount();
         User organizer = userDetails.getUser(); // 회의 주최자
 
-        List<LocalDateTime> list = request.getStartList().stream().map(ReservationTime::getStart)
+        List<Mr> mrList = mrRepository.findAll().stream().filter(x->x.getId()>=21).toList();
+
+        List<LocalDateTime> timeList = request.getStartList().stream().map(ReservationTime::getStart)
                 .sorted().toList();
-        LocalDateTime start = list.get(0);
-        LocalDateTime end = list.get(list.size() - 1).plusMinutes(59);
 
         List<Reservation> reservationList = new ArrayList<>();
-        for (Long i = meetingRoom.getId(); i <= 30L; i++) {
-            for (int j = 1; j <= count; j++) {
+
+        for (Mr mr : mrList) {
+            for (LocalDateTime t : timeList) {
                 Reservation reservation = Reservation.builder()
                         .user(organizer)
-                        .meetingRoom(meetingRoom)
-                        .startTime(start)
-                        .endTime(end)
+                        .meetingRoom(mr)
+                        .startTime(t)
+                        .endTime(t.plusMinutes(59))
                         .build();
                 reservationList.add(reservation);
             }
@@ -160,6 +167,29 @@ public class PerformanceService {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
+
+        // 유저 10명, 1달(30일)치 1시간단위 스케줄 풀타임(7~22) = 10*30*16 = 4800개 데이터
+        List<User> userList = userRepository.findAll().stream().filter(x-> x.getId()>1 && x.getId()<12).toList();
+        List<Schedule> scheduleList = new ArrayList<>();
+
+        for (User user : userList) {
+            for (int i = 0; i < request.getDays(); i++) {
+                LocalDate date = LocalDate.now();
+                for (int j = ScheduleTimeTable.OPEN_HOUR; j <= ScheduleTimeTable.CLOSE_HOUR; j++) {
+                    Schedule schedule = Schedule.builder()
+                            .startTime(LocalDateTime.of(date, LocalTime.of(j, 0)))
+                            .endTime(LocalDateTime.of(date, LocalTime.of(j, 59)))
+                            .user(user)
+                            .comment("test Schedule comment")
+                            .title("test Schedule title")
+                            .build();
+
+                    scheduleList.add(schedule);
+                }
+            }
+        }
+
+        scheduleRepository.saveAll(scheduleList);
 
         return "success";
     }
