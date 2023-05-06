@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.util.EnumUtils;
@@ -43,6 +45,9 @@ public class AdminService {
 
     /* 사원 목록 전체 조회 */
     @Transactional(readOnly = true)
+    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+//    @Cacheable(value = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
+    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
     public UserListResponseDto getAllUsers(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
@@ -75,6 +80,7 @@ public class AdminService {
         User getUser = findOneUser(userId, user);
         String userEmail = getUser.getEmail();
         evictCacheByEmail(userEmail);   //Evicting user from cache
+//        evictCacheByCompanyName(userDetails);   //Evicting userList from cache
 
         if (requestDto.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.UNABLE_MODIFY_PERMISSION_FOR_ADMIN);
@@ -96,7 +102,7 @@ public class AdminService {
 
     /* 사원 삭제 */
     @Transactional
-    public String deleteUser(Long userId,UserDetailsImpl userDetails) {
+    public String deleteUser(Long userId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
@@ -107,6 +113,7 @@ public class AdminService {
 
         String userEmail = getUser.getEmail();
         evictCacheByEmail(userEmail);   //Evicting user from cache
+//        evictCacheByCompanyName(userDetails);   //Evicting userList from cache
 
         //사원의 스케줄 삭제
         List<Schedule> schedules = scheduleRepository.findAllByUserId(userId);
@@ -135,5 +142,16 @@ public class AdminService {
             userDetailsCache.evict(email);
         }
     }
+
+    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+//    @CacheEvict(cacheNames = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
+//    public void evictCacheByCompanyName(UserDetailsImpl userDetails) {
+//        log.info("Evicting userList from cache={}", userDetails.getUser().getCompanies().getCompanyName());
+//        Cache userListCache = cacheManager.getCache("UserResponseDtoList");
+//        if (userListCache != null) {
+//            userListCache.evict(userDetails.getUser().getCompanies().getCompanyName());
+//        }
+//    }
+    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
 
 }
