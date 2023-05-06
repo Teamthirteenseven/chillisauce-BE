@@ -108,6 +108,9 @@ public class FloorService {
         }
         mrRepository.deleteAll(mrList);
         floorRepository.delete(floor);
+//        mrRepository.clearAllReservationsForFloor(floorId);
+//        spaceRepository.clearAllReservationsForFloor(floorId);
+//        floorRepository.delete(floor);
         return new FloorResponseDto(floor);
     }
 
