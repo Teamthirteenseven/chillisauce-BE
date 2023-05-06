@@ -39,7 +39,7 @@ public class PerformanceController {
                                                                       @PathVariable Long mrId,
                                                                       @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseMessage
-                .responseSuccess("성능 테스트용 예약 생성 성공", performanceService.injectReservations(request, mrId, userDetails));
+                .responseSuccess("성능 테스트용 예약 생성 성공", performanceService.injectReservations(request,mrId,userDetails));
     }
 
     @PostMapping("/schedules/inject")
