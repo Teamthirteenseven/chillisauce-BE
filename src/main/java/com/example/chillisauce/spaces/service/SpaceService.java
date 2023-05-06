@@ -94,6 +94,30 @@ public class SpaceService {
         return spaceResponseDto;
     }
 
+    /**
+     * 개선 전 전체 조회
+     */
+//    @Transactional
+//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
+//    public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
+//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+//        }
+//        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
+//                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+//        );
+//        List<Space> spaceList = spaceRepository.findAllByCompaniesId(companies.getId());
+//        return spaceList.stream().map(space -> {
+//            Long floorId = null;
+//            String floorName = null;
+//            if (space.getFloor() != null) {
+//                floorId = space.getFloor().getId();
+//                floorName = space.getFloor().getFloorName();
+//            }
+//            return new SpaceResponseDto(space, floorId, floorName);
+//        }).collect(Collectors.toList());
+//    }
+
     //공간 선택 조회
     @Transactional
     @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
@@ -106,6 +130,34 @@ public class SpaceService {
 
         return spaceResponseDto;
     }
+
+    /**
+     * 개선 전 선택 조회
+     */
+//    @Transactional
+//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
+//    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
+//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+//        }
+//        Space space = findCompanyNameAndSpaceId(companyName, spaceId);
+//
+//        Map<Long, List<UserLocation>> userLocationMap = boxRepository.findAllLocationsWithUserLocations().stream()
+//                .filter(obj -> ((Location) obj[0]).getSpace().getId().equals(space.getId()))
+//                .collect(Collectors.groupingBy(obj -> ((Location) obj[0]).getId(),
+//                        Collectors.mapping(obj -> (UserLocation) obj[1], Collectors.toList())));
+//
+//        List<Object[]> locationsWithUserLocations = space.getLocations().stream()
+//                .map(location -> new Object[]{location, userLocationMap.get(location.getId())})
+//                .collect(Collectors.toList());
+//
+//
+//        Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
+//        String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
+//
+//        SpaceResponseDto responseDto = new SpaceResponseDto(space, floorId, floorName, locationsWithUserLocations);
+//        return Collections.singletonList(responseDto);
+//    }
 
 
 
@@ -151,6 +203,9 @@ public class SpaceService {
         }
         mrRepository.deleteAll(mrList);
         spaceRepository.deleteById(spaceId);
+//        mrRepository.clearAllReservationsForSpace(spaceId);
+//        spaceRepository.clearAllReservationsForSpace(spaceId);
+//        spaceRepository.deleteById(spaceId);
         return new SpaceResponseDto(space);
     }
 

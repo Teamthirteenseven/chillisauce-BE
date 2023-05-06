@@ -1,6 +1,7 @@
 package com.example.chillisauce.spaces.repository;
 
 import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.users.entity.QCompanies;
 import com.example.chillisauce.users.entity.User;
@@ -12,7 +13,9 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.chillisauce.reservations.entity.QReservation.reservation;
 import static com.example.chillisauce.spaces.entity.QFloor.floor;
+import static com.example.chillisauce.spaces.entity.QMr.mr;
 import static com.example.chillisauce.spaces.entity.QSpace.space;
 
 
@@ -57,6 +60,38 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                         (s, s.getFloor() != null ? s.getFloor().getId() : null, s.getFloor() != null ? s.getFloor().getFloorName() : null))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 해당하는 space 전체 삭제
+     */
+    public void clearAllReservationsForSpace(Long spaceId) {
+        List<Long> meetingRoomList = queryFactory
+                .select(mr.id)
+                .from(mr)
+                .where(mr.space.id.eq(spaceId))
+                .fetch();
+        queryFactory
+                .update(reservation)
+                .set(reservation.meetingRoom, (Mr) null)
+                .where(reservation.meetingRoom.id.in(meetingRoomList))
+                .execute();
+    }
+    /**
+     * 해당하는 floor 전체 삭제
+     */
+    public void clearAllReservationsForFloor(Long floorId) {
+        List<Long> meetingRoomList = queryFactory
+                .select(mr.id)
+                .from(mr)
+                .where(mr.space.floor.id.eq(floorId))
+                .fetch();
+        queryFactory
+                .update(reservation)
+                .set(reservation.meetingRoom, (Mr) null)
+                .where(reservation.meetingRoom.id.in(meetingRoomList))
+                .execute();
+    }
+
 
     private BooleanExpression companyNameEquals(String companyName) {
         return space.companies.companyName.eq(companyName);
