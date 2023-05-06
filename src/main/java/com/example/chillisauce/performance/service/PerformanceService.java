@@ -28,6 +28,7 @@ import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -50,6 +51,7 @@ public class PerformanceService {
     private final MrRepository mrRepository;
     private final ReservationRepository reservationRepository;
     private final ScheduleRepository scheduleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public String injectUsers(UserInjectRequest request, UserDetailsImpl userDetails) {
         if(userDetails.getUser().getRole()!=UserRoleEnum.SUPERUSER){
@@ -64,7 +66,7 @@ public class PerformanceService {
                 .email("admin@test" + company.getId() + ".com")
                 .username("testAdmin")
                 .role(UserRoleEnum.ADMIN)
-                .password("1234qwer!")
+                .password(passwordEncoder.encode("1234qwer!"))
                 .companies(company)
                 .build();
         userRepository.save(admin);
