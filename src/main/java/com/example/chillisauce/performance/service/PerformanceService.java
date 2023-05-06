@@ -152,7 +152,7 @@ public class PerformanceService {
         Integer count = request.getCount();
         User organizer = userDetails.getUser(); // 회의 주최자
 
-        List<Mr> mrList = mrRepository.findAll().stream().filter(x->x.getId()>=21).toList();
+        List<Mr> mrList = mrRepository.findAll().stream().limit(count).toList();
 
         List<LocalDateTime> timeList = request.getStartList().stream().map(ReservationTime::getStart)
                 .sorted().toList();
@@ -180,7 +180,7 @@ public class PerformanceService {
         }
 
         // 유저 10명, 1달(30일)치 1시간단위 스케줄 풀타임(7~22) = 10*30*16 = 4800개 데이터
-        List<User> userList = userRepository.findAll().stream().filter(x-> x.getId()>1 && x.getId()<12).toList();
+        List<User> userList = userRepository.findAll().stream().limit(10).toList();
         List<Schedule> scheduleList = new ArrayList<>();
 
         for (User user : userList) {
