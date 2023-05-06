@@ -100,50 +100,47 @@ public class PerformanceService {
         Companies company = userDetails.getUser().getCompanies();
         Integer count = request.getCount();
 
-
-        List<Space> spaceList = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
             String spaceName = i + "번 공간";
             Space space = Space.builder()
                     .companies(company)
                     .spaceName(spaceName)
                     .build();
-            spaceList.add(space);
-        }
-        spaceRepository.saveAll(spaceList);
+            spaceRepository.save(space);
 
-        List<Box> boxList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            String boxName = i + "번 박스";
-            String x = i + "";
-            String y = i + "";
-            Box box = new Box(boxName, x , y ,spaceList.get(0));
-            boxList.add(box);
-        }
-        boxRepository.saveAll(boxList);
+            List<Box> boxList = new ArrayList<>();
+            for (int j = 1; j <= 5; j++) {
+                String boxName = j + "번 박스";
+                String x = j + "";
+                String y = j + "";
+                Box box = new Box(boxName, x, y, space);
+                boxList.add(box);
+            }
+            boxRepository.saveAll(boxList);
 
-        List<MultiBox> multiBoxList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            String multiBoxName = i + "번 멀티박스";
-            String x = i + "";
-            String y = i + "";
-            MultiBox multiBox = new MultiBox(multiBoxName, x, y, spaceList.get(0));
-            multiBoxList.add(multiBox);
-        }
-        multiBoxRepository.saveAll(multiBoxList);
+            List<MultiBox> multiBoxList = new ArrayList<>();
+            for (int j = 1; j <= 5; j++) {
+                String multiBoxName = j + "번 멀티박스";
+                String x = j + "";
+                String y = j + "";
+                MultiBox multiBox = new MultiBox(multiBoxName, x, y, space);
+                multiBoxList.add(multiBox);
+            }
+            multiBoxRepository.saveAll(multiBoxList);
 
-        List<Mr> meetingRoomList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            String mrName = i + "번 회의실";
-            String x = i + "";
-            String y = i + "";
-            Mr mr = new Mr(mrName, x, y, spaceList.get(0));
-            meetingRoomList.add(mr);
+            List<Mr> meetingRoomList = new ArrayList<>();
+            for (int j = 1; j <= 5; j++) {
+                String mrName = i + "번 회의실";
+                String x = j + "";
+                String y = j + "";
+                Mr mr = new Mr(mrName, x, y, space);
+                meetingRoomList.add(mr);
+            }
+            mrRepository.saveAll(meetingRoomList);
         }
-        mrRepository.saveAll(meetingRoomList);
-
         return "success";
     }
+
 
 
     public String injectReservations(ReservationInjectRequest request, Long mrId, UserDetailsImpl userDetails) {
