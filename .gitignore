@@ -33,6 +33,7 @@ out/
 **/resources/application-db.yml
 **/resources/application-test.properties
 **/resources/application-secret.properties
+**/resources/application-perform-secret.properties
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
