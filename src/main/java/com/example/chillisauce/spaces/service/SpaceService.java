@@ -97,7 +97,7 @@ public class SpaceService {
      * 개선 전 전체 조회
      */
     @Transactional
-    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
+//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
@@ -136,7 +136,7 @@ public class SpaceService {
      * 개선 전 선택 조회
      */
     @Transactional
-    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
+//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
     public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
