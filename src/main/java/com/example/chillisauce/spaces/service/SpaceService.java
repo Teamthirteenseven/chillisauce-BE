@@ -82,40 +82,40 @@ public class SpaceService {
     /**
      * 개선 후 전체 조회 QueryDsl
      */
-//    @Transactional
-//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
-//    public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
-//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
-//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
-//        }
-//        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
-//
-//        return spaceResponseDto;
-//    }
-
-    /**
-     * 개선 전 전체 조회
-     */
     @Transactional
 //    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
-                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
-        );
-        List<Space> spaceList = spaceRepository.findAllByCompaniesId(companies.getId());
-        return spaceList.stream().map(space -> {
-            Long floorId = null;
-            String floorName = null;
-            if (space.getFloor() != null) {
-                floorId = space.getFloor().getId();
-                floorName = space.getFloor().getFloorName();
-            }
-            return new SpaceResponseDto(space, floorId, floorName);
-        }).collect(Collectors.toList());
+        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
+
+        return spaceResponseDto;
     }
+
+    /**
+     * 개선 전 전체 조회
+     */
+//    @Transactional
+////    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
+//    public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
+//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+//        }
+//        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
+//                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
+//        );
+//        List<Space> spaceList = spaceRepository.findAllByCompaniesId(companies.getId());
+//        return spaceList.stream().map(space -> {
+//            Long floorId = null;
+//            String floorName = null;
+//            if (space.getFloor() != null) {
+//                floorId = space.getFloor().getId();
+//                floorName = space.getFloor().getFloorName();
+//            }
+//            return new SpaceResponseDto(space, floorId, floorName);
+//        }).collect(Collectors.toList());
+//    }
 
     /**
      * 개선 후 선택 조회 QueryDsl

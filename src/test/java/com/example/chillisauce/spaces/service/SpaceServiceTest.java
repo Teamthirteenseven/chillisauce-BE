@@ -122,29 +122,29 @@ public class SpaceServiceTest {
          * 여기서 부터 개선 전 테스트코드 !!
          */
 
-        @Test
-        void Space_공간_전체_조회() {
-            String companyName = "testCompany";
-
-            List<Space> spaceList = Collections.singletonList(space);
-            List<SpaceResponseDto> responseDtoList = spaceList.stream()
-                    .map(SpaceResponseDto::new)
-                    .toList();
-            when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
-            when(spaceRepository.findAllByCompaniesId(any())).thenReturn(spaceList);
-
-            List<SpaceResponseDto> responseDto = spaceList.stream().map(SpaceResponseDto::new).toList();
-
-            // when
-            List<SpaceResponseDto> result = spaceService.allSpacelist(companyName, details);
-
-            // then
-            assertNotNull(result);
-            assertEquals(result.size(), responseDto.size());
-            assertThat(responseDto).allSatisfy(responseSpace -> {
-                assertThat(responseSpace.getSpaceName()).isEqualTo("testSpace");
-            });
-        }
+//        @Test
+//        void Space_공간_전체_조회() {
+//            String companyName = "testCompany";
+//
+//            List<Space> spaceList = Collections.singletonList(space);
+//            List<SpaceResponseDto> responseDtoList = spaceList.stream()
+//                    .map(SpaceResponseDto::new)
+//                    .toList();
+//            when(companyRepository.findByCompanyName(eq(companyName))).thenReturn(Optional.of(Companies.builder().build()));
+//            when(spaceRepository.findAllByCompaniesId(any())).thenReturn(spaceList);
+//
+//            List<SpaceResponseDto> responseDto = spaceList.stream().map(SpaceResponseDto::new).toList();
+//
+//            // when
+//            List<SpaceResponseDto> result = spaceService.allSpacelist(companyName, details);
+//
+//            // then
+//            assertNotNull(result);
+//            assertEquals(result.size(), responseDto.size());
+//            assertThat(responseDto).allSatisfy(responseSpace -> {
+//                assertThat(responseSpace.getSpaceName()).isEqualTo("testSpace");
+//            });
+//        }
 
 
         @Test
@@ -226,22 +226,22 @@ public class SpaceServiceTest {
         /**
          * 여기서 부터 개선 후 테스트 코드 !!
          */
-//        @Test
-//        void Space_공간_전체_조회() {
-//            List<Space> spaceList = Collections.singletonList(space);
-//            List<SpaceResponseDto> responseDto = spaceList.stream().map(SpaceResponseDto::new).toList();
-//            when(spaceRepository.getSpaceAllList(companies.getCompanyName())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
-//
-//            // when
-//            List<SpaceResponseDto> result = spaceService.allSpacelist(companies.getCompanyName(), details);
-//
-//            // then
-//            assertNotNull(result);
-//            assertEquals(responseDto.size(), result.size());
-//            assertThat(result).allSatisfy(responseSpace -> {
-//                assertThat(responseSpace.getSpaceName()).isEqualTo("testSpace");
-//            });
-//        }
+        @Test
+        void Space_공간_전체_조회() {
+            List<Space> spaceList = Collections.singletonList(space);
+            List<SpaceResponseDto> responseDto = spaceList.stream().map(SpaceResponseDto::new).toList();
+            when(spaceRepository.getSpaceAllList(companies.getCompanyName())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+
+            // when
+            List<SpaceResponseDto> result = spaceService.allSpacelist(companies.getCompanyName(), details);
+
+            // then
+            assertNotNull(result);
+            assertEquals(responseDto.size(), result.size());
+            assertThat(result).allSatisfy(responseSpace -> {
+                assertThat(responseSpace.getSpaceName()).isEqualTo("testSpace");
+            });
+        }
 //
 //        @Test
 //        void Space_공간_선택_조회() {
