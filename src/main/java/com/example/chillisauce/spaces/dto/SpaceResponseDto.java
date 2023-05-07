@@ -54,49 +54,6 @@ public class SpaceResponseDto {
                 }).toList();
     }
 
-    /**
-     * 개선 전 DTO
-     */
-//        public SpaceResponseDto(Space space, Long floorId, String floorName, List<Object[]> locationsWithUserLocations) {
-//        this.spaceId = space.getId();
-//        this.spaceName = space.getSpaceName();
-//        this.floorId = floorId;
-//        this.floorName = floorName;
-//
-//        this.boxList = locationsWithUserLocations.stream().filter(obj -> obj[0] instanceof Box).map(obj -> {
-//                    Box box = (Box) obj[0];
-//                    @SuppressWarnings("unchecked")
-//                    List<UserLocation> userLocations = (List<UserLocation>) obj[1];
-//                    UserLocation userLocation = userLocations != null ? userLocations.stream().findFirst().orElse(null) : null;
-//                    return new BoxResponseDto(box, userLocation);
-//                })
-//                .collect(Collectors.toList());
-//
-//
-//        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
-//
-//        this.multiBoxList = locationsWithUserLocations.stream().filter(obj -> obj[0] instanceof MultiBox).map(obj -> {
-//                    MultiBox multiBox = (MultiBox) obj[0];
-//                    @SuppressWarnings("unchecked")
-//                    List<UserLocation> userLocations = (List<UserLocation>) obj[1];
-//                    return new MultiBoxResponseDto(multiBox, userLocations != null ? userLocations : Collections.emptyList());
-//                })
-//                .collect(Collectors.toList());
-//    }
-
-    /**
-     * 개선 전 DTO (전체조회)
-     */
-//    public SpaceResponseDto(Space space, Long floorId, String floorName) {
-//        this.spaceId = space.getId();
-//        this.spaceName = space.getSpaceName();
-//        this.floorId = floorId;
-//        this.floorName = floorName;
-//        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> new BoxResponseDto((Box) x)).toList();
-//        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
-//        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> new MultiBoxResponseDto((MultiBox) x)).toList();
-//    }
-
 
 
 

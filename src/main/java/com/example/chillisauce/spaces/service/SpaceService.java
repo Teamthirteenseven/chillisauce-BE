@@ -121,7 +121,7 @@ public class SpaceService {
      * 개선 후 선택 조회 QueryDsl
      */
     @Transactional
-//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
+    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
     public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
