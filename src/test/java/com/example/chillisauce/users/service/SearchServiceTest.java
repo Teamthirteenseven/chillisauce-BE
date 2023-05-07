@@ -1,7 +1,7 @@
 package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.users.dto.UserDetailResponseDto;
+import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.repository.UserRepository;

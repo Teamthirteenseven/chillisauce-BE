@@ -1,7 +1,8 @@
 package com.example.chillisauce.users.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
-import com.example.chillisauce.users.dto.*;
+import com.example.chillisauce.users.dto.request.*;
+import com.example.chillisauce.users.dto.response.AdminSignupResponseDto;
 import com.example.chillisauce.users.service.EmailService;
 import com.example.chillisauce.users.service.UserService;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.example.chillisauce.users.dto;
+package com.example.chillisauce.users.dto.request;
 
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;

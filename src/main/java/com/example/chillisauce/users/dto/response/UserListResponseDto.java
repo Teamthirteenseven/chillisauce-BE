@@ -1,5 +1,6 @@
-package com.example.chillisauce.users.dto;
+package com.example.chillisauce.users.dto.response;
 
+import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

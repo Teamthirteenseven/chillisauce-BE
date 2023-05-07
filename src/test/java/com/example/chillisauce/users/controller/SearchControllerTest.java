@@ -1,10 +1,9 @@
 package com.example.chillisauce.users.controller;
 
 import com.example.chillisauce.reservations.exception.ReservationExceptionHandler;
-import com.example.chillisauce.users.dto.UserDetailResponseDto;
+import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.service.SearchService;
-import com.example.chillisauce.users.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +29,6 @@ import java.util.List;
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentRequest;
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;

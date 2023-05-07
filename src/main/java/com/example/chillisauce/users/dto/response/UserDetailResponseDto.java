@@ -1,4 +1,4 @@
-package com.example.chillisauce.users.dto;
+package com.example.chillisauce.users.dto.response;
 
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.entity.UserRoleEnum;

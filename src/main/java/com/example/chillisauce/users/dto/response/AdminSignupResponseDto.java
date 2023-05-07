@@ -1,4 +1,4 @@
-package com.example.chillisauce.users.dto;
+package com.example.chillisauce.users.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
