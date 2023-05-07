@@ -3,7 +3,7 @@ package com.example.chillisauce.users.controller;
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.users.service.SearchService;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.users.dto.UserDetailResponseDto;
+import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

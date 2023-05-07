@@ -1,8 +1,8 @@
 package com.example.chillisauce.users.controller;
 
-import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
-import com.example.chillisauce.users.dto.UserDetailResponseDto;
-import com.example.chillisauce.users.dto.UserListResponseDto;
+import com.example.chillisauce.users.dto.request.RoleDeptUpdateRequestDto;
+import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
+import com.example.chillisauce.users.dto.response.UserListResponseDto;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.service.AdminService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,6 @@ import java.util.List;
 
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentRequest;
 import static com.example.chillisauce.docs.ApiDocumentUtil.getDocumentResponse;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
