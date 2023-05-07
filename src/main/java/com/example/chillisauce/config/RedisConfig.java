@@ -57,10 +57,11 @@ public class RedisConfig {
         spaceSerializer.setObjectMapper(objectMapper);
 
         /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
-//        Jackson2JsonRedisSerializer<List<UserListResponseDto>> userSerializer = new Jackson2JsonRedisSerializer<>
-//                (objectMapper.getTypeFactory().constructCollectionType(List.class, UserListResponseDto.class));
-//        userSerializer.setObjectMapper(objectMapper);
+        Jackson2JsonRedisSerializer<UserListResponseDto> userSerializer = new Jackson2JsonRedisSerializer<>
+                (objectMapper.getTypeFactory().constructType(UserListResponseDto.class));
+        userSerializer.setObjectMapper(objectMapper);
         /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+
 
         Jackson2JsonRedisSerializer<UserDetailsImpl> userDetailsSerializer = new Jackson2JsonRedisSerializer<>
                 (objectMapper.getTypeFactory().constructType(UserDetailsImpl.class));
@@ -87,12 +88,12 @@ public class RedisConfig {
         );
 
         /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
-//        builder.withCacheConfiguration("UserResponseDtoList",
-//                RedisCacheConfiguration.defaultCacheConfig()
-//                        .entryTtl(Duration.ofMinutes(60))
-//                        .disableCachingNullValues()
-//                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(userSerializer))
-//        );
+        builder.withCacheConfiguration("UserResponseDtoList",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(60))
+                        .disableCachingNullValues()
+                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(userSerializer))
+        );
         /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
 
         builder.withCacheConfiguration("UserDetails",
