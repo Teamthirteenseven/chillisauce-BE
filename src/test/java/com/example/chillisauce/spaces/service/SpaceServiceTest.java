@@ -119,7 +119,6 @@ public class SpaceServiceTest {
         }
 
 
-
         /**
          * 여기서 부터 개선 후 테스트 코드 !!
          */
@@ -139,7 +138,6 @@ public class SpaceServiceTest {
                 assertThat(responseSpace.getSpaceName()).isEqualTo("testSpace");
             });
         }
-
 
         @Test
         void Space_공간_선택_조회() {
@@ -176,7 +174,6 @@ public class SpaceServiceTest {
             assertEquals(floor.getId(), spaceResponseDto.getFloorId());
             assertEquals(floor.getFloorName(), spaceResponseDto.getFloorName());
         }
-
 
 
         @Test
