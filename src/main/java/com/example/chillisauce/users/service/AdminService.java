@@ -2,10 +2,8 @@ package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.repository.ReservationRepository;
-import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.schedules.entity.Schedule;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
-import com.example.chillisauce.schedules.service.ScheduleService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.entity.UserLocation;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
@@ -23,13 +21,10 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -46,7 +41,7 @@ public class AdminService {
     /* 사원 목록 전체 조회 */
     @Transactional(readOnly = true)
     /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
-//    @Cacheable(value = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
+    @Cacheable(value = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
     /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
     public UserListResponseDto getAllUsers(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -80,7 +75,7 @@ public class AdminService {
         User getUser = findOneUser(userId, user);
         String userEmail = getUser.getEmail();
         evictCacheByEmail(userEmail);   //Evicting user from cache
-//        evictCacheByCompanyName(userDetails);   //Evicting userList from cache
+        evictCacheByCompanyName(userDetails);   //Evicting userList from cache
 
         if (requestDto.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new UserException(UserErrorCode.UNABLE_MODIFY_PERMISSION_FOR_ADMIN);
@@ -113,7 +108,7 @@ public class AdminService {
 
         String userEmail = getUser.getEmail();
         evictCacheByEmail(userEmail);   //Evicting user from cache
-//        evictCacheByCompanyName(userDetails);   //Evicting userList from cache
+        evictCacheByCompanyName(userDetails);   //Evicting userList from cache
 
         //사원의 스케줄 삭제
         List<Schedule> schedules = scheduleRepository.findAllByUserId(userId);
@@ -144,14 +139,14 @@ public class AdminService {
     }
 
     /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
-//    @CacheEvict(cacheNames = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
-//    public void evictCacheByCompanyName(UserDetailsImpl userDetails) {
-//        log.info("Evicting userList from cache={}", userDetails.getUser().getCompanies().getCompanyName());
-//        Cache userListCache = cacheManager.getCache("UserResponseDtoList");
-//        if (userListCache != null) {
-//            userListCache.evict(userDetails.getUser().getCompanies().getCompanyName());
-//        }
-//    }
+    @CacheEvict(cacheNames = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
+    public void evictCacheByCompanyName(UserDetailsImpl userDetails) {
+        log.info("Evicting userList from cache={}", userDetails.getUser().getCompanies().getCompanyName());
+        Cache userListCache = cacheManager.getCache("UserResponseDtoList");
+        if (userListCache != null) {
+            userListCache.evict(userDetails.getUser().getCompanies().getCompanyName());
+        }
+    }
     /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
 
 }
