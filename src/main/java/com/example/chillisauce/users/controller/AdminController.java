@@ -2,9 +2,9 @@ package com.example.chillisauce.users.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
-import com.example.chillisauce.users.dto.UserDetailResponseDto;
-import com.example.chillisauce.users.dto.UserListResponseDto;
+import com.example.chillisauce.users.dto.request.RoleDeptUpdateRequestDto;
+import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
+import com.example.chillisauce.users.dto.response.UserListResponseDto;
 import com.example.chillisauce.users.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

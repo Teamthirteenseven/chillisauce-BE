@@ -5,7 +5,7 @@ import com.example.chillisauce.security.GrantedAuthoritySerializer;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.response.FloorResponseDto;
 import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
-import com.example.chillisauce.users.dto.UserListResponseDto;
+import com.example.chillisauce.users.dto.response.UserListResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;

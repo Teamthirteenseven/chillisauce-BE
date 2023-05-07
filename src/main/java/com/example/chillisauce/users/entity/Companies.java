@@ -1,6 +1,6 @@
 package com.example.chillisauce.users.entity;
 
-import com.example.chillisauce.users.dto.CompanyRequestDto;
+import com.example.chillisauce.users.dto.request.CompanyRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

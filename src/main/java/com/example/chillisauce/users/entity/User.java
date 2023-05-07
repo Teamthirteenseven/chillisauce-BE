@@ -1,9 +1,8 @@
 package com.example.chillisauce.users.entity;
 
-import com.example.chillisauce.spaces.entity.Box;
-import com.example.chillisauce.users.dto.AdminSignupRequestDto;
-import com.example.chillisauce.users.dto.RoleDeptUpdateRequestDto;
-import com.example.chillisauce.users.dto.UserSignupRequestDto;
+import com.example.chillisauce.users.dto.request.AdminSignupRequestDto;
+import com.example.chillisauce.users.dto.request.RoleDeptUpdateRequestDto;
+import com.example.chillisauce.users.dto.request.UserSignupRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +11,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "idx_username", columnList = "username")
+})
 @Getter
 @Builder
 @NoArgsConstructor
