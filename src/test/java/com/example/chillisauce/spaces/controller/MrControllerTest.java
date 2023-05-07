@@ -1,8 +1,8 @@
 package com.example.chillisauce.spaces.controller;
 
 import com.example.chillisauce.reservations.dto.response.ReservationResponse;
-import com.example.chillisauce.spaces.dto.MrRequestDto;
-import com.example.chillisauce.spaces.dto.MrResponseDto;
+import com.example.chillisauce.spaces.dto.request.MrRequestDto;
+import com.example.chillisauce.spaces.dto.response.MrResponseDto;
 import com.example.chillisauce.spaces.service.MrService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

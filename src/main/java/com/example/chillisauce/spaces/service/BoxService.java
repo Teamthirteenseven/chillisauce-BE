@@ -1,13 +1,12 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.BoxRequestDto;
-import com.example.chillisauce.spaces.dto.BoxResponseDto;
+import com.example.chillisauce.spaces.dto.request.BoxRequestDto;
+import com.example.chillisauce.spaces.dto.response.BoxResponseDto;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.BoxRepository;
-import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;

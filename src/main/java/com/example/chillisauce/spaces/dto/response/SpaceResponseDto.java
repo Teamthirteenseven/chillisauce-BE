@@ -1,16 +1,12 @@
-package com.example.chillisauce.spaces.dto;
+package com.example.chillisauce.spaces.dto.response;
 
 import com.example.chillisauce.spaces.entity.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -34,6 +30,12 @@ public class SpaceResponseDto {
         this.spaceName = spaceName;
     }
 
+    public SpaceResponseDto(Long spaceId, String spaceName, Long floorId, String floorName) {
+        this.spaceId = spaceId;
+        this.spaceName = spaceName;
+        this.floorId = floorId;
+        this.floorName = floorName;
+    }
 
     @Builder
     public SpaceResponseDto(Space space, Long floorId, String floorName, List<BoxResponseDto> boxList, List<MrResponseDto> mrList, List<MultiBoxResponseDto> multiBoxList) {

@@ -1,7 +1,6 @@
 package com.example.chillisauce.spaces.entity;
 
-import com.example.chillisauce.spaces.dto.BoxRequestDto;
-import com.example.chillisauce.users.entity.User;
+import com.example.chillisauce.spaces.dto.request.BoxRequestDto;
 import lombok.*;
 
 

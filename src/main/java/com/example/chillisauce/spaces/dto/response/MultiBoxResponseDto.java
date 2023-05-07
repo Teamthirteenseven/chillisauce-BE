@@ -1,4 +1,4 @@
-package com.example.chillisauce.spaces.dto;
+package com.example.chillisauce.spaces.dto.response;
 
 import com.example.chillisauce.spaces.entity.MultiBox;
 import com.example.chillisauce.spaces.entity.UserLocation;

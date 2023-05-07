@@ -2,8 +2,8 @@ package com.example.chillisauce.spaces.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.MrRequestDto;
-import com.example.chillisauce.spaces.dto.MrResponseDto;
+import com.example.chillisauce.spaces.dto.request.MrRequestDto;
+import com.example.chillisauce.spaces.dto.response.MrResponseDto;
 import com.example.chillisauce.spaces.service.MrService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

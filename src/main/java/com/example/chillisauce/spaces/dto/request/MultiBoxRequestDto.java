@@ -1,5 +1,6 @@
-package com.example.chillisauce.spaces.dto;
+package com.example.chillisauce.spaces.dto.request;
 
+import com.example.chillisauce.spaces.dto.response.LocationDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

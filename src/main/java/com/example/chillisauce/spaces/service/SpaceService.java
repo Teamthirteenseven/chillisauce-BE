@@ -3,7 +3,9 @@ package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.*;
+import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
+import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
+import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
@@ -14,13 +16,11 @@ import com.example.chillisauce.users.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -82,13 +82,13 @@ public class SpaceService {
      */
     @Transactional
 //    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
-    public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
+    public List<SpaceListResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
+        List<SpaceListResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
 //        List<BoxResponseDto> boxResponseDtos = spaceRepository.getBoxList();
 //        List<MrResponseDto> mrResponseDtos = spaceRepository.getMrList();
 //        List<MultiBoxResponseDto> multiBoxResponseDtos = spaceRepository.getMultiboxList();

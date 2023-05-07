@@ -1,4 +1,4 @@
-package com.example.chillisauce.spaces.dto;
+package com.example.chillisauce.spaces.dto.request;
 
 import lombok.Data;
 import lombok.Getter;
