@@ -17,6 +17,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StopWatch;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -82,6 +83,8 @@ public class SpaceService {
     @Transactional
 //    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
     public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
@@ -89,7 +92,8 @@ public class SpaceService {
 //        List<BoxResponseDto> boxResponseDtos = spaceRepository.getBoxList();
 //        List<MrResponseDto> mrResponseDtos = spaceRepository.getMrList();
 //        List<MultiBoxResponseDto> multiBoxResponseDtos = spaceRepository.getMultiboxList();
-
+        stopWatch.stop();
+        log.info(stopWatch.prettyPrint());
 
         return spaceResponseDto;
 //                .stream()
