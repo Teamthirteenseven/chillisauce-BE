@@ -120,45 +120,45 @@ public class SpaceService {
     /**
      * 개선 후 선택 조회 QueryDsl
      */
-//    @Transactional
-//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
-//    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
-//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
-//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
-//        }
-//        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
-//
-//
-//        return spaceResponseDto;
-//    }
-
-    /**
-     * 개선 전 선택 조회
-     */
     @Transactional
-//    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
+    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
     public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        Space space = findCompanyNameAndSpaceId(companyName, spaceId);
-
-        Map<Long, List<UserLocation>> userLocationMap = boxRepository.findAllLocationsWithUserLocations().stream()
-                .filter(obj -> ((Location) obj[0]).getSpace().getId().equals(space.getId()))
-                .collect(Collectors.groupingBy(obj -> ((Location) obj[0]).getId(),
-                        Collectors.mapping(obj -> (UserLocation) obj[1], Collectors.toList())));
-
-        List<Object[]> locationsWithUserLocations = space.getLocations().stream()
-                .map(location -> new Object[]{location, userLocationMap.get(location.getId())})
-                .collect(Collectors.toList());
+        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
 
 
-        Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
-        String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
-
-        SpaceResponseDto responseDto = new SpaceResponseDto(space, floorId, floorName, locationsWithUserLocations);
-        return Collections.singletonList(responseDto);
+        return spaceResponseDto;
     }
+
+    /**
+     * 개선 전 선택 조회
+     */
+//    @Transactional
+////    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
+//    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
+//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
+//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+//        }
+//        Space space = findCompanyNameAndSpaceId(companyName, spaceId);
+//
+//        Map<Long, List<UserLocation>> userLocationMap = boxRepository.findAllLocationsWithUserLocations().stream()
+//                .filter(obj -> ((Location) obj[0]).getSpace().getId().equals(space.getId()))
+//                .collect(Collectors.groupingBy(obj -> ((Location) obj[0]).getId(),
+//                        Collectors.mapping(obj -> (UserLocation) obj[1], Collectors.toList())));
+//
+//        List<Object[]> locationsWithUserLocations = space.getLocations().stream()
+//                .map(location -> new Object[]{location, userLocationMap.get(location.getId())})
+//                .collect(Collectors.toList());
+//
+//
+//        Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
+//        String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
+//
+//        SpaceResponseDto responseDto = new SpaceResponseDto(space, floorId, floorName, locationsWithUserLocations);
+//        return Collections.singletonList(responseDto);
+//    }
 
 
 
