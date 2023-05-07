@@ -11,8 +11,7 @@ import java.util.Optional;
 
 public interface SpaceRepository extends JpaRepository<Space, Long>, SpaceRepositorySupport{
     Optional<Space> findByIdAndCompanies(Long spaceId, Companies companies);
-    List<SpaceResponseDto> getSpacesWithLocations(Long spaceId);
-    List<SpaceResponseDto> getSpaceAllList(String companyName);
+
 
     List<Space> findAllByCompaniesId(Long spaceId);
 
