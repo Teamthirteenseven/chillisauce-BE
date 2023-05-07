@@ -2,7 +2,7 @@ package com.example.chillisauce.spaces.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.MultiBoxRequestDto;
+import com.example.chillisauce.spaces.dto.request.MultiBoxRequestDto;
 import com.example.chillisauce.spaces.service.MultiBoxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

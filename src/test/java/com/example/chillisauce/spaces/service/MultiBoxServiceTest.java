@@ -1,16 +1,14 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.MultiBoxRequestDto;
-import com.example.chillisauce.spaces.dto.MultiBoxResponseDto;
+import com.example.chillisauce.spaces.dto.request.MultiBoxRequestDto;
+import com.example.chillisauce.spaces.dto.response.MultiBoxResponseDto;
 import com.example.chillisauce.spaces.entity.MultiBox;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.MultiBoxRepository;
 import com.example.chillisauce.users.entity.Companies;
-import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

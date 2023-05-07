@@ -3,8 +3,8 @@ package com.example.chillisauce.spaces.controller;
 
 
 
-import com.example.chillisauce.spaces.dto.BoxRequestDto;
-import com.example.chillisauce.spaces.dto.BoxResponseDto;
+import com.example.chillisauce.spaces.dto.request.BoxRequestDto;
+import com.example.chillisauce.spaces.dto.response.BoxResponseDto;
 import com.example.chillisauce.spaces.service.BoxService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

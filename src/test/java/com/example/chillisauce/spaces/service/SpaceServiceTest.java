@@ -1,8 +1,9 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.SpaceRequestDto;
-import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
+import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
+import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
@@ -125,11 +126,11 @@ public class SpaceServiceTest {
         @Test
         void Space_공간_전체_조회() {
             List<Space> spaceList = Collections.singletonList(space);
-            List<SpaceResponseDto> responseDto = spaceList.stream().map(SpaceResponseDto::new).toList();
-            when(spaceRepository.getSpaceAllList(companies.getCompanyName())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+            List<SpaceListResponseDto> responseDto = spaceList.stream().map(SpaceListResponseDto::new).toList();
+            when(spaceRepository.getSpaceAllList(companies.getCompanyName())).thenReturn(spaceList.stream().map(SpaceListResponseDto::new).collect(Collectors.toList()));
 
             // when
-            List<SpaceResponseDto> result = spaceService.allSpacelist(companies.getCompanyName(), details);
+            List<SpaceListResponseDto> result = spaceService.allSpacelist(companies.getCompanyName(), details);
 
             // then
             assertNotNull(result);

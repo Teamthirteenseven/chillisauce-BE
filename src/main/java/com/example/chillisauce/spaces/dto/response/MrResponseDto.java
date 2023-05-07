@@ -1,4 +1,4 @@
-package com.example.chillisauce.spaces.dto;
+package com.example.chillisauce.spaces.dto.response;
 
 import com.example.chillisauce.reservations.dto.response.ReservationResponse;
 import com.example.chillisauce.reservations.entity.Reservation;

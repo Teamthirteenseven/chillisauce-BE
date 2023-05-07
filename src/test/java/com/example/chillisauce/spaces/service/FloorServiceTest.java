@@ -1,8 +1,8 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.FloorRequestDto;
-import com.example.chillisauce.spaces.dto.FloorResponseDto;
+import com.example.chillisauce.spaces.dto.request.FloorRequestDto;
+import com.example.chillisauce.spaces.dto.response.FloorResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;

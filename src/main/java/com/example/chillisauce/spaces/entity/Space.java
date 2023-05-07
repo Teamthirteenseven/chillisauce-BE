@@ -1,7 +1,6 @@
 package com.example.chillisauce.spaces.entity;
 
-import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.SpaceRequestDto;
+import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
 import com.example.chillisauce.users.entity.Companies;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

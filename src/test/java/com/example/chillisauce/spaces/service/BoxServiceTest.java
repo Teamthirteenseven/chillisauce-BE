@@ -1,8 +1,8 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.BoxRequestDto;
-import com.example.chillisauce.spaces.dto.BoxResponseDto;
+import com.example.chillisauce.spaces.dto.request.BoxRequestDto;
+import com.example.chillisauce.spaces.dto.response.BoxResponseDto;
 import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
