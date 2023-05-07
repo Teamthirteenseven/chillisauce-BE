@@ -1,6 +1,7 @@
 package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.reservations.dto.response.ReservationResponse;
+import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.spaces.entity.Mr;
 import lombok.*;
 

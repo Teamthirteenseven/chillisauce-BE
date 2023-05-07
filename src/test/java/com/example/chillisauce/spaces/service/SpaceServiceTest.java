@@ -151,7 +151,7 @@ public class SpaceServiceTest {
             //Then
             assertNotNull(result);
             assertEquals(1, result.size());
-            SpaceResponseDto spaceResponseDto = new SpaceResponseDto(space, floor.getId(), floor.getFloorName());
+            SpaceResponseDto spaceResponseDto = SpaceResponseDto.builder().space(space).floorName(floor.getFloorName()).floorId(floor.getId()).build();
             assertEquals("testSpace", spaceResponseDto.getSpaceName());
             assertEquals(floor.getId(), spaceResponseDto.getFloorId());
             assertEquals(floor.getFloorName(), spaceResponseDto.getFloorName());
@@ -169,7 +169,7 @@ public class SpaceServiceTest {
             //Then
             assertNotNull(result);
             assertEquals(1, result.size());
-            SpaceResponseDto spaceResponseDto = new SpaceResponseDto(space, floor.getId(), floor.getFloorName());
+            SpaceResponseDto spaceResponseDto = SpaceResponseDto.builder().space(space).floorName(floor.getFloorName()).floorId(floor.getId()).build();
             assertEquals("testSpace", spaceResponseDto.getSpaceName());
             assertEquals(floor.getId(), spaceResponseDto.getFloorId());
             assertEquals(floor.getFloorName(), spaceResponseDto.getFloorName());
