@@ -3,15 +3,11 @@ package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.SpaceRequestDto;
-import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.spaces.dto.*;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.BoxRepository;
-import com.example.chillisauce.spaces.repository.FloorRepository;
-import com.example.chillisauce.spaces.repository.MrRepository;
-import com.example.chillisauce.spaces.repository.SpaceRepository;
+import com.example.chillisauce.spaces.repository.*;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
@@ -37,6 +33,7 @@ public class SpaceService {
     private final ReservationService reservationService;
     private final MrRepository mrRepository;
     private final BoxRepository boxRepository;
+    private final LocationRepository locationRepository;
 
 
 
@@ -89,8 +86,15 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
+//        List<BoxResponseDto> boxResponseDtos = spaceRepository.getBoxList();
+//        List<MrResponseDto> mrResponseDtos = spaceRepository.getMrList();
+//        List<MultiBoxResponseDto> multiBoxResponseDtos = spaceRepository.getMultiboxList();
+
 
         return spaceResponseDto;
+//                .stream()
+//                .map(space -> new SpaceResponseDto(space,boxResponseDtos,mrResponseDtos,multiBoxResponseDtos))
+//                .collect(Collectors.toList());
     }
 
     /**
@@ -127,7 +131,6 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
-
 
         return spaceResponseDto;
     }

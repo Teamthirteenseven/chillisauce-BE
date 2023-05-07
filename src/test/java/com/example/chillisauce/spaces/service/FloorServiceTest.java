@@ -75,7 +75,7 @@ public class FloorServiceTest {
             //given
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(Companies.builder().build()));
             when(floorRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(floor));
-            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "testFloor");
+            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "testFloor",new ArrayList<>());
 
             //When
             List<FloorResponseDto> result = floorService.getFloorlist(companies.getCompanyName(),floor.getId(), details);

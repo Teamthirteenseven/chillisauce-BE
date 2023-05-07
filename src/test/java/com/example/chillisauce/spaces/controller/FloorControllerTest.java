@@ -72,7 +72,7 @@ public class FloorControllerTest {
             String url = "/floors/" + companyName;
 
             FloorRequestDto floorRequestDto = new FloorRequestDto("Floor 생성 테스트");
-            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "Floor 생성 테스트");
+            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "Floor 생성 테스트", new ArrayList<>());
             when(floorService.createFloor(eq(companyName), any(), any())).thenReturn(floorResponseDto);
 
 
@@ -109,7 +109,7 @@ public class FloorControllerTest {
             String url = "/floors/" + companyName + "/" + floorId;
 
             List<FloorResponseDto> responseDtoList = new ArrayList<>();
-            responseDtoList.add(new FloorResponseDto(1L, "Floor 생성 테스트"));
+            responseDtoList.add(new FloorResponseDto(1L, "Floor 생성 테스트",new ArrayList<>()));
 
             FloorRequestDto floorRequestDto = new FloorRequestDto("Floor 생성 테스트");
             when(floorService.getFloorlist(eq(companyName), any(), any())).thenReturn(responseDtoList);
@@ -148,7 +148,7 @@ public class FloorControllerTest {
             String url = "/floors/" + companyName;
 
             List<FloorResponseDto> responseDtoList = new ArrayList<>();
-            responseDtoList.add(new FloorResponseDto(1L, "Floor 수정 테스트"));
+            responseDtoList.add(new FloorResponseDto(1L, "Floor 수정 테스트",new ArrayList<>()));
 
             FloorRequestDto floorRequestDto = new FloorRequestDto("Floor 수정 테스트");
             when(floorService.getFloor(eq(companyName), any())).thenReturn(responseDtoList);
@@ -186,7 +186,7 @@ public class FloorControllerTest {
             Long floorId = 1L;
             String url = "/floors/" + companyName + "/" + floorId;
             FloorRequestDto floorRequestDto = new FloorRequestDto("Floor 생성 테스트");
-            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "Floor 생성 테스트");
+            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "Floor 생성 테스트",new ArrayList<>());
             when(floorService.updateFloor(eq(companyName), eq(floorId), any(), any())).thenReturn(floorResponseDto);
 
             //when
@@ -222,7 +222,7 @@ public class FloorControllerTest {
             String companyName = "testCompany";
             Long floorId = 1L;
             String url = "/floors/" + companyName + "/" + floorId;
-            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "Floor 생성 테스트");
+            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "Floor 생성 테스트",new ArrayList<>());
             when(floorService.deleteFloor(eq(companyName), eq(floorId), any())).thenReturn(floorResponseDto);
 
             //when

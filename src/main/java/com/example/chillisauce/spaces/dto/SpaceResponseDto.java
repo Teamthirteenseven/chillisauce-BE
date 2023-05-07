@@ -1,6 +1,8 @@
 package com.example.chillisauce.spaces.dto;
 
 import com.example.chillisauce.spaces.entity.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +20,6 @@ public class SpaceResponseDto {
     private String spaceName;
     private Long floorId;
     private String floorName;
-
     private List<BoxResponseDto> boxList = new ArrayList<>();
     private List<MrResponseDto> mrList = new ArrayList<>();
     private List<MultiBoxResponseDto> multiBoxList = new ArrayList<>();
@@ -32,40 +33,21 @@ public class SpaceResponseDto {
         this.spaceId = id;
         this.spaceName = spaceName;
     }
-    /**
-     * 개선 후 Dto
-     */
-    public SpaceResponseDto(Space space, Long floorId, String floorName) {
+
+
+    @Builder
+    public SpaceResponseDto(Space space, Long floorId, String floorName, List<BoxResponseDto> boxList, List<MrResponseDto> mrList, List<MultiBoxResponseDto> multiBoxList) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
         this.floorId = floorId;
         this.floorName = floorName;
-        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> {
-                    Box box = (Box) x;
-                    UserLocation userLocation = box.getUserLocations().stream().findFirst().orElse(null);
-                    return new BoxResponseDto(box, userLocation);
-                }).toList();
+        this.boxList = boxList;
+        this.mrList = mrList;
+        this.multiBoxList = multiBoxList;
 
-        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
-        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> {
-                    MultiBox multiBox = (MultiBox) x;
-                    List<UserLocation> userLocations = multiBox.getUserLocations();
-                    return new MultiBoxResponseDto(multiBox, userLocations);
-                }).toList();
     }
 
-
-
-
-    public SpaceResponseDto(Space space, Floor floor) {
-        this.spaceId = space.getId();
-        this.spaceName = space.getSpaceName();
-        this.floorId = floor.getId();
-        this.floorName = floor.getFloorName();
-        this.boxList = space.getLocations().stream().filter(x -> x instanceof Box).map(x -> new BoxResponseDto((Box) x)).toList();
-        this.mrList = space.getLocations().stream().filter(x -> x instanceof Mr).map(x -> new MrResponseDto((Mr) x)).toList();
-        this.multiBoxList = space.getLocations().stream().filter(x -> x instanceof MultiBox).map(x -> new MultiBoxResponseDto((MultiBox) x)).toList();
-    }
 
 
 }
+

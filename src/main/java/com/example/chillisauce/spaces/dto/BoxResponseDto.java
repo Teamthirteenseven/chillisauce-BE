@@ -40,7 +40,8 @@ public class BoxResponseDto {
         this.boxName = box.getLocationName();
         this.x = box.getX();
         this.y = box.getY();
-        this.username = userLocation != null ? userLocation.getUsername() : null;
+//        this.username = userLocation != null ? userLocation.getUsername() : null;
+        this.username = userLocation.getUsername();
     }
 
 
