@@ -2,8 +2,9 @@ package com.example.chillisauce.spaces.controller;
 
 import com.example.chillisauce.message.ResponseMessage;
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.SpaceRequestDto;
-import com.example.chillisauce.spaces.dto.SpaceResponseDto;
+import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
+import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
+import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
 import com.example.chillisauce.spaces.service.SpaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class SpaceController {
 
     //공간 전체조회
     @GetMapping("/spaces/{companyName}")
-    public ResponseEntity<ResponseMessage<List<SpaceResponseDto>>> allSpacelist
+    public ResponseEntity<ResponseMessage<List<SpaceListResponseDto>>> allSpacelist
             (@PathVariable("companyName") String companyName,@AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("공간 조회 성공",spaceService.allSpacelist(companyName, details));

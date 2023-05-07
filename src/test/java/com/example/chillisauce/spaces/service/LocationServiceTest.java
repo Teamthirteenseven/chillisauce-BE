@@ -1,7 +1,7 @@
 package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.dto.LocationDto;
+import com.example.chillisauce.spaces.dto.response.LocationDto;
 import com.example.chillisauce.spaces.entity.Location;
 import com.example.chillisauce.spaces.entity.UserLocation;
 import com.example.chillisauce.spaces.repository.LocationRepository;

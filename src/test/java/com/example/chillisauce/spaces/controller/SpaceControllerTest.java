@@ -1,10 +1,8 @@
 package com.example.chillisauce.spaces.controller;
 
-import com.example.chillisauce.spaces.dto.FloorRequestDto;
-import com.example.chillisauce.spaces.dto.FloorResponseDto;
-import com.example.chillisauce.spaces.dto.SpaceRequestDto;
-import com.example.chillisauce.spaces.dto.SpaceResponseDto;
-import com.example.chillisauce.spaces.service.FloorService;
+import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
+import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
+import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
 import com.example.chillisauce.spaces.service.SpaceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -152,8 +150,8 @@ public class SpaceControllerTest {
             String url = "/spaces/" + companyName;
 
 
-            List<SpaceResponseDto> responseDtoList = new ArrayList<>();
-            responseDtoList.add(new SpaceResponseDto(1L, "Test 공간"));
+            List<SpaceListResponseDto> responseDtoList = new ArrayList<>();
+            responseDtoList.add(new SpaceListResponseDto(1L, "Test 공간", null, null));
             when(spaceService.allSpacelist(eq(companyName), any())).thenReturn(responseDtoList);
 
             //when
@@ -173,10 +171,7 @@ public class SpaceControllerTest {
                                     fieldWithPath("data[].spaceId").type(JsonFieldType.NUMBER).description("Space id"),
                                     fieldWithPath("data[].spaceName").type(JsonFieldType.STRING).description("Space 이름"),
                                     fieldWithPath("data[].floorId").type(JsonFieldType.NULL).description("Floor id"),
-                                    fieldWithPath("data[].floorName").type(JsonFieldType.NULL).description("Floor name"),
-                                    fieldWithPath("data[].boxList[]").type(JsonFieldType.ARRAY).description("Box 리스트"),
-                                    fieldWithPath("data[].mrList[]").type(JsonFieldType.ARRAY).description("LocationList"),
-                                    fieldWithPath("data[].multiBoxList[]").type(JsonFieldType.ARRAY).description("LocationList")
+                                    fieldWithPath("data[].floorName").type(JsonFieldType.NULL).description("Floor name")
                             )
                     ));
 

@@ -1,13 +1,11 @@
 package com.example.chillisauce.spaces.entity;
 
 import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.spaces.dto.MrRequestDto;
-import com.example.chillisauce.users.entity.Companies;
+import com.example.chillisauce.spaces.dto.request.MrRequestDto;
 import lombok.*;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
