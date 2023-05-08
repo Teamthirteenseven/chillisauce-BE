@@ -1,46 +1,55 @@
-## 소개
+## 프로젝트명 - Flexidesk
 
-🔎 **스마트해진 업무공간,보다 생산적인 업무시간**
+## 목차
 
-**Flexidesk는 효율적인 자율 좌석제 운영을 위한 업무 위치 선택 및 회의실 예약 시스템을 제공합니다**
+[1.팀원 구성](#팀원-구성)  
+[2.개발 기간](#개발-기간)  
+[3.백엔드 개요](#백엔드-개요)
+[4.배포 사이트](#배포-사이트)  
+[5.Tech Stacks](#tech-stacks)  
+[6.아키텍쳐](#Architecture)  
+[7.API 명세](#api-명세)  
+[8.ERD](#erd)  
+[9.서비스 화면](#서비스-화면)
 
-**내가 일할 자리 내가 자유롭게 정하고 싶다.**
+## 팀원 구성
 
-**회의실 사용 겹치지 않도록 미리 예약하고 싶다.**
+|  팀원  |  역할  |             Github              |
+| :----: | :----: | :-----------------------------: |
+| 박지혜 | FE, L  |  https://github.com/wisdom1104  |
+| 정은선 |   FE   | https://github.com/eunseonJeong |
+| 김지호 |   FE   |    https://github.com/hojiii    |
+| 이민재 | BE, VL | https://github.com/slackjawed12 |
+| 임상규 |   BE   |   https://github.com/sangggyu   |
+| 장혁진 |   BE   | https://github.com/hyukjin1210  |
 
-**내 스케줄을 편하게 관리하고 확인하고 싶다.**
+---
 
-**이런 고민을 하고 있다면, Flexidesk를 시작하세요!**
+## 개발 기간
 
-🔹**자율 좌석제**
+> 2023.03.31 ~ 2023.05.11 (6주)
 
-팀이나 직급에 따라 자리를 배치해 독자적이고 수직적이었던 사무실 분위기가
+---
 
-자율좌석제 도입으로 상호보완적이고, 수평적인 분위기로 변화합니다.
+## 백엔드 개요
 
-🔹**업무 공간 이동**
+    개발 언어 : Java 17
+    개발 프레임워크 : Spring Boot 2.7.10
+    형상 관리 : git
+    협업 툴 : notion
+    디자인 공유 : Figma
 
-회사내에서도 나에게 맞는 공간을 찾아봐요
+---
 
-🔹**간편해진 회의실 예약**
+## 배포 사이트
 
-겹치는 시간은 피하고, 가능한 시간은 찾아줘요
+[Flexidesk 서비스 이용하기](https://www.flexidesks.click/)
 
-🔹**내 스케줄 관리도 한번에**
+<!-- [Flexidesk노션](https://www.notion.so/Flexidesk-91bdaba3920f405295e81ef6f1f44c7e?pvs=4) -->
 
-근무 일정과 연동되는 스케줄
-
-## 서비스 화면
-
-![img1](https://user-images.githubusercontent.com/77224652/236627905-1ace59f6-afba-41e6-94e2-97472f0f64be.png)
-![img2](https://user-images.githubusercontent.com/77224652/236627934-acd70dcb-a258-4ba5-8ea6-8847861f61a8.png)
-![img3](https://user-images.githubusercontent.com/77224652/236627951-c19b8593-286b-40bf-8bde-43129860c292.png)
+---
 
 ## Tech Stacks
-
-### Front-End
-
-![frontend](https://user-images.githubusercontent.com/77224652/236629690-f4a00e4f-7030-444a-86d9-a486f05bf7de.png)
 
 ### Back-End
 
@@ -50,21 +59,32 @@
 
 <img width="1621" alt="infra" src="https://user-images.githubusercontent.com/77224652/236628036-555f3f20-bf31-4376-b8f9-80bce9844b01.png">
 
+---
+
 ## Architecture
 
+### Service Flow
 ![architecture](https://user-images.githubusercontent.com/77224652/236628256-ea2cde32-ec3c-49ae-a7ea-4124ad945a6c.png)
 
-## CI/CD
 
+### CI/CD Flow
 ![backend-ci-cd](https://user-images.githubusercontent.com/77224652/236628330-641ad8a3-0bdc-4988-888c-fa349ada96b3.png)
 
-## 팀원
+---
 
-| 팀원  |   역할   |             Github              |
-|:---:|:------:|:-------------------------------:|
-| 박지혜 | FE, L  |  https://github.com/wisdom1104  |
-| 정은선 |   FE   | https://github.com/eunseonJeong |
-| 김지호 |   FE   |    https://github.com/hojiii    |
-| 이민재 | BE, VL | https://github.com/slackjawed12 |
-| 임상규 |   BE   |   https://github.com/sangggyu   |
-| 장혁진 |   BE   | https://github.com/hyukjin1210  |
+## ERD
+
+![ERD](https://file.notion.so/f/s/2127539a-a1a3-457c-90ef-eee81835f5f9/Untitled.png?id=55a73254-98f7-4d13-bc99-4f2ec55f363b&table=block&spaceId=4fdd5615-19d1-43bf-b9f2-ceb409b9f978&expirationTimestamp=1683541485833&signature=viQnAJrJfZkAGbjUICvjdJWUvPfynVsJJlzxGc-XVAQ&downloadName=Untitled.png)
+
+## API 명세
+
+[Api 명세](https://flexidesk.click/docs/index.html)
+
+---
+
+## 서비스 화면
+
+![img1](https://user-images.githubusercontent.com/77224652/236627905-1ace59f6-afba-41e6-94e2-97472f0f64be.png)
+![img2](https://user-images.githubusercontent.com/77224652/236627934-acd70dcb-a258-4ba5-8ea6-8847861f61a8.png)
+![img3](https://user-images.githubusercontent.com/77224652/236627951-c19b8593-286b-40bf-8bde-43129860c292.png)
+
