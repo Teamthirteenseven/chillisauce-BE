@@ -25,9 +25,7 @@ public class MultiBoxResponseDto {
         this.multiBoxName = multiBox.getLocationName();
         this.x = multiBox.getX();
         this.y = multiBox.getY();
-        this.userlist = userLocations.stream()
-                .map(UserLocationResponseDto::new)
-                .collect(Collectors.toList());
+        this.userlist = userLocations.stream().map(UserLocationResponseDto::new).collect(Collectors.toList());
     }
 
     public MultiBoxResponseDto(MultiBox multiBox) {

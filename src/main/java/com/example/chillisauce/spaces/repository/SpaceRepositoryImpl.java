@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,24 +30,47 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
-    /*
-    space 선택 조회
+
+    /**
+     * Space 선택조회
      */
-    public List<SpaceResponseDto> getSpacesWithLocations(Long spaceId) {
-        return from(space)
-                .leftJoin(space.floor, floor)
-                .leftJoin(space.locations)
-                .where(space.id.eq(spaceId))
+    public SpaceResponseDto getSpacesWithLocations(Long spaceId) {
+        QLocation location = QLocation.location;
+        QUserLocation userLocation = QUserLocation.userLocation;
+        QSpace qSpace = space;
+        Space space = from(qSpace)
+                .leftJoin(qSpace.floor, floor)
+                .leftJoin(qSpace.locations, location)
+                .leftJoin(location.userLocations, userLocation)
+                .where(qSpace.id.eq(spaceId))
                 .distinct()
-                .fetchJoin()
-                .stream()
-                .map(s -> SpaceResponseDto.builder().space(s).floorId(s.getFloor() != null ? s.getFloor().getId() : null )
-                        .floorName(s.getFloor() != null ? s.getFloor().getFloorName() : null).build())
-                .collect(Collectors.toList());
+                .fetchOne();
+
+        List<BoxResponseDto> boxList = new ArrayList<>();
+        List<MrResponseDto> mrList = new ArrayList<>();
+        List<MultiBoxResponseDto> multiBoxList = new ArrayList<>();
+
+        space.getLocations().forEach(l -> {
+            if (l instanceof Box) {
+                UserLocation locationUser = l.getUserLocations().stream()
+                        .findFirst().orElse(null);
+                boxList.add(new BoxResponseDto((Box) l, locationUser));
+            } else if (l instanceof Mr) {
+                mrList.add(new MrResponseDto((Mr) l));
+            } else if (l instanceof MultiBox) {
+                multiBoxList.add(new MultiBoxResponseDto((MultiBox) l, l.getUserLocations()));
+            }
+        });
+
+        return new SpaceResponseDto(space,
+                space.getFloor() != null ? space.getFloor().getId() : null,
+                space.getFloor() != null ? space.getFloor().getFloorName() : null,
+                boxList, mrList, multiBoxList);
     }
-    /*
-    space 전체 조회
-    */
+
+    /**
+     * Space 전체조회
+     */
     public List<SpaceListResponseDto> getSpaceAllList(String companyName) {
         QCompanies company = QCompanies.companies;
             return from(space)
@@ -60,59 +84,6 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                         floor.id,
                         floor.floorName
                 ))
-                .fetch();
-    }
-//        return spaces.stream()
-//                .map(s -> new SpaceResponseDto
-//                        (s, s.getFloor() != null ? s.getFloor().getId() : null, s.getFloor() != null ? s.getFloor().getFloorName() : null))
-//                .collect(Collectors.toList());
-//                .map(s -> {
-//                    List<BoxResponseDto> boxList = s.getLocations().stream()
-//                            .filter(l -> l instanceof Box)
-//                            .map(l -> (Box) l).map(BoxResponseDto::new)
-//                            .collect(Collectors.toList());
-//
-//                    List<MrResponseDto> mrList = s.getLocations().stream()
-//                            .filter(l -> l instanceof Mr)
-//                            .map(l -> (Mr) l).map(MrResponseDto::new)
-//                            .collect(Collectors.toList());
-//
-//                    List<MultiBoxResponseDto> multiBoxList = s.getLocations().stream()
-//                            .filter(l -> l instanceof MultiBox)
-//                            .map(l -> (MultiBox) l).map(MultiBoxResponseDto::new)
-//                            .collect(Collectors.toList());
-//
-//                    return new SpaceResponseDto(s, s.getFloor() != null ? s.getFloor().getId() : null,
-//                            s.getFloor() != null ? s.getFloor().getFloorName() : null,
-//                            boxList, mrList, multiBoxList);
-//                })
-//                .collect(Collectors.toList());
-
-    public List<BoxResponseDto> getBoxList() {
-        QBox box = QBox.box;
-        QUserLocation userLocation = QUserLocation.userLocation;
-        return queryFactory.select(Projections.constructor(BoxResponseDto.class, box, userLocation))
-                .from(box)
-                .leftJoin(box.userLocations, userLocation)
-                .fetchJoin()
-                .fetch();
-    }
-    public List<MrResponseDto> getMrList() {
-        QMr mr = QMr.mr;
-        QReservation reservation = QReservation.reservation;
-        return queryFactory.select(Projections.constructor(MrResponseDto.class, mr))
-                .from(mr)
-                .fetchJoin()
-                .fetch();
-    }
-
-    public List<MultiBoxResponseDto> getMultiboxList() {
-        QMultiBox multiBox = QMultiBox.multiBox;
-        QUserLocation userLocation = QUserLocation.userLocation;
-        return queryFactory.select(Projections.constructor(MultiBoxResponseDto.class, multiBox, userLocation))
-                .from(multiBox)
-                .leftJoin(multiBox.userLocations, userLocation)
-                .fetchJoin()
                 .fetch();
     }
 

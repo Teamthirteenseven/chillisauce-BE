@@ -44,7 +44,7 @@ public class SpaceController {
 
     //공간 선택조회
     @GetMapping("/spaces/{companyName}/{spaceId}")
-    public ResponseEntity<ResponseMessage<List<SpaceResponseDto>>> getSpacelist
+    public ResponseEntity<ResponseMessage<SpaceResponseDto>> getSpacelist
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("공간 조회 성공",spaceService.getSpacelist(companyName, spaceId, details));
