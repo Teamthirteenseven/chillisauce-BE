@@ -30,9 +30,8 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
-
-    /**
-     * Space 선택조회
+    /*
+    space 선택 조회
      */
     public SpaceResponseDto getSpacesWithLocations(Long spaceId) {
         QLocation location = QLocation.location;
@@ -68,9 +67,9 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 boxList, mrList, multiBoxList);
     }
 
-    /**
-     * Space 전체조회
-     */
+    /*
+    space 전체 조회
+    */
     public List<SpaceListResponseDto> getSpaceAllList(String companyName) {
         QCompanies company = QCompanies.companies;
             return from(space)
