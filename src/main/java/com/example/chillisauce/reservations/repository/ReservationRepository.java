@@ -1,6 +1,10 @@
 package com.example.chillisauce.reservations.repository;
 
+import com.example.chillisauce.reservations.dto.ReservationDetailWrapper;
+import com.example.chillisauce.reservations.dto.response.ReservationDetailResponse;
 import com.example.chillisauce.reservations.entity.Reservation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -19,10 +23,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "where r.user.id=:userId")
     List<Reservation> findAllByUserId(@Param("userId") Long userId);
 
-    @Query("select r from Reservation r " +
-            "left join fetch r.user " +
-            "left join fetch r.meetingRoom")
-    List<Reservation> findAll();
+    @Query(value = "select r " +
+            "from Reservation r " +
+            "left join fetch r.user as ru " +
+            "left join fetch ru.companies as rc "+
+            "left join fetch r.meetingRoom as rm " +
+            "where rc.companyName = :companyName",
+            countQuery="select count(r) from Reservation r")
+    Page<Reservation> findAllByCompanyName(@Param("companyName") String companyName, Pageable pageable);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select r from Reservation r " +

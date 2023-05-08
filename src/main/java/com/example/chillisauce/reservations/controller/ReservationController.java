@@ -12,12 +12,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 
 @Slf4j
@@ -37,10 +39,11 @@ public class ReservationController {
     public ResponseEntity<ResponseMessage<ReservationListResponse>> getAllReservations(
             @Parameter(description = "회사 이름", required = true, example = "testCompany")
             @PathVariable String companyName,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
             @Parameter(hidden = true)
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseMessage
-                .responseSuccess("전체 예약 조회 성공", reservationService.getAllReservations(companyName, userDetails));
+                .responseSuccess("전체 예약 조회 성공", reservationService.getAllReservations(companyName, page-1, userDetails));
     }
 
     /**

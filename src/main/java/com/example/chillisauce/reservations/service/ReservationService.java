@@ -1,8 +1,8 @@
 package com.example.chillisauce.reservations.service;
 
+import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
 import com.example.chillisauce.reservations.dto.request.ReservationRequest;
 import com.example.chillisauce.reservations.dto.request.ReservationTime;
-import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
 import com.example.chillisauce.reservations.dto.response.*;
 import com.example.chillisauce.reservations.entity.Reservation;
 import com.example.chillisauce.reservations.entity.ReservationUser;
@@ -24,6 +24,10 @@ import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,20 +51,34 @@ public class ReservationService {
     /**
      * 회사 전체 예약 조회
      */
-    public ReservationListResponse getAllReservations(String companyName, UserDetailsImpl userDetails) {
+    public ReservationListResponse getAllReservations(String companyName, Integer page, UserDetailsImpl userDetails) {
         Companies companies = companyRepository.findByCompanyName(companyName)
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.COMPANY_NOT_FOUND));
 
-        List<Reservation> all = reservationRepository.findAll();
+        if (!userDetails.getUser().getCompanies().getCompanyName()
+                .equals(companies.getCompanyName())) {
+            throw new ReservationException(ReservationErrorCode.INVALID_USER);
+        }
+
+        // 페이지네이션
+        int size = 20;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC,"id"));
+
+        Page<Reservation> all = reservationRepository.findAllByCompanyName(companyName, pageable);
+
+        List<ReservationDetailResponse> responseList =
+                all.stream().map(x -> {
+                    Mr meetingRoom = x.getMeetingRoom();
+                    Long mrId = meetingRoom == null ? 0 : meetingRoom.getId();
+                    String mrName = meetingRoom == null ? "삭제된 회의실" : meetingRoom.getLocationName();
+                    User user = x.getUser();
+                    String username = user==null ? "삭제된 유저" : user.getUsername();
+                    return new ReservationDetailResponse(x.getId(), mrId, mrName, username,
+                            x.getStartTime(), x.getEndTime());
+                }).toList();
 
         // 회의실이 null, 유저가 null : 삭제된 객체
-        return new ReservationListResponse(all.stream().map(x -> {
-            Mr meetingRoom = x.getMeetingRoom();
-            User user = x.getUser();
-            Long mrId = meetingRoom == null ? 0 : meetingRoom.getId();
-            String username = user == null ? "탈퇴한 유저" : user.getUsername();
-            return new ReservationDetailResponse(x, mrId, username);
-        }).toList());
+        return new ReservationListResponse(responseList);
     }
 
     /**
@@ -92,7 +110,7 @@ public class ReservationService {
     }
 
     // TIME_SET 시간 단위의 예약 가능 정보, 시각을 얻는 메서드
-    ReservationTimeResponse getTimeUnitInfo(LocalDate selDate, TimeUnit timeUnit, List<Reservation> all){
+    ReservationTimeResponse getTimeUnitInfo(LocalDate selDate, TimeUnit timeUnit, List<Reservation> all) {
         LocalTime startTime = LocalTime.of(timeUnit.getStart().getHour(), timeUnit.getStart().getMinute());
         LocalTime endTime = LocalTime.of(timeUnit.getEnd().getHour(), timeUnit.getEnd().getMinute());
         LocalDateTime startDateTime = LocalDateTime.of(selDate, startTime);
