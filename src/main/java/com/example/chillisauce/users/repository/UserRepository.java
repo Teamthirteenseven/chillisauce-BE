@@ -16,9 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
     List<User> findAllByIdInAndCompanies_CompanyName(List<Long> userIds, String companyName);
 
-    @Query("select u " +
-            "from users u " +
-            "join fetch u.companies " +
-            "where u.username like %:name%")
-    List<User> findAllByUsernameContainingAndCompanies(@Param("name") String name);
+//    @Query("select u " +
+//            "from users u " +
+//            "join fetch u.companies " +
+//            "where u.username like %:name%")
+//    List<User> findAllByUsernameContainingAndCompanies(@Param("name") String name);
 }
