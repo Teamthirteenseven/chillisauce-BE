@@ -26,22 +26,13 @@ public class BoxResponseDto {
         this.y = box.getY();
     }
 
-    public BoxResponseDto(Box box, User user) {
-        this.boxId = box.getId();
-        this.boxName = box.getLocationName();
-        this.x = box.getX();
-        this.y = box.getY();
-        this.username = user.getUsername();
-    }
-
 
     public BoxResponseDto(Box box, UserLocation userLocation) {
         this.boxId = box.getId();
         this.boxName = box.getLocationName();
         this.x = box.getX();
         this.y = box.getY();
-//        this.username = userLocation != null ? userLocation.getUsername() : null;
-        this.username = userLocation.getUsername();
+        this.username = userLocation != null ? userLocation.getUsername() : null;
     }
 
 

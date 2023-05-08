@@ -20,6 +20,7 @@ public class SpaceResponseDto {
     private List<MrResponseDto> mrList = new ArrayList<>();
     private List<MultiBoxResponseDto> multiBoxList = new ArrayList<>();
 
+
     public SpaceResponseDto(Space space) {
         this.spaceId = space.getId();
         this.spaceName = space.getSpaceName();
@@ -28,13 +29,6 @@ public class SpaceResponseDto {
     public SpaceResponseDto(Long id, String spaceName) {
         this.spaceId = id;
         this.spaceName = spaceName;
-    }
-
-    public SpaceResponseDto(Long spaceId, String spaceName, Long floorId, String floorName) {
-        this.spaceId = spaceId;
-        this.spaceName = spaceName;
-        this.floorId = floorId;
-        this.floorName = floorName;
     }
 
     @Builder
@@ -48,8 +42,6 @@ public class SpaceResponseDto {
         this.multiBoxList = multiBoxList;
 
     }
-
-
 
 }
 

@@ -185,9 +185,8 @@ public class SpaceControllerTest {
             Long spaceId = 1L;
             String url = "/spaces/" + companyName + "/" + spaceId;
 
-            List<SpaceResponseDto> responseDtoList = new ArrayList<>();
-            responseDtoList.add(new SpaceResponseDto(1L, "Test 공간"));
-            when(spaceService.getSpacelist(eq(companyName), eq(spaceId), any())).thenReturn(responseDtoList);
+            SpaceResponseDto spaceResponseDto = new SpaceResponseDto(1L, "testSpace");
+            when(spaceService.getSpacelist(eq(companyName), eq(spaceId), any())).thenReturn(spaceResponseDto);
 
             //when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
@@ -202,14 +201,14 @@ public class SpaceControllerTest {
                             responseFields(
                                     fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                     fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
-                                    fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("결과값"),
-                                    fieldWithPath("data[].spaceId").type(JsonFieldType.NUMBER).description("Space id"),
-                                    fieldWithPath("data[].spaceName").type(JsonFieldType.STRING).description("Space 이름"),
-                                    fieldWithPath("data[].floorId").type(JsonFieldType.NULL).description("Floor id"),
-                                    fieldWithPath("data[].floorName").type(JsonFieldType.NULL).description("Floor name"),
-                                    fieldWithPath("data[].boxList[]").type(JsonFieldType.ARRAY).description("Box 리스트"),
-                                    fieldWithPath("data[].mrList[]").type(JsonFieldType.ARRAY).description("LocationList"),
-                                    fieldWithPath("data[].multiBoxList[]").type(JsonFieldType.ARRAY).description("LocationList")
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과값"),
+                                    fieldWithPath("data.spaceId").type(JsonFieldType.NUMBER).description("Space id"),
+                                    fieldWithPath("data.spaceName").type(JsonFieldType.STRING).description("Space 이름"),
+                                    fieldWithPath("data.floorId").type(JsonFieldType.NULL).description("Floor id"),
+                                    fieldWithPath("data.floorName").type(JsonFieldType.NULL).description("Floor name"),
+                                    fieldWithPath("data.boxList[]").type(JsonFieldType.ARRAY).description("Box 리스트"),
+                                    fieldWithPath("data.mrList[]").type(JsonFieldType.ARRAY).description("Mr 리스트"),
+                                    fieldWithPath("data.multiBoxList[]").type(JsonFieldType.ARRAY).description("MultiBox 리스트")
                             )
                     ));
         }

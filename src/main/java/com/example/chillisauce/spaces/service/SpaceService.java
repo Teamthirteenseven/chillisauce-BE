@@ -6,7 +6,10 @@ import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
 import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
-import com.example.chillisauce.spaces.entity.*;
+import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Location;
+import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.*;
@@ -20,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -89,84 +94,25 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
         List<SpaceListResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
-//        List<BoxResponseDto> boxResponseDtos = spaceRepository.getBoxList();
-//        List<MrResponseDto> mrResponseDtos = spaceRepository.getMrList();
-//        List<MultiBoxResponseDto> multiBoxResponseDtos = spaceRepository.getMultiboxList();
         stopWatch.stop();
         log.info(stopWatch.prettyPrint());
 
         return spaceResponseDto;
-//                .stream()
-//                .map(space -> new SpaceResponseDto(space,boxResponseDtos,mrResponseDtos,multiBoxResponseDtos))
-//                .collect(Collectors.toList());
     }
 
-    /**
-     * 개선 전 전체 조회
-     */
-//    @Transactional
-////    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
-//    public List<SpaceResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
-//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
-//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
-//        }
-//        Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
-//                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
-//        );
-//        List<Space> spaceList = spaceRepository.findAllByCompaniesId(companies.getId());
-//        return spaceList.stream().map(space -> {
-//            Long floorId = null;
-//            String floorName = null;
-//            if (space.getFloor() != null) {
-//                floorId = space.getFloor().getId();
-//                floorName = space.getFloor().getFloorName();
-//            }
-//            return new SpaceResponseDto(space, floorId, floorName);
-//        }).collect(Collectors.toList());
-//    }
 
     /**
      * 개선 후 선택 조회 QueryDsl
      */
     @Transactional
 //    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
-    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
+    public SpaceResponseDto getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        List<SpaceResponseDto> spaceResponseDto = spaceRepository.getSpacesWithLocations(spaceId);
 
-        return spaceResponseDto;
+        return spaceRepository.getSpacesWithLocations(spaceId);
     }
-
-    /**
-     * 개선 전 선택 조회
-     */
-//    @Transactional
-////    @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
-//    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
-//        if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
-//            throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
-//        }
-//        Space space = findCompanyNameAndSpaceId(companyName, spaceId);
-//
-//        Map<Long, List<UserLocation>> userLocationMap = boxRepository.findAllLocationsWithUserLocations().stream()
-//                .filter(obj -> ((Location) obj[0]).getSpace().getId().equals(space.getId()))
-//                .collect(Collectors.groupingBy(obj -> ((Location) obj[0]).getId(),
-//                        Collectors.mapping(obj -> (UserLocation) obj[1], Collectors.toList())));
-//
-//        List<Object[]> locationsWithUserLocations = space.getLocations().stream()
-//                .map(location -> new Object[]{location, userLocationMap.get(location.getId())})
-//                .collect(Collectors.toList());
-//
-//
-//        Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
-//        String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
-//
-//        SpaceResponseDto responseDto = new SpaceResponseDto(space, floorId, floorName, locationsWithUserLocations);
-//        return Collections.singletonList(responseDto);
-//    }
-
 
 
 
