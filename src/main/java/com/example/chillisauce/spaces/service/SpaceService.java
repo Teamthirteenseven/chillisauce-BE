@@ -72,7 +72,6 @@ public class SpaceService {
         if (!details.getUser().getRole().equals(UserRoleEnum.ADMIN) && !details.getUser().getRole().equals(UserRoleEnum.MANAGER)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
-
         Companies companies = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
@@ -114,7 +113,6 @@ public class SpaceService {
 
         return spaceRepository.getSpacesWithLocations(spaceId);
     }
-
 
 
     //공간 개별 수정
