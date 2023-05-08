@@ -26,6 +26,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,8 +41,7 @@ import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -65,7 +68,7 @@ class ReservationServiceTest {
     @DisplayName("getAllReservations 메서드는")
     class GetAllReservationsTestCase {
         // given
-        int size = 2;
+        Integer offset = 0;
         Companies company = Company_생성();
         Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
         User user = User_USER권한_생성(company);
@@ -78,18 +81,26 @@ class ReservationServiceTest {
                 LocalDateTime.of(2023, 4, 11, 17, 0),
                 LocalDateTime.of(2023, 4, 11, 17, 59));
 
+        List<Reservation> reservations = List.of(reservationOne, reservationTwo);
+        Page<Reservation> reservationPage = new PageImpl<>(reservations);
+
         @Test
         void 회사_전체_예약내역을_조회한다() {
             // given
+            Pageable pageable = PageRequest.of(offset, 20);
             when(companyRepository.findByCompanyName(eq(company.getCompanyName())))
-                    .thenReturn(Optional.of(Companies.builder().build()));
-            when(reservationRepository.findAll()).thenReturn(List.of(reservationOne, reservationTwo));
+                    .thenReturn(Optional.of(company));
+
+            when(reservationRepository
+                    .findAllByCompanyName(eq(company.getCompanyName()), any()))
+                    .thenReturn(reservationPage);
 
             // when
-            ReservationListResponse result = reservationService.getAllReservations(company.getCompanyName(), userDetails);
+            ReservationListResponse result = reservationService
+                    .getAllReservations(company.getCompanyName(), offset, userDetails);
 
             // then
-            assertThat(result.getReservationList().size()).isEqualTo(size);
+            assertThat(result.getReservationList().size()).isEqualTo(2);
             assertThat(result.getReservationList()).extracting("reservationId", Long.class).contains(1L, 2L);
         }
     }
@@ -140,7 +151,8 @@ class ReservationServiceTest {
             when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
 
             // when
-            ReservationTimetableResponse result = reservationService.getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
+            ReservationTimetableResponse result = reservationService
+                    .getReservationTimetable(selDate, meetingRoom.getId(), userDetails);
 
             // then
             assertThat(result.getTimeList())
