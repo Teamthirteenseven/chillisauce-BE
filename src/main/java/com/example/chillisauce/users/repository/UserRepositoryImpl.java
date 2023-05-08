@@ -25,10 +25,14 @@ public class UserRepositoryImpl extends QuerydslRepositorySupport implements Use
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
+
+    QUser user = QUser.user;
+    QCompanies company = QCompanies.companies;
+    public static final Long MAX_SEARCH_RESULTS = 5L;
+
     @Override
     public Optional<User> findByIdAndCompanies_CompanyName(Long id, String companyName) {
-        QUser user = QUser.user;
-        QCompanies company = QCompanies.companies;
+
         User result = queryFactory
                 .selectFrom(user)
                 .join(user.companies, company)
@@ -39,14 +43,22 @@ public class UserRepositoryImpl extends QuerydslRepositorySupport implements Use
 
     @Override
     public List<User> findAllByCompanies_CompanyName(String companyName) {
-        QUser user = QUser.user;
-        QCompanies company = QCompanies.companies;
-        List<User> result = queryFactory
+        return queryFactory
                 .selectFrom(user)
                 .join(user.companies, company)
                 .where(user.id.eq(user.id).and(companyNameEquals(companyName)))
                 .fetch();
-        return result;
+    }
+
+    @Override
+    public List<User> findAllByUsernameContainingAndCompanies(String name, String companyName) {
+        return queryFactory
+                .selectFrom(user)
+                .join(user.companies)
+                .fetchJoin()
+                .where(user.username.like("%" + name + "%").and(companyNameEquals(companyName)))
+                .limit(MAX_SEARCH_RESULTS)
+                .fetch();
     }
 
     private BooleanExpression companyNameEquals(String companyName) {
