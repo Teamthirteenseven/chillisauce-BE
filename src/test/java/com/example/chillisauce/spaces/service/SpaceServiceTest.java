@@ -53,31 +53,7 @@ public class SpaceServiceTest {
     private SpaceService spaceService;
     @Mock
     private MrRepository mrRepository;
-    @Mock
-    private BoxRepository boxRepository;
-    private Floor floor;
-    private Companies companies;
-    private UserDetailsImpl details;
-    private Space space;
-    @BeforeEach
-    void setup() {
 
-        floor = Floor.builder().build();
-        companies = Companies.builder()
-                .companyName("testCompany")
-                .build();
-        User user = User.builder()
-                .role(UserRoleEnum.ADMIN)
-                .companies(companies)
-                .build();
-        details = new UserDetailsImpl(user, null);
-        space = Space.builder()
-                .spaceName("테스트 Space")
-                .floor(floor)
-                .companies(companies)
-                .build();
-
-    }
 
     @Nested
     @DisplayName("성공케이스")
@@ -143,15 +119,15 @@ public class SpaceServiceTest {
         @Test
         void Space_공간_선택_조회() {
             //given
-            List<Space> spaceList = Collections.singletonList(space);
-            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+            SpaceResponseDto spaceResponseDtos = SpaceResponseDto.builder()
+                    .space(space).floorId(floor.getId()).floorName(floor.getFloorName()).build();
+            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceResponseDtos);
 
             //when
-            List<SpaceResponseDto> result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
+           SpaceResponseDto result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
 
             //Then
             assertNotNull(result);
-            assertEquals(1, result.size());
             SpaceResponseDto spaceResponseDto = SpaceResponseDto.builder().space(space).floorName(floor.getFloorName()).floorId(floor.getId()).build();
             assertEquals("testSpace", spaceResponseDto.getSpaceName());
             assertEquals(floor.getId(), spaceResponseDto.getFloorId());
@@ -161,15 +137,15 @@ public class SpaceServiceTest {
         @Test
         void Space_공간_선택_조회_Floor_null() {
             //given
-            List<Space> spaceList = Collections.singletonList(space);
-            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+            SpaceResponseDto spaceResponseDtos = SpaceResponseDto.builder()
+                    .space(space).floorId(floor.getId()).floorName(floor.getFloorName()).build();
+            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceResponseDtos);
 
             //when
-            List<SpaceResponseDto> result = spaceService.getSpacelist(companies.getCompanyName(), 1L, details);
+            SpaceResponseDto result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
 
             //Then
             assertNotNull(result);
-            assertEquals(1, result.size());
             SpaceResponseDto spaceResponseDto = SpaceResponseDto.builder().space(space).floorName(floor.getFloorName()).floorId(floor.getId()).build();
             assertEquals("testSpace", spaceResponseDto.getSpaceName());
             assertEquals(floor.getId(), spaceResponseDto.getFloorId());
