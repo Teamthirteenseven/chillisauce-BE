@@ -46,7 +46,5 @@ public class Box extends Location {
 
 
     }
-
-
 }
 
