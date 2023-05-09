@@ -47,6 +47,15 @@ public class SpaceFixtureFactory {
                 .build();
     }
 
+    public static Box Box_생성_아이디_지정(Long boxId) {
+        return Box.builder()
+                .id(boxId)
+                .locationName("testBox")
+                .x("777").y("777")
+                .build();
+    }
+
+
     public static Mr Mr_생성() {
         return Mr.builder()
                 .locationName("testMr")
@@ -77,6 +86,37 @@ public class SpaceFixtureFactory {
         return MultiBox.builder()
                 .locationName("testMultiBox")
                 .x("222").y("200")
+                .build();
+    }
+
+    public static MultiBox MultiBox_생성_아이디_지정(Long multiBoxId) {
+        return MultiBox.builder()
+                .id(multiBoxId)
+                .locationName("testMultiBox")
+                .x("222").y("200")
+                .build();
+    }
+
+    public static UserLocation UserLocation_생성_Box(Box box, User user) {
+        return UserLocation.builder()
+                .location(box)
+                .userId(user.getId())
+                .username("test")
+                .build();
+    }
+
+    public static UserLocation UserLocation_생성_MultiBox(MultiBox multiBox, User user) {
+        return UserLocation.builder()
+                .location(multiBox)
+                .userId(user.getId())
+                .username(user.getUsername())
+                .build();
+    }
+    public static UserLocation UserLocation_생성_Location(Location location, User user) {
+        return UserLocation.builder()
+                .location(location)
+                .userId(user.getId())
+                .username(user.getUsername())
                 .build();
     }
 

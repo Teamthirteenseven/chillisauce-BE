@@ -19,9 +19,14 @@ public class MultiBox extends Location {
         super(multiBoxRequestDto.getMultiBoxName(), multiBoxRequestDto.getX(), multiBoxRequestDto.getY());
     }
 
-    @Builder
+
     public MultiBox(String locationName, String x, String y) {
         super(locationName, x, y);
+    }
+
+    @Builder
+    public MultiBox(Long id,String locationName, String x, String y) {
+        super(id, locationName, x, y);
     }
 
     public MultiBox(String multiBoxName, String x, String y, Space space) {
