@@ -25,6 +25,8 @@ public class UserLocation {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    @Version
+    private Long version;
 
     public UserLocation(Location location, User user) {
         this.location = location;
