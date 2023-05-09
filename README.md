@@ -10,7 +10,7 @@
 [6.아키텍쳐](#Architecture)  
 [7.API 명세](#api-명세)  
 [8.ERD](#erd)  
-[9.서비스 화면](#서비스-화면)
+[9.서비스 이미지 소개](#서비스-이미지-소개)
 
 ## 팀원 구성
 
@@ -82,9 +82,25 @@
 
 ---
 
-## 서비스 화면
+## 서비스 이미지 소개
 
-![img1](https://user-images.githubusercontent.com/77224652/236627905-1ace59f6-afba-41e6-94e2-97472f0f64be.png)
-![img2](https://user-images.githubusercontent.com/77224652/236627934-acd70dcb-a258-4ba5-8ea6-8847861f61a8.png)
-![img3](https://user-images.githubusercontent.com/77224652/236627951-c19b8593-286b-40bf-8bde-43129860c292.png)
+> 손쉽게 만드는 회사 내의 모든 업무공간
 
+![gif1](https://github.com/Teamthirteenseven/chillisauce-BE/assets/77224652/e5d3d79e-fa06-4a04-b6e2-ddcde7072d33)
+
+> 회사 내에서도 나에게 맞는 공간을 찾는 업무 공간 이동
+
+![gif2](https://github.com/Teamthirteenseven/chillisauce-BE/assets/77224652/a8c6f67e-8882-466a-b85c-117405cce4ed)
+
+> 회의실 예약 및 조회
+
+![gif3](https://github.com/Teamthirteenseven/chillisauce-BE/assets/77224652/bab46804-a0fc-425f-a454-ce62dbda644b)
+
+
+> 근무 일정과 연동되는 스케줄 관리
+
+![gif4](https://github.com/Teamthirteenseven/chillisauce-BE/assets/77224652/1b4ce1b8-4c23-4e9a-8f18-63b1f1f0ff0f)
+
+> 권한 및 사용자 관리하기
+
+![gif5](https://github.com/Teamthirteenseven/chillisauce-BE/assets/77224652/acf1e4a7-b37b-4ff6-9207-fa7731b81b1c)
