@@ -30,6 +30,7 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
+
     /**
      * space 선택 조회
      */

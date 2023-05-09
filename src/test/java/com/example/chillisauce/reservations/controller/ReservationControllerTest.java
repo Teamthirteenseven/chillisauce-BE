@@ -74,17 +74,19 @@ class ReservationControllerTest {
         // given
         String companyName = "testCompany";
         String url = "/reservations/" + companyName + "/all";
+        Integer page = 1;
 
         @Test
         @WithMockUser
         void 전체_회의실_예약내역을_반환한다() throws Exception {
             // given
             ReservationListResponse all = getAllReservationResponse();
-            when(reservationService.getAllReservations(eq(companyName), any())).thenReturn(all);
+            when(reservationService.getAllReservations(eq(companyName), eq(page - 1), any())).thenReturn(all);
 
             // when
             ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
                     .header("Authorization", "Bearer Token")
+                    .param("page", "1")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON));
 
@@ -147,6 +149,7 @@ class ReservationControllerTest {
         // given
         String url = "/reservations/1";
         ReservationTimetableResponse timeTable = getReservationTimetable();
+
         @Test
         @WithMockUser
         void 특정날짜_특정회의실의_예약테이블을_반환한다() throws Exception {
