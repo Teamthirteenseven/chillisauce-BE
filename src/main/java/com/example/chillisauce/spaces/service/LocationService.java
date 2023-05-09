@@ -28,7 +28,7 @@ public class LocationService {
 
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
-    public LocationDto moveWithUser(String companyName, Long locationId, UserDetailsImpl details) {
+    public synchronized LocationDto moveWithUser(String companyName, Long locationId, UserDetailsImpl details) {
 
         User user = details.getUser();
 
