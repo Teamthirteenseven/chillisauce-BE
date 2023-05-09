@@ -22,9 +22,13 @@ public class Box extends Location {
         super(boxRequestDto.getBoxName(), boxRequestDto.getX(), boxRequestDto.getY());
     }
 
-    @Builder
+
     public Box(String locationName, String x, String y) {
         super(locationName, x, y);
+    }
+    @Builder
+    public Box(Long id, String locationName, String x, String y) {
+        super(id,locationName, x, y);
     }
 
     public Box(String boxName, String x, String y, Space space) {

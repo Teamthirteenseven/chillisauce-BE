@@ -2,7 +2,9 @@ package com.example.chillisauce.spaces.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.response.LocationDto;
+import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Location;
+import com.example.chillisauce.spaces.entity.MultiBox;
 import com.example.chillisauce.spaces.entity.UserLocation;
 import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
@@ -19,10 +21,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import static com.example.chillisauce.fixture.SpaceFixtureFactory.*;
 import java.util.Optional;
 
+import static com.example.chillisauce.spaces.entity.QBox.box;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 
@@ -50,36 +55,29 @@ public class LocationServiceTest {
 
 
 
-    @BeforeEach
-    void setup() {
-        User user = User.builder()
-                .role(UserRoleEnum.ADMIN)
-                .build();
-        details = new UserDetailsImpl(user, null);
-        Location location = new Location("테스트", "200", "300");
-        userLocation = new UserLocation();
-        userLocation.setLocation(location);
-        companies = Companies.builder().build();
 
-    }
 
     @Nested
     @DisplayName("성공케이스")
     class SuccessCase {
+        Location next = Box_생성_아이디_지정(2L);
+        Location prev = MultiBox_생성_아이디_지정(1L);
         @Test
-        void UserLocation_isPresent_true_유저_등록_이동() {
+        void UserLocation_isPresent_true_유저_멀티박스_박스_이동() {
             // given
             Long locationId = 2L;
-            String companyName = "test";
-            Location differentLocation = new Location("다른 테스트", "100", "100");
-            details = new UserDetailsImpl(User.builder().role(UserRoleEnum.USER).build(), "test");
+            Companies company = Company_생성();
+            UserDetailsImpl details = details_권한_USER(company);
+            Location differentLocation = Box_생성_아이디_지정(1L);
+            UserLocation userLocation = UserLocation_생성_Location(prev, details.getUser());
+
 
             when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
-            when(companyRepository.findByCompanyName(companyName)).thenReturn(Optional.of(companies));
-            when(locationRepository.findByIdAndSpaceCompanies(locationId, companies)).thenReturn(Optional.of(differentLocation));
+            when(companyRepository.findByCompanyName(company.getCompanyName())).thenReturn(Optional.of(companies));
+            when(locationRepository.findByIdAndSpaceCompanies(eq(locationId), any())).thenReturn(Optional.of(next));
             when(userLocationRepository.findByUserId(details.getUser().getId())).thenReturn(Optional.of(userLocation));
             // when
-            LocationDto locationDto = locationService.moveWithUser(companyName,locationId,details);
+            LocationDto locationDto = locationService.moveWithUser(company.getCompanyName(),locationId,details);
 
             // then
             assertEquals(locationDto.getLocationName(), differentLocation.getLocationName());

@@ -30,8 +30,9 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
-    /*
-    space 선택 조회
+
+    /**
+     * space 선택 조회
      */
     public SpaceResponseDto getSpacesWithLocations(Long spaceId) {
         QLocation location = QLocation.location;
@@ -39,27 +40,27 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
         QSpace qSpace = space;
         Space space = from(qSpace)
                 .leftJoin(qSpace.floor, floor)
-                .leftJoin(qSpace.locations, location)
+                .leftJoin(qSpace.locations, location).fetchJoin()
                 .leftJoin(location.userLocations, userLocation)
                 .where(qSpace.id.eq(spaceId))
-                .distinct()
                 .fetchOne();
 
-        List<BoxResponseDto> boxList = new ArrayList<>();
-        List<MrResponseDto> mrList = new ArrayList<>();
-        List<MultiBoxResponseDto> multiBoxList = new ArrayList<>();
-
-        space.getLocations().forEach(l -> {
-            if (l instanceof Box) {
-                UserLocation locationUser = l.getUserLocations().stream()
-                        .findFirst().orElse(null);
-                boxList.add(new BoxResponseDto((Box) l, locationUser));
-            } else if (l instanceof Mr) {
-                mrList.add(new MrResponseDto((Mr) l));
-            } else if (l instanceof MultiBox) {
-                multiBoxList.add(new MultiBoxResponseDto((MultiBox) l, l.getUserLocations()));
-            }
-        });
+        List<BoxResponseDto> boxList = space.getLocations().stream()
+                .filter(l -> l instanceof Box)
+                .map(l -> {
+                    UserLocation locationUser = l.getUserLocations().stream()
+                            .findFirst().orElse(null);
+                    return new BoxResponseDto((Box) l,locationUser);
+                })
+                .collect(Collectors.toList());
+        List<MrResponseDto> mrList = space.getLocations().stream()
+                .filter(l -> l instanceof Mr)
+                .map(l -> new MrResponseDto((Mr) l))
+                .collect(Collectors.toList());
+        List<MultiBoxResponseDto> multiBoxList = space.getLocations().stream()
+                .filter(l -> l instanceof MultiBox)
+                .map(l -> new MultiBoxResponseDto((MultiBox) l,l.getUserLocations()))
+                .collect(Collectors.toList());
 
         return new SpaceResponseDto(space,
                 space.getFloor() != null ? space.getFloor().getId() : null,
@@ -67,9 +68,9 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 boxList, mrList, multiBoxList);
     }
 
-    /*
-    space 전체 조회
-    */
+    /**
+     * space 전체 조회
+     */
     public List<SpaceListResponseDto> getSpaceAllList(String companyName) {
         QCompanies company = QCompanies.companies;
             return from(space)
