@@ -46,16 +46,6 @@ public class LocationServiceTest {
     @Mock
     private CompanyRepository companyRepository;
 
-    private UserDetailsImpl details;
-
-    private UserLocation userLocation;
-
-    private Companies companies;
-
-
-
-
-
 
     @Nested
     @DisplayName("성공케이스")
@@ -73,7 +63,7 @@ public class LocationServiceTest {
 
 
             when(userRepository.findById(details.getUser().getId())).thenReturn(Optional.of(details.getUser()));
-            when(companyRepository.findByCompanyName(company.getCompanyName())).thenReturn(Optional.of(companies));
+            when(companyRepository.findByCompanyName(company.getCompanyName())).thenReturn(Optional.of(company));
             when(locationRepository.findByIdAndSpaceCompanies(eq(locationId), any())).thenReturn(Optional.of(next));
             when(userLocationRepository.findByUserId(details.getUser().getId())).thenReturn(Optional.of(userLocation));
             // when
