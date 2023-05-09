@@ -33,4 +33,10 @@ public class UserLocation {
 
     }
 
+    public UserLocation update(Location location, User user) {
+        this.userId = user.getId();
+        this.username = getUsername();
+        this.location = location;
+        return this;
+    }
 }

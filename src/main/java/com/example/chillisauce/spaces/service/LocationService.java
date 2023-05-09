@@ -9,7 +9,6 @@ import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
-import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
@@ -25,47 +24,50 @@ import java.util.Optional;
 public class LocationService {
 
     private final UserLocationRepository userLocationRepository;
-    private final UserRepository userRepository;
     private final LocationRepository locationRepository;
-
-    private final CompanyRepository companyRepository;
-
 
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public LocationDto moveWithUser(String companyName, Long locationId, UserDetailsImpl details) {
-        User user = userRepository.findById(details.getUser().getId()).orElseThrow(
-                () -> new SpaceException(SpaceErrorCode.USER_NOT_FOUND)
-        );
-        Location location = findCompanyNameAndBoxId(companyName,locationId);
 
-        Optional<UserLocation> userLocation = userLocationRepository.findByUserId(user.getId()); //사용자 현재위치
-        Optional<UserLocation> targetUserLocation = userLocationRepository.findByLocationId(locationId); //이동하려는 위치에 있는 사용자
+        User user = details.getUser();
 
-        if (userLocation.isPresent() && userLocation.get().getLocation().equals(location)) { //사용자가 이미 이 위치에 있다면 예외
-            throw new SpaceException(SpaceErrorCode.USER_ALREADY_AT_LOCATION);
+        // 유저가 같은 회사원인지 검증
+        if (!user.getCompanies().getCompanyName().equals(companyName)) {
+            throw new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND);
         }
 
-        if (targetUserLocation.isPresent() && location instanceof Box) { //위치에 이미 다른 사용자가 있으면 (Box 타입일 경우 예외)
-            throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
+        // companyName 과 정확히 같은 회사에 속한 스페이스를 찾고, locationId와 같은 로케이션 찾기
+        // 없으면 404
+        Location target = findCompanyNameAndId(companyName, locationId);
+
+        // target 이 박스이면
+        if (target instanceof Box) {
+            // 유저가 있는지 확인하고 있으면 예외
+            if(userLocationRepository.findByLocationId(target.getId()).isPresent()) {
+                throw new SpaceException(SpaceErrorCode.BOX_ALREADY_IN_USER);
+            }
         }
 
-        if (userLocation.isEmpty()) { //없으면
-            UserLocation newUserLocation = userLocationRepository.save(new UserLocation(location, user));
-            return new LocationDto(newUserLocation.getLocation(), user.getUsername());
+        // 사용자 id - 위치 정보
+        Optional<UserLocation> userLocation = userLocationRepository.findByUserId(user.getId());
+
+        UserLocation result;
+
+        if (userLocation.isPresent()) {
+            // 위치정보 있으면 업데이트
+            result = userLocation.get().update(target, user);
         } else {
-            userLocation.get().setLocation(location);
-            userLocationRepository.save(userLocation.get());
-            return new LocationDto(userLocation.get().getLocation(), user.getUsername());
+            // 없으면 저장
+            result = userLocationRepository.save(new UserLocation(target, user));
         }
+
+        return new LocationDto(result.getLocation(), result.getUsername());
     }
 
 
-    public Location findCompanyNameAndBoxId(String companyName, Long locationId) {
-        Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
-                () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
-        );
-        return locationRepository.findByIdAndSpaceCompanies(locationId, company).orElseThrow(
+    public Location findCompanyNameAndId(String companyName, Long locationId) {
+        return locationRepository.findByIdAndCompanyName(locationId, companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.BOX_NOT_FOUND)
         );
     }
