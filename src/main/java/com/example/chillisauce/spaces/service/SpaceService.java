@@ -104,7 +104,7 @@ public class SpaceService {
     /**
      * 개선 후 선택 조회 QueryDsl
      */
-    @Transactional
+    @Transactional(readOnly = true)
     @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
     public SpaceResponseDto getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
