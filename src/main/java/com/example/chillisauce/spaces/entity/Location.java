@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "locationType")
-public class Location {
+public abstract class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,5 +55,11 @@ public class Location {
         this.y = y;
     }
 
+    public Location(Long id, String locationName, String x, String y) {
+        this.id = id;
+        this.locationName = locationName;
+        this.x = x;
+        this.y = y;
+    }
 
 }
