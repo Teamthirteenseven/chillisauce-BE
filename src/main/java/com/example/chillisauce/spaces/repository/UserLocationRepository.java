@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserLocationRepository extends JpaRepository<UserLocation, Long> {
-    @Lock(LockModeType.OPTIMISTIC)
     Optional<UserLocation> findByUserId(Long id);
     Optional<UserLocation> findByLocationId(Long locationId);
 
