@@ -56,6 +56,9 @@ public class RedisConfig {
                 (objectMapper.getTypeFactory().constructCollectionType(List.class, SpaceResponseDto.class));
         spaceSerializer.setObjectMapper(objectMapper);
 
+        Jackson2JsonRedisSerializer<SpaceResponseDto> spaceListSerializer = new Jackson2JsonRedisSerializer<>(SpaceResponseDto.class);
+        spaceListSerializer.setObjectMapper(objectMapper);
+
         /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
         Jackson2JsonRedisSerializer<UserListResponseDto> userSerializer = new Jackson2JsonRedisSerializer<>
                 (objectMapper.getTypeFactory().constructType(UserListResponseDto.class));
@@ -85,6 +88,13 @@ public class RedisConfig {
                         .entryTtl(Duration.ofMinutes(60))
                         .disableCachingNullValues()
                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(spaceSerializer))
+        );
+
+        builder.withCacheConfiguration("SpaceResponseDtoList",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(60))
+                        .disableCachingNullValues()
+                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(spaceListSerializer))
         );
 
         /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
