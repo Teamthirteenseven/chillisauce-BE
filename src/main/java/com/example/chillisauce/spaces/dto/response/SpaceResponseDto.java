@@ -1,6 +1,7 @@
 package com.example.chillisauce.spaces.dto.response;
 
 import com.example.chillisauce.spaces.entity.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class SpaceResponseDto {
 
     private Long spaceId;
