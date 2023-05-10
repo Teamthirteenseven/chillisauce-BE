@@ -97,46 +97,7 @@ public class FloorControllerTest {
                             )
                     ));
         }
-        @Test
-        @WithMockUser
-        void Floor_선택조회_성공() throws Exception{
-            //given
-            String companyName = "testCompany";
-            Long floorId = 1L;
-            String url = "/floors/" + companyName + "/" + floorId;
 
-            List<FloorResponseDto> responseDtoList = new ArrayList<>();
-            responseDtoList.add(new FloorResponseDto(1L, "Floor 생성 테스트",new ArrayList<>()));
-
-            FloorRequestDto floorRequestDto = new FloorRequestDto("Floor 생성 테스트");
-            when(floorService.getFloorlist(eq(companyName), any(), any())).thenReturn(responseDtoList);
-
-            //when
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get(url)
-                    .header("Authorization", "Bearer Token")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(floorRequestDto)));
-
-            //then
-            result.andExpect(status().isOk())
-                    .andDo(document("get-getFloorlist",
-                            getDocumentRequest(),
-                            getDocumentResponse(),
-                            requestFields(
-                                    fieldWithPath("floorName").type(JsonFieldType.STRING).description("Floor 이름")
-                            ),
-
-                            responseFields(
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
-                                    fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("결과값"),
-                                    fieldWithPath("data[].floorId").type(JsonFieldType.NUMBER).description("Floor id"),
-                                    fieldWithPath("data[].floorName").type(JsonFieldType.STRING).description("Floor 이름"),
-                                    fieldWithPath("data[].spaceList[]").type(JsonFieldType.ARRAY).description("SpaceList")
-                            )
-                    ));
-        }
         @Test
         @WithMockUser
         void Floor만_조회_성공() throws Exception {

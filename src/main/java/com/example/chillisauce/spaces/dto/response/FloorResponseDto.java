@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -16,9 +17,9 @@ public class FloorResponseDto {
 
     private String floorName;
 
-    private List<SpaceResponseDto> spaceList = new ArrayList<>();
+    private List<SpaceListResponseDto> spaceList = new ArrayList<>();
     @Builder
-    public FloorResponseDto(Long floorId, String floorName, List<SpaceResponseDto> spaceList) {
+    public FloorResponseDto(Long floorId, String floorName, List<SpaceListResponseDto> spaceList) {
         this.floorId = floorId;
         this.floorName = floorName;
         this.spaceList = spaceList;

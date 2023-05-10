@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.example.chillisauce.fixture.SpaceFixtureFactory.*;
+import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,8 +53,8 @@ public class MrServiceTest {
         Companies companies = Company_생성();
         Space space = Space_생성_아이디_지정(1L);
         UserDetailsImpl details = details_권한_ADMIN_유저_네임_NULL(companies);
-        Reservation reservation = Reservation_생성();
-        Mr mr = Mr_생성_아이디_지정(1L);
+        Reservation reservation = Reservation_생성_빈값();
+        Mr mr = MeetingRoom_생성_아이디_지정(1L);
         @Test
         void 미팅룸_생성() {
             //given
@@ -154,7 +154,7 @@ public class MrServiceTest {
         @Test
         void 해당_회사_없음() {
             //given
-            Mr mr = Mr_생성_아이디_지정(1L);
+            Mr mr = MeetingRoom_생성_아이디_지정(1L);
             Companies companies = Different_Company_생성();
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.empty());
 
@@ -169,7 +169,7 @@ public class MrServiceTest {
         void 해당_회사_아이디_없음() {
             //given
             Companies companies = Different_Company_생성();
-            Mr mr = Mr_생성_아이디_지정(1L);
+            Mr mr = MeetingRoom_생성_아이디_지정(1L);
 
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
             when(mrRepository.findByIdAndSpaceCompanies(mr.getId(), companies)).thenReturn(Optional.empty());

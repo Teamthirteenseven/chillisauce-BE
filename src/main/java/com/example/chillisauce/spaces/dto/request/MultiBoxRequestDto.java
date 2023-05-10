@@ -15,11 +15,7 @@ public class MultiBoxRequestDto {
 
     private String y;
 
-    public MultiBoxRequestDto(LocationDto locationDto) {
-        this.multiBoxName = locationDto.getLocationName();
-        this.x = locationDto.getX();
-        this.y = locationDto.getY();
-    }
+
 
     public MultiBoxRequestDto(String locationName, String x, String y) {
         this.multiBoxName = locationName;

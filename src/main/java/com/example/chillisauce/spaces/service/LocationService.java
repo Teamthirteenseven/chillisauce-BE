@@ -10,8 +10,6 @@ import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.UserLocationRepository;
 import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.repository.CompanyRepository;
-import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,9 @@ public class LocationService {
 
     private final UserLocationRepository userLocationRepository;
     private final LocationRepository locationRepository;
-
+    /**
+     * 사용자 이동
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public LocationDto moveWithUser(String companyName, Long locationId, UserDetailsImpl details) {

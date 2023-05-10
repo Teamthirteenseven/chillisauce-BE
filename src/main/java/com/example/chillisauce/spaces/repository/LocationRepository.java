@@ -1,7 +1,6 @@
 package com.example.chillisauce.spaces.repository;
 
 import com.example.chillisauce.spaces.entity.Location;
-import com.example.chillisauce.users.entity.Companies;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

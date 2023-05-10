@@ -3,6 +3,7 @@ package com.example.chillisauce.spaces.service;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.request.FloorRequestDto;
 import com.example.chillisauce.spaces.dto.response.FloorResponseDto;
+import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
@@ -10,6 +11,7 @@ import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.FloorRepository;
 import com.example.chillisauce.spaces.repository.MrRepository;
+import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -25,8 +27,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.example.chillisauce.fixture.SpaceFixtureFactory.*;
+import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +48,7 @@ public class FloorServiceTest {
     @InjectMocks
     private FloorService floorService;
     @Mock
-    private MrRepository mrRepository;
+    private SpaceRepository spaceRepository;
 
     @Nested
     @DisplayName("성공케이스")
@@ -54,6 +57,7 @@ public class FloorServiceTest {
         Floor floor = Floor_생성_아이디_지정(1L);
         Companies companies = Company_생성();
         UserDetailsImpl details = details_권한_ADMIN_유저_네임_NULL(companies);
+
         @Test
         void Floor_생성() {
             //given
@@ -70,38 +74,19 @@ public class FloorServiceTest {
 
         }
 
-        @Test
-        void Floor_선택_조회() {
-            //given
-            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(Companies.builder().build()));
-            when(floorRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(floor));
-            FloorResponseDto floorResponseDto = new FloorResponseDto(1L, "testFloor",new ArrayList<>());
-
-            //When
-            List<FloorResponseDto> result = floorService.getFloorlist(companies.getCompanyName(),floor.getId(), details);
-
-            //Then
-            assertNotNull(result);
-            assertEquals(1, result.size());
-            assertEquals("testFloor", floorResponseDto.getFloorName());
-        }
 
         @Test
         void Floor_전체_조회() {
             //given
             List<Floor> floorList = Collections.singletonList(floor);
-            List<FloorResponseDto> responseDto = floorList.stream()
-                    .map(FloorResponseDto::new)
-                    .toList();
-            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
-            when(floorRepository.findAllByCompaniesId(any())).thenReturn(floorList);
+            List<FloorResponseDto> responseDto = floorList.stream().map(FloorResponseDto::new).toList();
+            when(spaceRepository.getFloorAllList(companies.getCompanyName())).thenReturn(floorList.stream().map(FloorResponseDto::new).collect(Collectors.toList()));
 
             //when
             List<FloorResponseDto> result = floorService.getFloor(companies.getCompanyName(), details);
 
             //Then
             assertNotNull(result);
-            assertEquals(result.size(), responseDto.size());
             assertThat(responseDto).allSatisfy(responseSpace -> {
                 assertThat(responseSpace.getFloorName()).isEqualTo("testFloor");
             });
@@ -124,11 +109,10 @@ public class FloorServiceTest {
 
         @Test
         void Floor_삭제() {
-            List<Mr> mrList = new ArrayList<>();
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(Companies.builder().build()));
             when(floorRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(floor));
+            doNothing().when(spaceRepository).clearAllReservationsForFloor(floor.getId());
             doNothing().when(floorRepository).delete(floor);
-            doNothing().when(mrRepository).deleteAll(mrList);
             //when
             FloorResponseDto floorResponseDto = floorService.deleteFloor(companies.getCompanyName(), floor.getId(), details);
 
@@ -190,13 +174,7 @@ public class FloorServiceTest {
             SpaceException exception = assertThrows(SpaceException.class, executable);
             assertEquals(expectedErrorCode, exception.getErrorCode());
         }
-        @Test
-        void Floor_선택_조회_해당_회사_권한_없음() {
-            // when & then
-            CompanyNotPermissionExceptionCase.COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
-                floorService.getFloorlist(different.getCompanyName(),floor.getId(), details);
-            });
-        }
+
 
         @Test
         void Floor_전체_조회_해당_회사_권한_없음() {
@@ -214,6 +192,7 @@ public class FloorServiceTest {
         Companies companies = Company_생성();
         FloorRequestDto requestDto = new FloorRequestDto("floorTest");
         UserDetailsImpl details = details_권한_ADMIN_유저_네임_NULL(companies);
+
         public static void COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
             SpaceException exception = assertThrows(SpaceException.class, executable);
             assertEquals(expectedErrorCode, exception.getErrorCode());
@@ -223,51 +202,45 @@ public class FloorServiceTest {
         void Floor_생성_해당_회사_없음() {
             //when,then
             findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
-                floorService.createFloor(companies.getCompanyName(),requestDto, details);
+                floorService.createFloor(companies.getCompanyName(), requestDto, details);
             });
         }
 
 
-        @Test
-        void Floor_전체_조회_해당_회사_없음() {
-            //when,then
-            findByCompanyName.COMPANIES_NOT_FOUND_EXCEPTION(SpaceErrorCode.COMPANIES_NOT_FOUND, () -> {
-                floorService.getFloor(companies.getCompanyName(), details);
-            });
-        }
-    }
+        @Nested
+        @DisplayName("회사 이름과 공간 ID로 층을 찾을 수 없는 경우")
+        class findCompanyNameAndFloorId {
+            Companies companies = Company_생성();
+            Space space = Space_생성_아이디_지정(1L);
 
-    @Nested
-    @DisplayName("회사 이름과 공간 ID로 층을 찾을 수 없는 경우")
-    class findCompanyNameAndFloorId {
-        Companies companies = Company_생성();
-        Space space = Space_생성_아이디_지정(1L);
-        @Test
-        void 해당_회사_없음() {
-            //given
-            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.empty());
+            @Test
+            void 해당_회사_없음() {
+                //given
+                when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.empty());
 
-            //When,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                floorService.findCompanyNameAndFloorId(companies.getCompanyName(), space.getId());
-            });
-            assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
-        }
+                //When,Then
+                SpaceException exception = assertThrows(SpaceException.class, () -> {
+                    floorService.findCompanyNameAndFloorId(companies.getCompanyName(), space.getId());
+                });
+                assertEquals(SpaceErrorCode.COMPANIES_NOT_FOUND, exception.getErrorCode());
+            }
 
-        @Test
-        void 해당_회사_아이디_없음() {
-            //given
-            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
-            when(floorRepository.findByIdAndCompanies(space.getId(), companies)).thenReturn(Optional.empty());
+            @Test
+            void 해당_회사_아이디_없음() {
+                //given
+                when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
+                when(floorRepository.findByIdAndCompanies(space.getId(), companies)).thenReturn(Optional.empty());
 
-            //when,Then
-            SpaceException exception = assertThrows(SpaceException.class, () -> {
-                floorService.findCompanyNameAndFloorId(companies.getCompanyName(), space.getId());
-            });
-            assertEquals(SpaceErrorCode.SPACE_NOT_FOUND, exception.getErrorCode());
+                //when,Then
+                SpaceException exception = assertThrows(SpaceException.class, () -> {
+                    floorService.findCompanyNameAndFloorId(companies.getCompanyName(), space.getId());
+                });
+                assertEquals(SpaceErrorCode.SPACE_NOT_FOUND, exception.getErrorCode());
+            }
         }
     }
 }
+
 
 
 

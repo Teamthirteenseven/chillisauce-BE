@@ -1,18 +1,16 @@
 package com.example.chillisauce.spaces.service;
 
 
-import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
 import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
 import com.example.chillisauce.spaces.entity.Floor;
-import com.example.chillisauce.spaces.entity.Location;
-import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.*;
+import com.example.chillisauce.spaces.repository.FloorRepository;
+import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,14 +34,12 @@ public class SpaceService {
     private final CompanyRepository companyRepository;
     private final FloorRepository floorRepository;
 
-    private final ReservationService reservationService;
-    private final MrRepository mrRepository;
-    private final BoxRepository boxRepository;
-    private final LocationRepository locationRepository;
 
 
 
-    //플로우 안에 공간 생성
+    /**
+     * 플로우 안에 생성
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto createSpaceInFloor(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details, Long floorId) {
@@ -65,7 +60,9 @@ public class SpaceService {
         return new SpaceResponseDto(space);
     }
 
-    //공간생성
+    /**
+     * 공간 생성
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto createSpace(String companyName, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
@@ -83,7 +80,7 @@ public class SpaceService {
     }
 
     /**
-     * 개선 후 전체 조회 QueryDsl
+     * 공간 전체 조회
      */
     @Transactional
     @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
@@ -102,20 +99,27 @@ public class SpaceService {
 
 
     /**
-     * 개선 후 선택 조회 QueryDsl
+     * 공간 개별 조회
      */
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName + '_' + #spaceId")
-    public SpaceResponseDto getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
+    public List<SpaceResponseDto> getSpacelist(String companyName, Long spaceId, UserDetailsImpl details) {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
+        }
+        Space space = spaceRepository.findById(spaceId)
+                .orElseThrow(() -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND));
+        if (!space.getCompanies().getCompanyName().equals(companyName)) {
+            throw new SpaceException(SpaceErrorCode.SPACE_DOES_NOT_BELONG_TO_COMPANY);
         }
 
         return spaceRepository.getSpacesWithLocations(spaceId);
     }
 
 
-    //공간 개별 수정
+    /**
+     * 공간 수정
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto updateSpace(String companyName, Long spaceId, SpaceRequestDto spaceRequestDto, UserDetailsImpl details) {
@@ -136,7 +140,9 @@ public class SpaceService {
         return new SpaceResponseDto(space);
     }
 
-    //공간 삭제
+    /**
+     * 공간 삭제
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public SpaceResponseDto deleteSpace(String companyName, Long spaceId, UserDetailsImpl details) {
@@ -144,29 +150,9 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = findCompanyNameAndSpaceId(companyName, spaceId);
-        List<Location> allLocations = space.getLocations();
-        List<Mr> mrList = new ArrayList<>();
 
-        for (Location location : allLocations) {
-            if (location instanceof Mr) {
-                mrList.add((Mr) location);
-            }
-        }
-        for (Mr mr : mrList) {
-            reservationService.deleteMeetingRoomInReservations(mr.getId(), details);
-        }
-        mrRepository.deleteAll(mrList);
+        spaceRepository.clearAllReservationsForSpace(spaceId);
         spaceRepository.deleteById(spaceId);
-        /**
-         * 1차 개선 아래 주석 JPQL 서브쿼리
-         */
-//        mrRepository.clearAllReservationsForSpace(spaceId);
-//        spaceRepository.deleteById(spaceId);
-        /**
-         * 2차 개선 아래 주석 QueryDSL   (delete 를 따로 호출하는게 성능이 좋은지 QueryDsl 에 포함하는게 좋은지도 궁금)
-         */
-//        spaceRepository.clearAllReservationsForSpace(spaceId);
-//        spaceRepository.deleteById(spaceId);
         return new SpaceResponseDto(space);
     }
 
