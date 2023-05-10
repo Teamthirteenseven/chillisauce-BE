@@ -137,15 +137,6 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .execute();
     }
 
-    public void CompanyNameMatchesSpaceId(String companyName, Long spaceId) {
-        QCompanies company = QCompanies.companies;
-        queryFactory.selectFrom(space)
-                .innerJoin(space.companies, company)
-                .where(space.id.eq(spaceId).and(company.companyName.eq(companyName)))
-                .fetchOne();
-    }
-
-
     private BooleanExpression companyNameEquals(String companyName) {
         return space.companies.companyName.eq(companyName);
     }
