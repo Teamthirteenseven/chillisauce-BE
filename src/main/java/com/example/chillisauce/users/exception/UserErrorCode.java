@@ -10,9 +10,10 @@ import static org.springframework.http.HttpStatus.*;
 @Getter
 @AllArgsConstructor
 public enum UserErrorCode implements ErrorStatusMessage {
-    /* 400 BAD_REQUEST : 잘못된 요청 */
+    /* 401 BAD_REQUEST : 인증 오류 */
     INVALID_TOKEN(UNAUTHORIZED, "토큰이 유효하지 않습니다"),
     INVALID_CERTIFICATION(UNAUTHORIZED, "인증번호가 유효하지 않습니다"),
+    /* 400 BAD_REQUEST : 잘못된 요청 */
     USAGE_LIMIT(TOO_MANY_REQUESTS, "반복된 요청입니다. 잠시 후 사용해주세요."),
     DUPLICATE_EMAIL(BAD_REQUEST, "중복된 이메일이 존재합니다"),
     DUPLICATE_COMPANY(BAD_REQUEST, "중복된 회사명이 존재합니다"),
@@ -24,7 +25,6 @@ public enum UserErrorCode implements ErrorStatusMessage {
     NOT_HAVE_PERMISSION(BAD_REQUEST, "권한이 없습니다."),
     DO_NOT_CHANGED_PERMISSION(BAD_REQUEST, "관리자 권한은 변경할 수 없습니다."),
     UNABLE_MODIFY_PERMISSION_FOR_ADMIN(BAD_REQUEST, "관리자 권한으로 수정할 수 없습니다."),
-    NOT_AUTHOR(BAD_REQUEST, "작성자만 삭제/수정할 수 있습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "등록된 사용자가 없습니다"),

@@ -2,11 +2,9 @@ package com.example.chillisauce.users.service;
 
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
-import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.exception.UserErrorCode;
 import com.example.chillisauce.users.exception.UserException;
-import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

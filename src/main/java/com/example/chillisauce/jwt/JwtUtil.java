@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -30,9 +29,9 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
 
-    private final UserDetailsServiceImpl userDetailsService;       //스프링 시큐리티 의존성 주입
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Value("${jwt.secret.key}") //절대 보여주지마...!
+    @Value("${jwt.secret.key}")
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -105,7 +104,7 @@ public class JwtUtil {
 
     /* 토큰 만료 시간 */
     public long getAccessTime() {
-        return 2 * 60 * 60 * 1000L; // 8시간
+        return 8 * 60 * 60 * 1000L; // 8시간
     }
 
 }

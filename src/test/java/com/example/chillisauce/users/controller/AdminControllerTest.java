@@ -55,6 +55,7 @@ class AdminControllerTest {
                 .build();
         this.objectMapper = new ObjectMapper();
     }
+
     UserDetailResponseDto userOne = UserDetailResponseDto.builder()
             .userId(1L)
             .email("1234@qwer")
@@ -67,6 +68,7 @@ class AdminControllerTest {
             .username("우주 최고 미남 홀란")
             .role(UserRoleEnum.USER)
             .build();
+
     private UserListResponseDto getUserList() {
         List<UserDetailResponseDto> response = new ArrayList<>();
         response.add(userOne);

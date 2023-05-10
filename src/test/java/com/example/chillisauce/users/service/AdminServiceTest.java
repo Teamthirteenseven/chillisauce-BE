@@ -89,8 +89,10 @@ class AdminServiceTest {
                     User.builder().id(1L).email("123@123").build(),
                     User.builder().id(1L).email("123@123").build());
             when(userRepository.findAllByCompanies_CompanyName(admin.getCompanies().getCompanyName())).thenReturn(allUsers);
+
             //when
             UserListResponseDto result = adminService.getAllUsers(details);
+
             //then
             assertThat(result).isNotNull();
             assertThat(result.getUserList().size()).isEqualTo(3);
@@ -107,8 +109,6 @@ class AdminServiceTest {
                     .updateRole(true)
                     .role(UserRoleEnum.MANAGER)
                     .build();
-
-
 
             //when
             when(userRepository.findByIdAndCompanies_CompanyName(2L, user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
@@ -145,13 +145,12 @@ class AdminServiceTest {
                     .userId(2L).
                     build();
 
+            //when
             when(userRepository.findById(any())).thenReturn(Optional.of(user));
             when(scheduleRepository.findAllByUserId(any())).thenReturn(List.of(schedule));
             when(reservationRepository.findAllByUserId(any())).thenReturn(List.of(reservation));
             when(userLocationRepository.findByUserId(any())).thenReturn(Optional.of(location));
             when(cacheManager.getCache("UserDetails")).thenReturn(userDetailsCache);
-
-            //when
             String result = adminService.deleteUser(2L, details);
 
             //then
@@ -201,9 +200,10 @@ class AdminServiceTest {
                                     .build())
                     .build();
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
-            when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.empty());
 
             //when
+            when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.empty());
+
             UserException exception = assertThrows(UserException.class, () -> {
                 adminService.getUsers(admin.getId(), details);
             });
@@ -236,9 +236,9 @@ class AdminServiceTest {
             //given
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
+            //when
             when(userRepository.findAllByCompanies_CompanyName(admin.getCompanies().getCompanyName())).thenReturn(Collections.emptyList());
 
-            //when
             UserListResponseDto result = adminService.getAllUsers(details);
 
             //then
@@ -270,13 +270,14 @@ class AdminServiceTest {
         void fail6() {
             //given
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
-            when(userRepository.findByIdAndCompanies_CompanyName(2L, admin.getCompanies().getCompanyName())).thenReturn(Optional.empty());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
                     .role(UserRoleEnum.MANAGER)
                     .build();
 
             //when
+            when(userRepository.findByIdAndCompanies_CompanyName(2L, admin.getCompanies().getCompanyName())).thenReturn(Optional.empty());
+
             UserException exception = assertThrows(UserException.class, () -> {
                 adminService.editUser(2L, details, requestDto);
             });
@@ -291,14 +292,11 @@ class AdminServiceTest {
         @Test
         void fail7() {
             //given
-
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
 
             RoleDeptUpdateRequestDto requestDto = RoleDeptUpdateRequestDto.builder()
                     .role(UserRoleEnum.ADMIN)
                     .build();
-
-
 
             //when
             when(userRepository.findByIdAndCompanies_CompanyName(user.getId(), user.getCompanies().getCompanyName())).thenReturn(Optional.of(user));
@@ -325,6 +323,7 @@ class AdminServiceTest {
                     .updateRole(true)
                     .build();
 
+            //when
             when(userRepository.findByIdAndCompanies_CompanyName(admin.getId(), admin.getCompanies().getCompanyName())).thenReturn(Optional.of(admin));
 
             UserException exception = assertThrows(UserException.class, () -> {
@@ -343,9 +342,10 @@ class AdminServiceTest {
             //given
 
             UserDetailsImpl details = new UserDetailsImpl(admin, admin.getUsername());
-            when(userRepository.findById(any())).thenReturn(Optional.empty());
 
             //when
+            when(userRepository.findById(any())).thenReturn(Optional.empty());
+
             UserException exception = assertThrows(UserException.class, () -> {
                 adminService.deleteUser(2L, details);
             });
@@ -359,14 +359,14 @@ class AdminServiceTest {
         @DisplayName("사원 삭제 실패(권한 없음)")
         @Test
         void A() {
-        //given
+            //given
             UserDetailsImpl details = new UserDetailsImpl(user, user.getUsername());
 
-        //when
+            //when
             UserException exception = assertThrows(UserException.class, () -> {
                 adminService.deleteUser(user2.getId(), details);
             });
-        //then
+            //then
             assertThat(exception).isNotNull();
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("권한이 없습니다.");
         }

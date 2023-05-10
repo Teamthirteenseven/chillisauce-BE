@@ -40,13 +40,11 @@ public class AdminService {
 
     /* 사원 목록 전체 조회 */
     @Transactional(readOnly = true)
-    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
     @Cacheable(value = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
-    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
     public UserListResponseDto getAllUsers(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
-        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {    //어드민과 매니저 권한 동일하게
+        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
         List<User> allList = userRepository.findAllByCompanies_CompanyName(user.getCompanies().getCompanyName());
@@ -57,7 +55,7 @@ public class AdminService {
     @Transactional(readOnly = true)
     public UserDetailResponseDto getUsers(Long userId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {    //어드민과 매니저 권한 동일하게
+        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !user.getRole().equals(UserRoleEnum.MANAGER)) {
             throw new UserException(UserErrorCode.NOT_HAVE_PERMISSION);
         }
         User getUser = findOneUser(userId, user);
@@ -138,7 +136,7 @@ public class AdminService {
         }
     }
 
-    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
+    /* 캐시 삭제용 메서드 */
     @CacheEvict(cacheNames = "UserResponseDtoList", key = "#userDetails.user.companies.companyName")
     public void evictCacheByCompanyName(UserDetailsImpl userDetails) {
         log.info("Evicting userList from cache={}", userDetails.getUser().getCompanies().getCompanyName());
@@ -147,6 +145,5 @@ public class AdminService {
             userListCache.evict(userDetails.getUser().getCompanies().getCompanyName());
         }
     }
-    /* 성능테스트 2. 캐싱 / 논캐싱 비교*/
 
 }
