@@ -1,5 +1,6 @@
 package com.example.chillisauce.reservations.service;
 
+import com.example.chillisauce.fixture.SpaceFixtureFactory;
 import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
 import com.example.chillisauce.reservations.dto.request.ReservationRequest;
 import com.example.chillisauce.reservations.dto.request.ReservationTime;
@@ -13,7 +14,9 @@ import com.example.chillisauce.reservations.repository.ReservationUserRepository
 import com.example.chillisauce.reservations.vo.ReservationTimetable;
 import com.example.chillisauce.schedules.repository.ScheduleRepository;
 import com.example.chillisauce.security.UserDetailsImpl;
+import com.example.chillisauce.spaces.entity.Box;
 import com.example.chillisauce.spaces.entity.Mr;
+import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
@@ -30,6 +33,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.NestedTestConfiguration;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,12 +59,13 @@ class ReservationServiceTest {
     @Mock
     UserRepository userRepository;
     @Mock
-    ReservationUserRepository reservationUserRepository;
-    @Mock
-    ScheduleRepository scheduleRepository;
+    LocationRepository locationRepository;
     @InjectMocks
     ReservationService reservationService;
-
+    @Mock
+    ScheduleRepository scheduleRepository;
+    @Mock
+    ReservationUserRepository reservationUserRepository;
     @Mock
     private CompanyRepository companyRepository;
 
@@ -88,8 +93,6 @@ class ReservationServiceTest {
         void 회사_전체_예약내역을_조회한다() {
             // given
             Pageable pageable = PageRequest.of(offset, 20);
-            when(companyRepository.findByCompanyName(eq(company.getCompanyName())))
-                    .thenReturn(Optional.of(company));
 
             when(reservationRepository
                     .findAllByCompanyName(eq(company.getCompanyName()), any()))
@@ -102,6 +105,21 @@ class ReservationServiceTest {
             // then
             assertThat(result.getReservationList().size()).isEqualTo(2);
             assertThat(result.getReservationList()).extracting("reservationId", Long.class).contains(1L, 2L);
+        }
+
+        @Nested
+        @DisplayName("다른 회사 유저가 접근할 경우")
+        class InvalidUserCase{
+            // given
+            Companies companyTwo = Company_생성_이름_지정("anotherCompany");
+            User userTwo = User_USER권한_생성(companyTwo);
+            UserDetailsImpl userDetails = new UserDetailsImpl(userTwo, userTwo.getEmail());
+            @Test
+            void 접근_불가_예외를_반환한다(){
+                // when, then
+                assertThatThrownBy(()-> reservationService.getAllReservations(company.getCompanyName(), offset, userDetails))
+                        .isInstanceOf(ReservationException.class).hasMessage("예약에 접근할 수 없는 유저입니다.");
+            }
         }
     }
 
@@ -126,7 +144,8 @@ class ReservationServiceTest {
                     LocalDateTime.of(selDate, LocalTime.of(17, 0, 0)),
                     LocalDateTime.of(selDate, LocalTime.of(17, 59, 0)));
 
-            when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
+            when(locationRepository.findByIdAndCompanyName(meetingRoom.getId(), company.getCompanyName()))
+                    .thenReturn(Optional.of(meetingRoom));
             when(reservationRepository
                     .findAllByMeetingRoomIdAndStartTimeBetween(meetingRoom.getId(),
                             selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX)))
@@ -144,11 +163,12 @@ class ReservationServiceTest {
         }
 
         @Test
-        void 오늘_이전의_날짜를_고르면_예약할수없다() {
+        void 오늘_이전의_날짜를_고르면_예약_불가를_반환한다() {
             // given
             LocalDate selDate = LocalDateTime.now().toLocalDate().minusDays(1L);
 
-            when(meetingRoomRepository.findById(meetingRoom.getId())).thenReturn(Optional.of(meetingRoom));
+            when(locationRepository.findByIdAndCompanyName(meetingRoom.getId(), company.getCompanyName()))
+                    .thenReturn(Optional.of(meetingRoom));
 
             // when
             ReservationTimetableResponse result = reservationService
@@ -158,6 +178,43 @@ class ReservationServiceTest {
             assertThat(result.getTimeList())
                     .filteredOn(x -> x.getIsCheckOut().equals(true))
                     .hasSize(ReservationTimetable.CLOSE_HOUR - ReservationTimetable.OPEN_HOUR + 1);
+        }
+
+        @Nested
+        @DisplayName("해당하는 회의실이 없으면")
+        class NotFoundCase{
+            // given
+            LocalDate selDate = LocalDateTime.now().toLocalDate().plusDays(1L);
+            @Test
+            void 예외를_반환한다(){
+                // given
+                when(locationRepository.findByIdAndCompanyName(eq(meetingRoom.getId()), eq(company.getCompanyName())))
+                        .thenReturn(Optional.empty());
+
+                // when, then
+                assertThatThrownBy(()-> reservationService
+                        .getReservationTimetable(selDate, meetingRoom.getId(), userDetails))
+                        .isInstanceOf(ReservationException.class).hasMessage("등록된 회의실이 없습니다.");
+            }
+        }
+
+        @Nested
+        @DisplayName("회의실이 아니면")
+        class TypeErrorCase{
+            // given
+            Box box = SpaceFixtureFactory.Box_생성();
+            LocalDate selDate = LocalDateTime.now().toLocalDate().plusDays(1L);
+            @Test
+            void 예외를_반환한다(){
+                // given
+                when(locationRepository.findByIdAndCompanyName(eq(meetingRoom.getId()), eq(company.getCompanyName())))
+                        .thenReturn(Optional.of(box));
+
+                // when, then
+                assertThatThrownBy(()-> reservationService
+                        .getReservationTimetable(selDate, meetingRoom.getId(), userDetails))
+                        .isInstanceOf(ReservationException.class).hasMessage("해당 장소는 회의실이 아닙니다.");
+            }
         }
     }
 

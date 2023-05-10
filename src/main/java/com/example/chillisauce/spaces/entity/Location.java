@@ -61,4 +61,8 @@ public abstract class Location {
         this.x = x;
         this.y = y;
     }
+
+    public abstract boolean isBox();
+    public abstract boolean isMultiBox();
+    public abstract boolean isMr();
 }
