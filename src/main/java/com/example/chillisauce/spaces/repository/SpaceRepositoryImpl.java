@@ -1,6 +1,5 @@
 package com.example.chillisauce.spaces.repository;
 
-import com.example.chillisauce.reservations.entity.QReservation;
 import com.example.chillisauce.spaces.dto.response.*;
 import com.example.chillisauce.spaces.entity.*;
 import com.example.chillisauce.users.entity.QCompanies;
@@ -11,7 +10,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,38 +32,42 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
     /**
      * space 선택 조회
      */
-    public SpaceResponseDto getSpacesWithLocations(Long spaceId) {
+    public List<SpaceResponseDto> getSpacesWithLocations(Long spaceId) {
         QLocation location = QLocation.location;
         QUserLocation userLocation = QUserLocation.userLocation;
         QSpace qSpace = space;
-        Space space = from(qSpace)
+        List<Space> spaces = from(qSpace)
                 .leftJoin(qSpace.floor, floor)
                 .leftJoin(qSpace.locations, location).fetchJoin()
                 .leftJoin(location.userLocations, userLocation)
                 .where(qSpace.id.eq(spaceId))
-                .fetchOne();
+                .distinct()
+                .fetch();
 
-        List<BoxResponseDto> boxList = space.getLocations().stream()
-                .filter(l -> l instanceof Box)
-                .map(l -> {
-                    UserLocation locationUser = l.getUserLocations().stream()
-                            .findFirst().orElse(null);
-                    return new BoxResponseDto((Box) l,locationUser);
-                })
-                .collect(Collectors.toList());
-        List<MrResponseDto> mrList = space.getLocations().stream()
-                .filter(l -> l instanceof Mr)
-                .map(l -> new MrResponseDto((Mr) l))
-                .collect(Collectors.toList());
-        List<MultiBoxResponseDto> multiBoxList = space.getLocations().stream()
-                .filter(l -> l instanceof MultiBox)
-                .map(l -> new MultiBoxResponseDto((MultiBox) l,l.getUserLocations()))
-                .collect(Collectors.toList());
+        return spaces.stream().map(space -> {
 
-        return new SpaceResponseDto(space,
-                space.getFloor() != null ? space.getFloor().getId() : null,
-                space.getFloor() != null ? space.getFloor().getFloorName() : null,
-                boxList, mrList, multiBoxList);
+            List<BoxResponseDto> boxList = space.getLocations().stream()
+                    .filter(Location::isBox)
+                    .map(l -> {
+                        UserLocation locationUser = l.getUserLocations().stream()
+                                .findFirst().orElse(null);
+                        return new BoxResponseDto((Box) l,locationUser);
+                    })
+                    .collect(Collectors.toList());
+            List<MrResponseDto> mrList = space.getLocations().stream()
+                    .filter(Location::isMr)
+                    .map(l -> new MrResponseDto((Mr) l))
+                    .collect(Collectors.toList());
+            List<MultiBoxResponseDto> multiBoxList = space.getLocations().stream()
+                    .filter(Location::isMultiBox)
+                    .map(l -> new MultiBoxResponseDto((MultiBox) l,l.getUserLocations()))
+                    .collect(Collectors.toList());
+
+            return new SpaceResponseDto(space,
+                    space.getFloor() != null ? space.getFloor().getId() : null,
+                    space.getFloor() != null ? space.getFloor().getFloorName() : null,
+                    boxList, mrList, multiBoxList);
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -85,6 +87,22 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                         floor.floorName
                 ))
                 .fetch();
+    }
+
+    public List<FloorResponseDto> getFloorAllList(String companyName) {
+        QCompanies company = QCompanies.companies;
+        List<Floor> floors = from(floor)
+                .leftJoin(floor.companies, company)
+                .where(company.companyName.eq(companyName))
+                .fetch();
+
+        return floors.stream().map(f -> {
+            List<SpaceListResponseDto> spaceList = f.getSpaces().stream()
+                    .map(SpaceListResponseDto::new)
+                    .collect(Collectors.toList());
+
+            return new FloorResponseDto(f.getId(), f.getFloorName(), spaceList);
+        }).collect(Collectors.toList());
     }
 
 
@@ -117,6 +135,14 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .set(reservation.meetingRoom, (Mr) null)
                 .where(reservation.meetingRoom.id.in(meetingRoomList))
                 .execute();
+    }
+
+    public void CompanyNameMatchesSpaceId(String companyName, Long spaceId) {
+        QCompanies company = QCompanies.companies;
+        queryFactory.selectFrom(space)
+                .innerJoin(space.companies, company)
+                .where(space.id.eq(spaceId).and(company.companyName.eq(companyName)))
+                .fetchOne();
     }
 
 

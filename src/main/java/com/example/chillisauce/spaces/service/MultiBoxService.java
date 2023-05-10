@@ -23,7 +23,9 @@ public class MultiBoxService {
     private final MultiBoxRepository multiBoxRepository;
     private final CompanyRepository companyRepository;
 
-    //multiBox 생성
+    /**
+     * 멀티박스 생성
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MultiBoxResponseDto createMultiBox(String companyName, Long spaceId, MultiBoxRequestDto multiBoxRequestDto, UserDetailsImpl details) {
@@ -37,7 +39,9 @@ public class MultiBoxService {
         space.addLocation(multiBox);
         return new MultiBoxResponseDto(multiBox);
     }
-    //multiBox 개별 수정
+    /**
+     * 멀티박스 수정
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MultiBoxResponseDto updateMultiBox(String companyName, Long multiBoxId, MultiBoxRequestDto multiBoxRequestDto, UserDetailsImpl details) {
@@ -49,7 +53,9 @@ public class MultiBoxService {
         multiBoxRepository.save(multiBox);
         return new MultiBoxResponseDto(multiBox);
     }
-    //multiBox 개별 삭제
+    /**
+     * 멀티박스 삭제
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MultiBoxResponseDto deleteMultiBox(String companyName, Long multiBoxId, UserDetailsImpl details) {

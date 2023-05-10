@@ -11,11 +11,7 @@ public class MrRequestDto {
     private String x;
     private String y;
 
-    public MrRequestDto(LocationDto locationDto) {
-        this.mrName = locationDto.getLocationName();
-        this.x = locationDto.getX();
-        this.y = locationDto.getY();
-    }
+
     public MrRequestDto(String locationName, String x, String y) {
         this.mrName = locationName;
         this.x = x;

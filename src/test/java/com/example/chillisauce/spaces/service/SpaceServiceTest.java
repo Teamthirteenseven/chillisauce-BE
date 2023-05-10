@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.chillisauce.fixture.SpaceFixtureFactory.*;
+import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,7 +62,7 @@ public class SpaceServiceTest {
         Companies companies = Company_생성();
         Floor floor = Floor_생성_아이디_지정(1L);
         UserDetailsImpl details = details_권한_ADMIN_유저_네임_NULL(companies);
-        Space space = Space_생성_아이디_지정(1L);
+        Space space = Space_생성_아이디_지정_회사_지정(1L, companies);
         @Test
         void Floor_안에_Space_생성() {
             //given
@@ -96,9 +96,6 @@ public class SpaceServiceTest {
         }
 
 
-        /**
-         * 여기서 부터 개선 후 테스트 코드 !!
-         */
         @Test
         void Space_공간_전체_조회() {
             List<Space> spaceList = Collections.singletonList(space);
@@ -119,12 +116,11 @@ public class SpaceServiceTest {
         @Test
         void Space_공간_선택_조회() {
             //given
-            SpaceResponseDto spaceResponseDtos = SpaceResponseDto.builder()
-                    .space(space).floorId(floor.getId()).floorName(floor.getFloorName()).build();
-            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceResponseDtos);
-
+            List<Space> spaceList = Collections.singletonList(space);
+            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+            when(spaceRepository.findById(eq(space.getId()))).thenReturn(Optional.of(space));
             //when
-           SpaceResponseDto result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
+            List<SpaceResponseDto> result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
 
             //Then
             assertNotNull(result);
@@ -137,12 +133,11 @@ public class SpaceServiceTest {
         @Test
         void Space_공간_선택_조회_Floor_null() {
             //given
-            SpaceResponseDto spaceResponseDtos = SpaceResponseDto.builder()
-                    .space(space).floorId(floor.getId()).floorName(floor.getFloorName()).build();
-            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceResponseDtos);
-
+            List<Space> spaceList = Collections.singletonList(space);
+            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+            when(spaceRepository.findById(space.getId())).thenReturn(Optional.of(space));
             //when
-            SpaceResponseDto result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
+            List<SpaceResponseDto> result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
 
             //Then
             assertNotNull(result);
@@ -172,8 +167,7 @@ public class SpaceServiceTest {
             //given
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
             when(spaceRepository.findByIdAndCompanies(space.getId(), companies)).thenReturn(Optional.of(space));
-            List<Mr> mrList = new ArrayList<>();
-            doNothing().when(mrRepository).deleteAll(mrList);
+            doNothing().when(spaceRepository).clearAllReservationsForSpace(space.getId());
             doNothing().when(spaceRepository).deleteById(space.getId());
 
             //when

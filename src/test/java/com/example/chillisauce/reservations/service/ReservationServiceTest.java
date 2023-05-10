@@ -1,6 +1,6 @@
 package com.example.chillisauce.reservations.service;
 
-import com.example.chillisauce.fixture.SpaceFixtureFactory;
+import com.example.chillisauce.fixture.FixtureFactory;
 import com.example.chillisauce.reservations.dto.request.ReservationAttendee;
 import com.example.chillisauce.reservations.dto.request.ReservationRequest;
 import com.example.chillisauce.reservations.dto.request.ReservationTime;
@@ -202,7 +202,7 @@ class ReservationServiceTest {
         @DisplayName("회의실이 아니면")
         class TypeErrorCase{
             // given
-            Box box = SpaceFixtureFactory.Box_생성();
+            Box box = Box_생성();
             LocalDate selDate = LocalDateTime.now().toLocalDate().plusDays(1L);
             @Test
             void 예외를_반환한다(){

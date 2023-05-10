@@ -24,14 +24,8 @@ public class FloorController {
         floorService.createFloor(companyName, floorRequestDto, details);
         return ResponseMessage.responseSuccess("Floor 생성 성공","");
     }
-    //floor 선택조회
-    @GetMapping("/floors/{companyName}/{floorId}")
-    public ResponseEntity<ResponseMessage<List<FloorResponseDto>>> getFloorlist
-            (@PathVariable("companyName") String companyName, @PathVariable("floorId") Long floorId, @AuthenticationPrincipal UserDetailsImpl details) {
 
-        return ResponseMessage.responseSuccess("해당 Floor 조회 성공",floorService.getFloorlist(companyName, floorId, details));
-    }
-    //floor만 조회
+    //floor 전체 조회
     @GetMapping("/floors/{companyName}")
     public ResponseEntity<ResponseMessage<List<FloorResponseDto>>> getFloor(@PathVariable("companyName") String companyName, @AuthenticationPrincipal UserDetailsImpl details){
 

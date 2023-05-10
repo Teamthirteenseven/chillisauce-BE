@@ -3,7 +3,8 @@ package com.example.chillisauce.spaces.service;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.request.BoxRequestDto;
 import com.example.chillisauce.spaces.dto.response.BoxResponseDto;
-import com.example.chillisauce.spaces.entity.*;
+import com.example.chillisauce.spaces.entity.Box;
+import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
 import com.example.chillisauce.spaces.repository.BoxRepository;
@@ -26,8 +27,9 @@ public class BoxService {
     private final SpaceService spaceService;
 
 
-
-    //Box 생성
+    /**
+     * 박스 생성
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public BoxResponseDto createBox(String companyName, Long spaceId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
@@ -44,7 +46,9 @@ public class BoxService {
         return new BoxResponseDto(box);
     }
 
-    //Box 개별 수정
+    /**
+     * 박스 수정
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public BoxResponseDto updateBox(String companyName, Long boxId, BoxRequestDto boxRequestDto, UserDetailsImpl details) {
@@ -57,7 +61,9 @@ public class BoxService {
         return new BoxResponseDto(box);
     }
 
-    //Box 개별 삭제
+    /**
+     * 박스 개별 삭제
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public BoxResponseDto deleteBox(String companyName, Long boxId, UserDetailsImpl details) {
@@ -69,7 +75,6 @@ public class BoxService {
         return new BoxResponseDto(box);
     }
 
-    //companyName find , BoxId 두개 합쳐놓은 메서드
     public Box findCompanyNameAndBoxId(String companyName, Long boxId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
