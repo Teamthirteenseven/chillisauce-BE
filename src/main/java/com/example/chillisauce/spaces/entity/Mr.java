@@ -48,5 +48,18 @@ public class Mr extends Location{
         this.setY(mrRequestDto.getY());
     }
 
+    @Override
+    public boolean isBox() {
+        return false;
+    }
 
+    @Override
+    public boolean isMultiBox() {
+        return false;
+    }
+
+    @Override
+    public boolean isMr() {
+        return true;
+    }
 }

@@ -43,8 +43,21 @@ public class Box extends Location {
         this.setLocationName(boxRequestDto.getBoxName());
         this.setX(boxRequestDto.getX());
         this.setY(boxRequestDto.getY());
+    }
 
+    @Override
+    public boolean isBox() {
+        return true;
+    }
 
+    @Override
+    public boolean isMultiBox() {
+        return false;
+    }
+
+    @Override
+    public boolean isMr() {
+        return false;
     }
 }
 

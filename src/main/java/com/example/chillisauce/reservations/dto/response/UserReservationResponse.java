@@ -37,15 +37,6 @@ public class UserReservationResponse {
     @Schema(description = "참석자 목록")
     List<UsernameResponse> userList;
 
-    public UserReservationResponse(Reservation reservation) {
-        this.reservationId = reservation.getId();
-        this.mrId = reservation.getMeetingRoom().getId();
-        this.mrName=reservation.getMeetingRoom().getLocationName();
-        this.username = reservation.getUser().getUsername();
-        this.start = reservation.getStartTime();
-        this.end = reservation.getEndTime();
-    }
-
     public UserReservationResponse(Reservation reservation, Long mrId, String username, List<UsernameResponse> userList) {
         this.reservationId = reservation.getId();
         this.mrId = mrId;
