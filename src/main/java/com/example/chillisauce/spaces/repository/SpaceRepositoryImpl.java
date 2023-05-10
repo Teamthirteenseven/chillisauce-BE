@@ -7,6 +7,7 @@ import com.example.chillisauce.users.entity.User;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ import static com.example.chillisauce.spaces.entity.QMr.mr;
 import static com.example.chillisauce.spaces.entity.QSpace.space;
 
 
+@Slf4j
 public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements SpaceRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
@@ -62,7 +64,6 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                     .filter(Location::isMultiBox)
                     .map(l -> new MultiBoxResponseDto((MultiBox) l,l.getUserLocations()))
                     .collect(Collectors.toList());
-
             return new SpaceResponseDto(space,
                     space.getFloor() != null ? space.getFloor().getId() : null,
                     space.getFloor() != null ? space.getFloor().getFloorName() : null,
