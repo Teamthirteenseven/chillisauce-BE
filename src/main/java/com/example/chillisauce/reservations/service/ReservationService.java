@@ -19,7 +19,6 @@ import com.example.chillisauce.spaces.entity.Location;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.repository.LocationRepository;
 import com.example.chillisauce.spaces.repository.MrRepository;
-import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;

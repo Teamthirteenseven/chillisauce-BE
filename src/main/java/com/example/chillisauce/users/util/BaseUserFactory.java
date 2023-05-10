@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 관리자 회원가입 시 기본 유저 생성
+ * 관리자 회원가입 시 5명의 기본 유저 생성
  */
 @Component
 @Slf4j
