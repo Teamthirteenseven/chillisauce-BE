@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -44,7 +45,7 @@ public class SpaceController {
 
     //공간 선택조회
     @GetMapping("/spaces/{companyName}/{spaceId}")
-    public ResponseEntity<ResponseMessage<SpaceResponseDto>> getSpacelist
+    public ResponseEntity<ResponseMessage<List<SpaceResponseDto>>> getSpacelist
             (@PathVariable("companyName") String companyName, @PathVariable("spaceId") Long spaceId, @AuthenticationPrincipal UserDetailsImpl details) {
 
         return ResponseMessage.responseSuccess("공간 조회 성공",spaceService.getSpacelist(companyName, spaceId, details));

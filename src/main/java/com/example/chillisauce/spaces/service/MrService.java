@@ -29,7 +29,9 @@ public class MrService {
 
     private final ReservationService reservationService;
 
-    //미팅룸 생성
+    /**
+     * 회의실 생성
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto createMr (String companyName, Long spaceId, MrRequestDto mrRequestDto, UserDetailsImpl details){
@@ -43,7 +45,9 @@ public class MrService {
         return new MrResponseDto(mr);
     }
 
-    //Mr 개별 수정
+    /**
+     * 회의실 수정
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto updateMr(String companyName, Long mrId, MrRequestDto mrRequestDto, UserDetailsImpl details) {
@@ -55,7 +59,9 @@ public class MrService {
         mrRepository.save(mr);
         return new MrResponseDto(mr);
     }
-    //Mr 개별 삭제
+    /**
+     * 회의실 삭제
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public MrResponseDto deleteMr(String companyName, Long mrId, UserDetailsImpl details) {
@@ -67,7 +73,9 @@ public class MrService {
         mrRepository.deleteById(mrId);
         return new MrResponseDto(mr);
     }
-    //Mr 전체 조회
+    /**
+     * 회의실 전체조회
+     */
     @Transactional
     @CacheEvict(cacheNames = {"SpaceResponseDtoList", "FloorResponseDtoList"}, allEntries = true)
     public List<MrResponseDto> mrlist(String companyName, UserDetailsImpl details) {
@@ -87,7 +95,6 @@ public class MrService {
     }
 
 
-    //companyName find , MrId 두개 합쳐놓은 메서드
     public Mr findCompanyNameAndMrId(String companyName, Long mrId) {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
