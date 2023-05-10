@@ -40,7 +40,7 @@ public class UserReservationResponse {
     public UserReservationResponse(Reservation reservation, Long mrId, String username, List<UsernameResponse> userList) {
         this.reservationId = reservation.getId();
         this.mrId = mrId;
-        this.mrName=reservation.getMeetingRoom().getLocationName();
+        this.mrName = reservation.getMeetingRoom() == null ? "삭제된 회의실" : reservation.getMeetingRoom().getLocationName();
         this.username = username;
         this.start = reservation.getStartTime();
         this.end = reservation.getEndTime();
