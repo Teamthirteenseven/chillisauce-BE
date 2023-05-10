@@ -155,10 +155,19 @@ public class ReservationService {
     public ReservationResponse addReservation(Long meetingRoomId,
                                               ReservationRequest request,
                                               UserDetailsImpl userDetails) {
-        Mr meetingRoom = meetingRoomRepository.findById(meetingRoomId).orElseThrow(
-                () -> new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND));
+        User organizer = userDetails.getUser();
+        String companyName = organizer.getCompanies().getCompanyName();
+        Optional<Location> location = locationRepository.findByIdAndCompanyName(meetingRoomId, companyName);
 
-        User organizer = userDetails.getUser(); // 회의 주최자
+        if (location.isEmpty()) {
+            throw new ReservationException(ReservationErrorCode.MEETING_ROOM_NOT_FOUND);
+        }
+
+        if (!location.get().isMr()) {
+            throw new ReservationException(ReservationErrorCode.LOCATION_NOT_MEETING_ROOM);
+        }
+
+        Mr meetingRoom = (Mr) location.get();
 
         List<LocalDateTime> list = request.getStartList().stream().map(ReservationTime::getStart)
                 .sorted().toList();
