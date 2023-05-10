@@ -25,6 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtUtil.getHeaderToken(request);
 
+        /* 엑세스토큰이 있고 검증절차를 통과하지 못하면 예외발생 */
         if(accessToken != null) {
             if(!jwtUtil.validateToken(accessToken)){
                 jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
@@ -35,6 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /* 인증객체 생성 */
     public void setAuthentication(String email) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authentication = jwtUtil.createAuthentication(email);

@@ -2,7 +2,6 @@ package com.example.chillisauce.users.repository;
 
 import com.example.chillisauce.config.TestConfig;
 import com.example.chillisauce.users.entity.Companies;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
@@ -22,19 +22,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 @DisplayName("Companies Test")
 class CompanyRepositoryTest {
 
-
     @Autowired
     CompanyRepository companyRepository;
-
-    @BeforeEach
-    void setUp() {
-        Companies companies = Companies.builder()
-                .companyName("7jo")
-                .certification("1234")
-                .build();
-//        companyRepository.save(companies);
-    }
-
 
     @DisplayName("회사 생성 성공")
     @Test

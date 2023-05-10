@@ -8,7 +8,7 @@ import com.example.chillisauce.users.entity.User;
 import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.CompanyRepository;
 import com.example.chillisauce.users.repository.UserRepository;
-import com.example.chillisauce.users.util.TestUserInjector;
+import com.example.chillisauce.users.util.BaseUserFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class UserServiceTest {
     @Mock
     private CompanyRepository companyRepository;
     @Mock
-    private TestUserInjector testUserInjector;
+    private BaseUserFactory baseUserFactory;
     @Mock
     private JwtUtil jwtUtil;
     @Spy
@@ -112,7 +112,6 @@ class UserServiceTest {
                 return null;
             }).when(response).setHeader(anyString(), anyString());
 
-
             //given
             LoginRequestDto loginRequestDto = LoginRequestDto.builder()
                     .email(user.getEmail())
@@ -121,10 +120,10 @@ class UserServiceTest {
 
             String fakeAccess = "fakeAccess";
 
-            Mockito.when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
-            Mockito.when(jwtUtil.createToken(user)).thenReturn(fakeAccess);
-
             //when
+            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(jwtUtil.createToken(user)).thenReturn(fakeAccess);
+
             String result = userService.Login(loginRequestDto, response);
             String accessToken = headers.get(JwtUtil.AUTHORIZATION_HEADER);
             //then
@@ -138,9 +137,8 @@ class UserServiceTest {
         @Test
         void certification() {
             //given
-            when(companyRepository.findByCertification(company.getCertification())).thenReturn(Optional.of(company));
-
             //when
+            when(companyRepository.findByCertification(company.getCertification())).thenReturn(Optional.of(company));
             userService.checkCertification(company.getCertification());
 
             //then
@@ -163,9 +161,9 @@ class UserServiceTest {
                     .password("1234")
                     .build();
 
+            //when
             when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
 
-            //when
             UserException exception = assertThrows(UserException.class, () -> {
                 userService.Login(loginRequestDto, response);
             });
@@ -186,9 +184,9 @@ class UserServiceTest {
                     .password("5678")
                     .build();
 
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(admin)); //가짜 저장
-
             //when
+            when(userRepository.findByEmail(any())).thenReturn(Optional.of(admin));
+
             UserException exception = assertThrows(UserException.class, () -> {
                 userService.Login(loginRequestDto, response);
             });
@@ -213,9 +211,9 @@ class UserServiceTest {
                     .certification("123")
                     .build();
 
+            //when
             when(userRepository.findByEmail(signupRequestDto.getEmail())).thenReturn(Optional.of(admin));
 
-            //when
             AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
             CompanyRequestDto companyRequestDto = new CompanyRequestDto(signupRequestDto);
 
@@ -241,8 +239,9 @@ class UserServiceTest {
                     .certification("123")
                     .build();
 
-            when(companyRepository.findByCompanyName(signupRequestDto.getCompanyName())).thenReturn(Optional.of(Companies.builder().build()));
             //when
+            when(companyRepository.findByCompanyName(signupRequestDto.getCompanyName())).thenReturn(Optional.of(Companies.builder().build()));
+
             AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
             CompanyRequestDto companyRequestDto = new CompanyRequestDto(signupRequestDto);
 
@@ -267,6 +266,7 @@ class UserServiceTest {
                     .companyName("원피스")
                     .certification("123")
                     .build();
+
             //when
             AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
             CompanyRequestDto companyRequestDto = new CompanyRequestDto(signupRequestDto);
@@ -291,9 +291,9 @@ class UserServiceTest {
                     .certification("123")
                     .build();
 
+            //when
             when(userRepository.findByEmail(requestDto.getEmail())).thenReturn(Optional.of(User.builder().build()));
 
-            //when
             UserException exception = assertThrows(UserException.class, () -> {
                 userService.signupUser(requestDto);
             });
@@ -318,6 +318,7 @@ class UserServiceTest {
             UserException exception = assertThrows(UserException.class, () -> {
                 userService.signupUser(requestDto);
             });
+
             //then
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
         }
@@ -328,9 +329,9 @@ class UserServiceTest {
             //given
             String certification = "123";
 
+            //when
             when(companyRepository.findByCertification(certification)).thenReturn(Optional.empty());
 
-            //when
             UserException exception = assertThrows(UserException.class, () -> {
                 userService.checkCertification(certification);
             });
@@ -352,13 +353,17 @@ class UserServiceTest {
                     .certification("testCert")
                     .build();
             String cert = "testCert";
-            when(companyRepository.findByCertification(cert)).thenReturn(Optional.of(company));
+
             //when
+            when(companyRepository.findByCertification(cert)).thenReturn(Optional.of(company));
+
             AdminSignupRequestDto adminSignupRequestDto = new AdminSignupRequestDto(signupRequestDto);
             CompanyRequestDto companyRequestDto = new CompanyRequestDto(signupRequestDto);
+
             UserException exception = assertThrows(UserException.class, () -> {
                 userService.signupAdmin(adminSignupRequestDto, companyRequestDto);
             });
+
             //then
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("이미 사용중인 인증번호 입니다.");
         }
@@ -374,11 +379,14 @@ class UserServiceTest {
                     .username("루피")
                     .certification("123")
                     .build();
-            when(companyRepository.findByCertification(requestDto.getCertification())).thenReturn(Optional.empty());
+
             //when
+            when(companyRepository.findByCertification(requestDto.getCertification())).thenReturn(Optional.empty());
+
             UserException exception = assertThrows(UserException.class, () -> {
                 userService.signupUser(requestDto);
             });
+
             //then
             assertThat(exception.getErrorCode().getMessage()).isEqualTo("인증번호가 유효하지 않습니다");
         }

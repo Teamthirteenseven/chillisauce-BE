@@ -58,7 +58,7 @@ class UserControllerTest {
     public void init(RestDocumentationContextProvider restDocumentation) {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(userController)
-                .setControllerAdvice(new UserExceptionHandler(new ObjectMapper()))
+                .setControllerAdvice(new UserExceptionHandler())
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
         this.objectMapper = new ObjectMapper();
