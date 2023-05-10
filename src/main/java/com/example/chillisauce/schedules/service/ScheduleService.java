@@ -37,7 +37,7 @@ public class ScheduleService {
         List<Schedule> all = scheduleRepository
                 .findAllByUserIdAndStartTimeBetween(user.getId(), selDate.atStartOfDay(), selDate.atTime(LocalTime.MAX));
 
-        //TODO: 예약 수 x timeSet entry 만큼 loop 돌기 때문에 성능이 좋지 않음
+        // 예약 수 x timeSet entry lop
         List<ScheduleTimeResponseDto> timeList =
                 ScheduleTimeTable.TIME_SET.stream().map(
                         x -> {

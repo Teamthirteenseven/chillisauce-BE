@@ -18,6 +18,13 @@ public class FixtureFactory {
                 .build();
     }
 
+    public static Companies Company_생성_이름_지정(String companyName) {
+        return Companies.builder()
+                .companyName(companyName)
+                .certification("testCert")
+                .build();
+    }
+
     public static User User_USER권한_생성(Companies company) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return User.builder()

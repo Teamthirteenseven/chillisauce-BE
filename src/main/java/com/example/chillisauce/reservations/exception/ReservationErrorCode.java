@@ -13,8 +13,9 @@ public enum ReservationErrorCode implements ErrorStatusMessage {
     /* 400 */
     NOT_PROPER_TIME(BAD_REQUEST, "유효한 시간 범위가 아닙니다."),
     DUPLICATED_TIME(BAD_REQUEST, "해당 시간대에 이미 등록된 예약이 있습니다."),
-    INVALID_USER_RESERVATION_UPDATE(BAD_REQUEST, "예약을 수정할 권한이 없는 유저입니다"),
-    INVALID_USER(BAD_REQUEST, "예약에 접근할 수 없는 유저입니다"),
+    INVALID_USER_RESERVATION_UPDATE(BAD_REQUEST, "예약을 수정할 권한이 없는 유저입니다."),
+    INVALID_USER(BAD_REQUEST, "예약에 접근할 수 없는 유저입니다."),
+    LOCATION_NOT_MEETING_ROOM(BAD_REQUEST, "해당 장소는 회의실이 아닙니다."),
 
     /* 404 */
     MEETING_ROOM_NOT_FOUND(NOT_FOUND, "등록된 회의실이 없습니다."),
