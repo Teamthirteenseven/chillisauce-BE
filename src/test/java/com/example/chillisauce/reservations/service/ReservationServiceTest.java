@@ -235,11 +235,10 @@ class ReservationServiceTest {
         @Test
         void 예약을_등록한다() {
             // given
-            when(userRepository.findAllByIdInAndCompanies_CompanyName(any(), any())).thenReturn(List.of(organizer, attendee));
+            when(locationRepository.findByIdAndCompanyName(eq(meetingRoom.getId()), eq(company.getCompanyName())))
+                            .thenReturn(Optional.of(meetingRoom));
 
             // when
-            when(meetingRoomRepository.findById(eq(meetingRoom.getId()))).thenReturn(Optional.of(meetingRoom));
-
             ReservationResponse result = reservationService.addReservation(meetingRoom.getId(), requestDto, userDetails);
 
             // then
@@ -259,7 +258,8 @@ class ReservationServiceTest {
 
             ReservationRequest secondReservationDto = new ReservationRequest(list, userList);
 
-            when(meetingRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(meetingRoom));
+            when(locationRepository.findByIdAndCompanyName(eq(meetingRoom.getId()), eq(company.getCompanyName())))
+                    .thenReturn(Optional.of(meetingRoom));
 
             doReturn(Optional.of(firstReservation)).when(reservationRepository)
                     .findFirstByMeetingRoomIdAndStartTimeLessThanAndEndTimeGreaterThan(meetingRoom.getId(),
@@ -274,18 +274,38 @@ class ReservationServiceTest {
             assertThat(exception.getMessage()).isEqualTo("해당 시간대에 이미 등록된 예약이 있습니다.");
         }
 
-        @Test
-        void 해당_회의실이_없으면_예외가_발생한다() {
+        @Nested
+        @DisplayName("해당하는 회의실이 없으면")
+        class NotFoundCase{
+            @Test
+            void 예외를_반환한다(){
+                // given
+                when(locationRepository.findByIdAndCompanyName(eq(meetingRoom.getId()), eq(company.getCompanyName())))
+                        .thenReturn(Optional.empty());
+
+                // when, then
+                assertThatThrownBy(()-> reservationService
+                        .addReservation(meetingRoom.getId(), requestDto, userDetails))
+                        .isInstanceOf(ReservationException.class).hasMessage("등록된 회의실이 없습니다.");
+            }
+        }
+
+        @Nested
+        @DisplayName("회의실이 아니면")
+        class TypeErrorCase{
             // given
-            when(meetingRoomRepository.findById(eq(meetingRoom.getId()))).thenReturn(Optional.empty());
+            Box box = Box_생성();
+            @Test
+            void 예외를_반환한다(){
+                // given
+                when(locationRepository.findByIdAndCompanyName(eq(meetingRoom.getId()), eq(company.getCompanyName())))
+                        .thenReturn(Optional.of(box));
 
-            // when
-            ReservationException exception = assertThrows(ReservationException.class,
-                    () -> reservationService.addReservation(meetingRoom.getId(), requestDto, userDetails));
-
-            // then
-            assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("등록된 회의실이 없습니다.");
+                // when, then
+                assertThatThrownBy(()-> reservationService
+                        .addReservation(meetingRoom.getId(), requestDto, userDetails))
+                        .isInstanceOf(ReservationException.class).hasMessage("해당 장소는 회의실이 아닙니다.");
+            }
         }
     }
 
