@@ -25,7 +25,7 @@ public class BaseUserFactory {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public String makeBaseUser(String companyName) {
+    public void makeBaseUser(String companyName) {
         Companies company = companyRepository.findByCompanyName(companyName)
                 .orElseThrow(() -> new UserException(UserErrorCode.COMPANY_NOT_FOUND));
 
@@ -46,6 +46,5 @@ public class BaseUserFactory {
                 }
         ).toList();
         userRepository.saveAll(userList);
-        return "success";
     }
 }

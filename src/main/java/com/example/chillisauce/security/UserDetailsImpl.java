@@ -24,6 +24,7 @@ public class UserDetailsImpl implements UserDetails, Serializable {
     private User user;
     private String username;
 
+    /* 수동으로 직렬화, 역직렬화 */
     @JsonSerialize(contentUsing = GrantedAuthoritySerializer.class)
     @JsonDeserialize(contentUsing = GrantedAuthorityDeserializer.class)
     @Override
