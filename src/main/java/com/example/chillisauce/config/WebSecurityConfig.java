@@ -3,6 +3,7 @@ package com.example.chillisauce.config;
 import com.example.chillisauce.jwt.JwtAuthFilter;
 import com.example.chillisauce.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,12 @@ import java.util.Arrays;
 @EnableGlobalMethodSecurity(securedEnabled = true) // @Secured 어노테이션 활성화
 public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
+
+    @Value("${springdoc.api-docs.path}")
+    String apidocsPath;
+
+    @Value("${springdoc.swagger-ui.path}")
+    String swaggerPath;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,6 +76,8 @@ public class WebSecurityConfig {
         http.authorizeRequests()
                 .requestMatchers(EndpointRequest.toAnyEndpoint())
                 .access("hasIpAddress('127.0.0.1') or hasIpAddress('::1')")
+                .antMatchers(swaggerPath+"/**").permitAll()
+                .antMatchers(apidocsPath+"/**").permitAll()
                 .antMatchers("/users/signup/**").permitAll()
                 .antMatchers("/users/login/**").permitAll()
                 .anyRequest().authenticated()
