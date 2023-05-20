@@ -50,7 +50,7 @@ dependencies {
     implementation group: 'org.json', name: 'json', version: '20230227'
 
     //Jwt
-    compileOnly 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
@@ -90,6 +90,7 @@ test {
         destinationFile = file("$buildDir/jacoco/jacoco.exec")
     }
     outputs.dir snippetsDir
+    finalizedBy jacocoTestReport
 }
 
 asciidoctor {
@@ -115,12 +116,64 @@ jacoco {
 }
 
 jacocoTestReport {
+    dependsOn test
+
     reports {
         html.enabled true
         xml.enabled true
         csv.enabled true
+
+        html.destination file("${buildDir}/jacoco/index.html")
+        xml.destination file("${buildDir}/jacoco/index.csv")
+        csv.destination file("${buildDir}/jacoco/index.xml")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: coverageExcludePath())
+                })
+        )
+    }
+
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'BUNDLE'
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+            excludes += coverageExcludeClasses()
+        }
     }
 }
+
+// jacocoTestReport 제외 경로
+static def coverageExcludePath() {
+    def qPath = []
+    for (qPattern in "**/QA".."**/QZ"){
+        qPath.add(qPattern + "*")
+    }
+
+    return [ "**/*Config*", "**/*Application*", "**/dto/**"] + qPath
+}
+
+// jacocoTestCoverageVerification 제외 클래스
+static def coverageExcludeClasses() {
+    def qClasses = []
+    for (qPattern in "*QA".."*QZ"){
+        qClasses.add(qPattern + "*")
+    }
+
+    return [ "*Config*", "*.*Application", "*.dto.*"] + qClasses
+}
+
 
 //querydsl 설정 추가
 def querydslDir = "$buildDir/generated/querydsl" //Q클래스 생성을 위한 경로 설정
@@ -129,12 +182,15 @@ querydsl {
     jpa = true
     querydslSourcesDir = querydslDir
 }
+
 sourceSets {
     main.java.srcDir querydslDir
 }
+
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
