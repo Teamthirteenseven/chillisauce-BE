@@ -140,6 +140,12 @@ public class FixtureFactory {
         return Floor.builder()
                 .id(id)
                 .floorName("testFloor")
+                .spaces(new ArrayList<>())
+                .build();
+    }
+    public static Floor Floor_생성() {
+        return Floor.builder()
+                .floorName("testFloor")
                 .build();
     }
 
@@ -154,6 +160,12 @@ public class FixtureFactory {
                 .id(id)
                 .spaceName("testSpace")
                 .companies(companies)
+                .build();
+    }
+
+    public static Space Space_생성() {
+        return Space.builder()
+                .spaceName("testSpace")
                 .build();
     }
 
@@ -183,6 +195,12 @@ public class FixtureFactory {
                 .locationName("testMr")
                 .x("111").y("222")
                 .reservation(reservations)
+                .build();
+    }
+    public static Mr Mr_생성() {
+        return Mr.builder()
+                .locationName("testMr")
+                .x("111").y("222")
                 .build();
     }
 
