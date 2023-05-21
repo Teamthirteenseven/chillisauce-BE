@@ -61,6 +61,16 @@ public class FixtureFactory {
                 .build();
     }
 
+    public static User User_USER권한_생성_이메일_이름_지정(Companies company, String email, String username) {
+        return User.builder()
+                .companies(company)
+                .email(email)
+                .password("12345678")
+                .username(username)
+                .role(UserRoleEnum.USER)
+                .build();
+    }
+
     public static User User_ADMIN권한_생성(Companies company, String email) {
         return User.builder()
                 .companies(company)

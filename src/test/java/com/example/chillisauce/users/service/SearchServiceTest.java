@@ -4,6 +4,7 @@ import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.users.dto.response.UserDetailResponseDto;
 import com.example.chillisauce.users.entity.Companies;
 import com.example.chillisauce.users.entity.User;
+import com.example.chillisauce.users.exception.UserException;
 import com.example.chillisauce.users.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -50,6 +53,20 @@ class SearchServiceTest {
 
             // then
             Assertions.assertThat(result).filteredOn(x -> x.getUsername().contains(query)).hasSize(2);
+        }
+
+        @Test
+        void 유저가_없으면_예외를_발생한다() {
+            //given
+            when(userRepository.findAllByUsernameContainingAndCompanies(eq(query), eq(company.getCompanyName())))
+                    .thenReturn(List.of());
+            //when
+            UserException exception = assertThrows(UserException.class, () -> {
+                searchService.searchUser(query, userDetails);
+            });
+            //then
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode().getMessage()).isEqualTo("등록된 사용자가 없습니다");
         }
     }
 }
