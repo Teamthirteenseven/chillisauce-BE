@@ -4,18 +4,15 @@ import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
 import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
 import com.example.chillisauce.spaces.dto.response.SpaceResponseDto;
-import com.example.chillisauce.spaces.entity.*;
+import com.example.chillisauce.spaces.entity.Floor;
+import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
 import com.example.chillisauce.spaces.exception.SpaceException;
-import com.example.chillisauce.spaces.repository.BoxRepository;
 import com.example.chillisauce.spaces.repository.FloorRepository;
 import com.example.chillisauce.spaces.repository.MrRepository;
 import com.example.chillisauce.spaces.repository.SpaceRepository;
 import com.example.chillisauce.users.entity.Companies;
-import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.entity.UserRoleEnum;
 import com.example.chillisauce.users.repository.CompanyRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +30,10 @@ import java.util.stream.Collectors;
 import static com.example.chillisauce.fixture.FixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -51,8 +49,6 @@ public class SpaceServiceTest {
     private FloorRepository floorRepository;
     @InjectMocks
     private SpaceService spaceService;
-    @Mock
-    private MrRepository mrRepository;
 
 
     @Nested
@@ -117,7 +113,7 @@ public class SpaceServiceTest {
         void Space_공간_선택_조회() {
             //given
             List<Space> spaceList = Collections.singletonList(space);
-            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+            when(spaceRepository.getSpacesList(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
             when(spaceRepository.findById(eq(space.getId()))).thenReturn(Optional.of(space));
             //when
             List<SpaceResponseDto> result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);
@@ -134,7 +130,7 @@ public class SpaceServiceTest {
         void Space_공간_선택_조회_Floor_null() {
             //given
             List<Space> spaceList = Collections.singletonList(space);
-            when(spaceRepository.getSpacesWithLocations(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
+            when(spaceRepository.getSpacesList(space.getId())).thenReturn(spaceList.stream().map(SpaceResponseDto::new).collect(Collectors.toList()));
             when(spaceRepository.findById(space.getId())).thenReturn(Optional.of(space));
             //when
             List<SpaceResponseDto> result = spaceService.getSpacelist(companies.getCompanyName(), space.getId(), details);

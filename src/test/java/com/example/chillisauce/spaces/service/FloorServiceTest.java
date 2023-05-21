@@ -80,7 +80,7 @@ public class FloorServiceTest {
             //given
             List<Floor> floorList = Collections.singletonList(floor);
             List<FloorResponseDto> responseDto = floorList.stream().map(FloorResponseDto::new).toList();
-            when(spaceRepository.getFloorAllList(companies.getCompanyName())).thenReturn(floorList.stream().map(FloorResponseDto::new).collect(Collectors.toList()));
+            when(floorRepository.getFloorAllList(companies.getCompanyName())).thenReturn(floorList.stream().map(FloorResponseDto::new).collect(Collectors.toList()));
 
             //when
             List<FloorResponseDto> result = floorService.getFloor(companies.getCompanyName(), details);
@@ -111,7 +111,7 @@ public class FloorServiceTest {
         void Floor_삭제() {
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(Companies.builder().build()));
             when(floorRepository.findByIdAndCompanies(anyLong(), any(Companies.class))).thenReturn(Optional.of(floor));
-            doNothing().when(spaceRepository).clearAllReservationsForFloor(floor.getId());
+            doNothing().when(floorRepository).clearAllReservationsForFloor(floor.getId());
             doNothing().when(floorRepository).delete(floor);
             //when
             FloorResponseDto floorResponseDto = floorService.deleteFloor(companies.getCompanyName(), floor.getId(), details);

@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface FloorRepository extends JpaRepository<Floor, Long> {
+public interface FloorRepository extends JpaRepository<Floor, Long>, FloorRepositorySupport{
     Optional<Floor> findByIdAndCompanies(Long floorId, Companies company);
 
-    List<Floor> findAllByCompaniesId(Long CompaniesId);
 }

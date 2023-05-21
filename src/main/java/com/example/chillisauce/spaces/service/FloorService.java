@@ -55,7 +55,7 @@ public class FloorService {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        List<FloorResponseDto> floorResponseDto = spaceRepository.getFloorAllList(companyName);
+        List<FloorResponseDto> floorResponseDto = floorRepository.getFloorAllList(companyName);
 
         return floorResponseDto;
     }
@@ -85,7 +85,7 @@ public class FloorService {
         }
         Floor floor = findCompanyNameAndFloorId(companyName, floorId);
 
-        spaceRepository.clearAllReservationsForFloor(floorId);
+        floorRepository.clearAllReservationsForFloor(floorId);
         floorRepository.delete(floor);
         return new FloorResponseDto(floor);
     }

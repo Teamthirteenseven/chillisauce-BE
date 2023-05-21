@@ -26,7 +26,7 @@ public class Floor {
     @NotEmpty
     private String floorName;
     @OneToMany(mappedBy = "floor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Space> spaces = new ArrayList<>();
+    private List<Space> spaces = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "companies_id", nullable = false)
@@ -39,6 +39,10 @@ public class Floor {
 
     public void updateFloor(FloorRequestDto floorRequestDto) {
         this.floorName = floorRequestDto.getFloorName();
+    }
+
+    public void updateFloor(List<Space> spaces) {
+        this.spaces = spaces;
     }
 }
 

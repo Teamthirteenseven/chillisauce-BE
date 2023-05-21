@@ -113,7 +113,7 @@ public class SpaceService {
             throw new SpaceException(SpaceErrorCode.SPACE_DOES_NOT_BELONG_TO_COMPANY);
         }
 
-        return spaceRepository.getSpacesWithLocations(spaceId);
+        return spaceRepository.getSpacesList(spaceId);
     }
 
 

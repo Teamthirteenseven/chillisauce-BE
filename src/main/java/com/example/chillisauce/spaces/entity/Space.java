@@ -2,11 +2,7 @@ package com.example.chillisauce.spaces.entity;
 
 import com.example.chillisauce.spaces.dto.request.SpaceRequestDto;
 import com.example.chillisauce.users.entity.Companies;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 
 import javax.persistence.*;
@@ -19,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Builder
 @AllArgsConstructor
+@Setter
 public class Space {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,5 +73,10 @@ public class Space {
         this.spaceName = spaceRequestDto.getSpaceName();
         this.floor = floor;
     }
+
+    public void updateSpace(Floor floor) {
+        this.floor = floor;
+    }
+
 
 }

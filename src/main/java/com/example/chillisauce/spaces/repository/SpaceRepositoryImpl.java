@@ -9,6 +9,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -21,6 +22,7 @@ import static com.example.chillisauce.spaces.entity.QSpace.space;
 
 
 @Slf4j
+@Repository
 public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements SpaceRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
@@ -34,7 +36,7 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
     /**
      * space 선택 조회
      */
-    public List<SpaceResponseDto> getSpacesWithLocations(Long spaceId) {
+    public List<SpaceResponseDto> getSpacesList(Long spaceId) {
         QLocation location = QLocation.location;
         QUserLocation userLocation = QUserLocation.userLocation;
         QSpace qSpace = space;
@@ -46,30 +48,10 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .distinct()
                 .fetch();
 
-        return spaces.stream().map(space -> {
-
-            List<BoxResponseDto> boxList = space.getLocations().stream()
-                    .filter(Location::isBox)
-                    .map(l -> {
-                        UserLocation locationUser = l.getUserLocations().stream()
-                                .findFirst().orElse(null);
-                        return new BoxResponseDto((Box) l,locationUser);
-                    })
-                    .collect(Collectors.toList());
-            List<MrResponseDto> mrList = space.getLocations().stream()
-                    .filter(Location::isMr)
-                    .map(l -> new MrResponseDto((Mr) l))
-                    .collect(Collectors.toList());
-            List<MultiBoxResponseDto> multiBoxList = space.getLocations().stream()
-                    .filter(Location::isMultiBox)
-                    .map(l -> new MultiBoxResponseDto((MultiBox) l,l.getUserLocations()))
-                    .collect(Collectors.toList());
-            return new SpaceResponseDto(space,
-                    space.getFloor() != null ? space.getFloor().getId() : null,
-                    space.getFloor() != null ? space.getFloor().getFloorName() : null,
-                    boxList, mrList, multiBoxList);
-        }).collect(Collectors.toList());
+        return spaces.stream().map(space -> createSpaceResponseDto(space)).collect(Collectors.toList());
     }
+
+
 
     /**
      * space 전체 조회
@@ -90,23 +72,6 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .fetch();
     }
 
-    public List<FloorResponseDto> getFloorAllList(String companyName) {
-        QCompanies company = QCompanies.companies;
-        List<Floor> floors = from(floor)
-                .leftJoin(floor.companies, company)
-                .where(company.companyName.eq(companyName))
-                .fetch();
-
-        return floors.stream().map(f -> {
-            List<SpaceListResponseDto> spaceList = f.getSpaces().stream()
-                    .map(SpaceListResponseDto::new)
-                    .collect(Collectors.toList());
-
-            return new FloorResponseDto(f.getId(), f.getFloorName(), spaceList);
-        }).collect(Collectors.toList());
-    }
-
-
     /**
      * 해당하는 space 전체 삭제 2차 개선
      */
@@ -122,24 +87,46 @@ public class SpaceRepositoryImpl extends QuerydslRepositorySupport implements Sp
                 .where(reservation.meetingRoom.id.in(meetingRoomList))
                 .execute();
     }
-    /**
-     * 해당하는 floor 전체 삭제 2차 개선
-     */
-    public void clearAllReservationsForFloor(Long floorId) {
-        List<Long> meetingRoomList = queryFactory
-                .select(mr.id)
-                .from(mr)
-                .where(mr.space.floor.id.eq(floorId))
-                .fetch();
-        queryFactory
-                .update(reservation)
-                .set(reservation.meetingRoom, (Mr) null)
-                .where(reservation.meetingRoom.id.in(meetingRoomList))
-                .execute();
-    }
+
 
     private BooleanExpression companyNameEquals(String companyName) {
         return space.companies.companyName.eq(companyName);
+    }
+
+    SpaceResponseDto createSpaceResponseDto(Space space) {
+        List<BoxResponseDto> boxList = createBoxList(space);
+        List<MrResponseDto> mrList = createMrList(space);
+        List<MultiBoxResponseDto> multiBoxList = createMultiBoxList(space);
+
+        Long floorId = space.getFloor() != null ? space.getFloor().getId() : null;
+        String floorName = space.getFloor() != null ? space.getFloor().getFloorName() : null;
+
+        return new SpaceResponseDto(space.getId(), space.getSpaceName(), floorId, floorName, boxList, mrList, multiBoxList);
+    }
+
+    private List<BoxResponseDto> createBoxList(Space space) {
+        return space.getLocations().stream()
+                .filter(Location::isBox)
+                .map(l -> {
+                    UserLocation locationUser = l.getUserLocations().stream()
+                            .findFirst().orElse(null);
+                    return new BoxResponseDto((Box) l, locationUser);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<MrResponseDto> createMrList(Space space) {
+        return space.getLocations().stream()
+                .filter(Location::isMr)
+                .map(l -> new MrResponseDto((Mr) l))
+                .collect(Collectors.toList());
+    }
+
+    private List<MultiBoxResponseDto> createMultiBoxList(Space space) {
+        return space.getLocations().stream()
+                .filter(Location::isMultiBox)
+                .map(l -> new MultiBoxResponseDto((MultiBox) l, l.getUserLocations()))
+                .collect(Collectors.toList());
     }
 
 }
