@@ -128,6 +128,8 @@ jacocoTestReport {
         csv.destination file("${buildDir}/jacoco/index.xml")
     }
 
+    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/jacoco.exec"))
+
     afterEvaluate {
         classDirectories.setFrom(
                 files(classDirectories.files.collect {
@@ -140,6 +142,8 @@ jacocoTestReport {
 }
 
 jacocoTestCoverageVerification {
+    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/jacoco.exec"))
+
     violationRules {
         rule {
             enabled = true
@@ -147,7 +151,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'INSTRUCTION'
                 value = 'COVEREDRATIO'
-                minimum = 0.60
+                minimum = 0.70
             }
             excludes += coverageExcludeClasses()
         }
@@ -161,22 +165,28 @@ static def coverageExcludePath() {
         qPath.add(qPattern + "*")
     }
 
-    return [ "**/*Config*", "**/*Application*", "**/dto/**"] + qPath
+    return [ "**/*Config*",
+             "**/*Application*",
+             "**/dto/**",
+             "**/healthcheck/**"] + qPath
 }
 
 // jacocoTestCoverageVerification 제외 클래스
 static def coverageExcludeClasses() {
     def qClasses = []
-    for (qPattern in "*QA".."*QZ"){
+    for (qPattern in "*.*QA".."*.*QZ"){
         qClasses.add(qPattern + "*")
     }
 
-    return [ "*Config*", "*.*Application", "*.dto.*"] + qClasses
+    return [ "*.*Config*",
+             "*.*Application",
+             "*.dto.*",
+             "*.healthcheck.*"] + qClasses
 }
 
 
-//querydsl 설정 추가
-def querydslDir = "$buildDir/generated/querydsl" //Q클래스 생성을 위한 경로 설정
+// querydsl 설정 추가
+def querydslDir = "$buildDir/generated/querydsl" // Q 클래스 생성을 위한 경로 설정
 
 querydsl {
     jpa = true

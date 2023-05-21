@@ -7,6 +7,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,7 +23,6 @@ import java.util.Base64;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class JwtUtil {
 
@@ -30,23 +30,20 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
 
     private final UserDetailsServiceImpl userDetailsService;
-
-    @Value("${jwt.secret.key}")
-    private String secretKey;
-    private Key key;
+    private final Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-
-    @PostConstruct
-    public void init() {
+    public JwtUtil(@Value("${jwt.secret.key}") final String secretKey, UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
         byte[] bytes = Base64.getDecoder().decode(secretKey);
-        key = Keys.hmacShaKeyFor(bytes);
+        this.key = Keys.hmacShaKeyFor(bytes);
     }
 
     /*  header 토큰 가져오기 */
     public String getHeaderToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); {
-            if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        {
+            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
                 return bearerToken.substring(7);
         }
         return null;
