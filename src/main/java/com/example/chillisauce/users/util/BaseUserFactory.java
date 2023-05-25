@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class BaseUserFactory {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    @Transactional
     public void makeBaseUser(String companyName) {
         Companies company = companyRepository.findByCompanyName(companyName)
                 .orElseThrow(() -> new UserException(UserErrorCode.COMPANY_NOT_FOUND));

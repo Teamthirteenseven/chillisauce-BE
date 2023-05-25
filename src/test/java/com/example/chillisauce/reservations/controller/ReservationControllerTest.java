@@ -367,4 +367,34 @@ class ReservationControllerTest {
                     ));
         }
     }
+
+    @Nested
+    @DisplayName("예약 내 회의실 DELETE 요청 시")
+    class DeleteMrInReservationsTestCase {
+        @Test
+        @WithMockUser
+        void 회의실_정보를_삭제한다() throws Exception {
+            // given
+            String url = "/reservations/meetingRoom/1";
+            when(reservationService.deleteMeetingRoomInReservations(eq(1L), any())).thenReturn("success");
+
+            // when
+            ResultActions result = mockMvc.perform(MockMvcRequestBuilders.delete(url)
+                    .header("Authorization", "Bearer Token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            result.andExpect(status().isOk())
+                    .andDo(document("delete-reservation-meetingRoom",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            responseFields(
+                                    fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("상태코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.STRING).description("결과값")
+                            )
+                    ));
+        }
+    }
 }

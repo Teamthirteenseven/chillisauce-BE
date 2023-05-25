@@ -44,15 +44,21 @@ public abstract class Location {
         this.space = space;
     }
 
-    public void linkSpace(Space space) {
+    public void update(Space space) {
         this.space = space;
-        space.getLocations().add(this);
     }
 
     public Location(String locationName, String x, String y) {
         this.locationName = locationName;
         this.x = x;
         this.y = y;
+    }
+
+    public Location(String locationName, String x, String y, Space space) {
+        this.locationName = locationName;
+        this.x = x;
+        this.y = y;
+        this.space = space;
     }
 
     public Location(Long id, String locationName, String x, String y) {

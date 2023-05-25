@@ -20,6 +20,7 @@ public class Space {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     @NotEmpty
     private String spaceName;
@@ -35,8 +36,6 @@ public class Space {
     @JoinColumn(name = "floor_id")
     private Floor floor;
 
-
-
     public Space(SpaceRequestDto spaceRequestDto, Floor floor, Companies companies) {
         this.spaceName = spaceRequestDto.getSpaceName();
         this.floor = floor;
@@ -51,23 +50,6 @@ public class Space {
     public Space(Companies companies) {
         this.companies = companies;
     }
-
-
-    public void addLocation(Box box) {
-        this.locations.add(box);
-        box.linkSpace(this);
-    }
-
-    public void addLocation(Mr mr) {
-        this.locations.add(mr);
-        mr.linkSpace(this);
-    }
-
-    public void addLocation(MultiBox multiBox) {
-        this.locations.add(multiBox);
-        multiBox.linkSpace(this);
-    }
-
 
     public void updateSpace(SpaceRequestDto spaceRequestDto, Floor floor) {
         this.spaceName = spaceRequestDto.getSpaceName();

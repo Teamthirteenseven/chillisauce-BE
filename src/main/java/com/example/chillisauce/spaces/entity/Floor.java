@@ -25,8 +25,9 @@ public class Floor {
     @Column(nullable = false)
     @NotEmpty
     private String floorName;
+
     @OneToMany(mappedBy = "floor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Space> spaces = new ArrayList<>();
+    private List<Space> spaces;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "companies_id", nullable = false)

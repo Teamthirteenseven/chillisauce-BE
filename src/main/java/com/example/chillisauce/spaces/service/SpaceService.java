@@ -102,8 +102,10 @@ public class SpaceService {
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
+
         Space space = spaceRepository.findById(spaceId)
                 .orElseThrow(() -> new SpaceException(SpaceErrorCode.SPACE_NOT_FOUND));
+
         if (!space.getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.SPACE_DOES_NOT_BELONG_TO_COMPANY);
         }

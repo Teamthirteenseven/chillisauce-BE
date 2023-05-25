@@ -317,29 +317,50 @@ class ReservationServiceTest {
         User user = User_USER권한_생성_아이디지정(1L, company);
         UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
         Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
-        Reservation before = Reservation_생성_아이디_지정(1L, user, meetingRoom,
+        Reservation target = Reservation_생성_아이디_지정(1L, user, meetingRoom,
                 LocalDateTime.of(2023,4,8,11,0),
                 LocalDateTime.of(2023,4,8,13,59));
 
+        ReservationTime selectTime = new ReservationTime(LocalDateTime.of(2023, 4,8,12,0));
+        List<ReservationTime> startList = List.of(selectTime);
+        ReservationAttendee userOne = new ReservationAttendee(1L);
+        ReservationAttendee userTwo = new ReservationAttendee(2L);
+        List<ReservationAttendee> userList = List.of(userOne, userTwo);
+        ReservationRequest request = new ReservationRequest(startList, userList);
+
         @Test
         void 예약을_수정한다() {
-            // given
-            ReservationTime selectTime = new ReservationTime(LocalDateTime.of(2023, 4,8,12,0));
-            List<ReservationTime> startList = List.of(selectTime);
-            ReservationAttendee userOne = new ReservationAttendee(1L);
-            ReservationAttendee userTwo = new ReservationAttendee(2L);
-            List<ReservationAttendee> userList = List.of(userOne, userTwo);
-            ReservationRequest request = new ReservationRequest(startList, userList);
-
             // when
-            when(reservationRepository.findById(eq(before.getId()))).thenReturn(Optional.of(before));
+            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.of(target));
 
-            ReservationResponse result = reservationService.editReservation(before.getId(), request, userDetails);
+            ReservationResponse result = reservationService.editReservation(target.getId(), request, userDetails);
 
             // then
             assertThat(result).isNotNull();
             assertThat(result.getStart()).isEqualTo(selectTime.getStart());
             assertThat(result.getEnd()).isEqualTo(selectTime.getStart().plusMinutes(59));
+        }
+
+        @Test
+        void 예약이_없으면_예외를_반환한다(){
+            // given
+            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.empty());
+
+            // when, then
+            assertThatThrownBy(()-> reservationService.editReservation(target.getId(), request, userDetails))
+                    .isInstanceOf(ReservationException.class).hasMessage("예약을 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 권한이_없는_유저가_요청하면_예외를_반환한다(){
+            // given
+            User another = User_USER권한_생성_아이디_이메일_지정(2L, company, "test2@test.com");
+            UserDetailsImpl anotherDetails = new UserDetailsImpl(another, another.getEmail());
+            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.of(target));
+
+            // when, then
+            assertThatThrownBy(()->reservationService.editReservation(target.getId(), request, anotherDetails))
+                    .isInstanceOf(ReservationException.class).hasMessage("예약을 수정할 권한이 없는 유저입니다.");
         }
     }
 
@@ -367,7 +388,7 @@ class ReservationServiceTest {
         }
 
         @Test
-        void 예약이_없으면_예외가_발생한다(){
+        void 예약이_없으면_예외를_반환한다(){
             // given
             when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.empty());
 
@@ -377,15 +398,43 @@ class ReservationServiceTest {
         }
 
         @Test
-        void 다른_유저가_요청하면_권한_예외가_발생한다(){
+        void 권한이_없는_유저가_요청하면_예외를_반환한다(){
             // given
             User another = User_USER권한_생성_아이디_이메일_지정(2L, company, "test2@test.com");
             UserDetailsImpl anotherDetails = new UserDetailsImpl(another, another.getEmail());
-            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.empty());
+            when(reservationRepository.findById(eq(target.getId()))).thenReturn(Optional.of(target));
 
             // when, then
             assertThatThrownBy(()->reservationService.deleteReservation(target.getId(), anotherDetails))
-                    .isInstanceOf(ReservationException.class).hasMessage("예약을 찾을 수 없습니다.");
+                    .isInstanceOf(ReservationException.class).hasMessage("예약을 수정할 권한이 없는 유저입니다.");
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteMeetingRoomInReservations 메서드는")
+    class DeleteMrInReservationsTestCase {
+        // given
+        Companies company = Company_생성();
+        User user = User_USER권한_생성_아이디지정(1L, company);
+        UserDetailsImpl userDetails = new UserDetailsImpl(user, user.getEmail());
+        Mr meetingRoom = MeetingRoom_생성_아이디_지정(1L);
+        Reservation reservationOne = Reservation_생성_아이디_지정(1L, user, meetingRoom,
+                LocalDateTime.of(2023, 5, 3, 17, 0),
+                LocalDateTime.of(2023,5,3,17,59));
+
+        Reservation reservationTwo = Reservation_생성_아이디_지정(2L, user, meetingRoom,
+                LocalDateTime.of(2023, 5, 3, 19, 0),
+                LocalDateTime.of(2023,5,3,19,59));
+        @Test
+        void 예약에서_회의실_정보를_null로_업데이트_한다() {
+            // when
+            when(reservationRepository.findAllByMeetingRoomId(eq(meetingRoom.getId())))
+                    .thenReturn(List.of(reservationOne, reservationTwo));
+
+            String result = reservationService.deleteMeetingRoomInReservations(meetingRoom.getId(), userDetails);
+
+            // then
+            assertThat(result).isEqualTo("success");
         }
     }
 }
