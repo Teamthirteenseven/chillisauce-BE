@@ -96,9 +96,6 @@ class UserRepositoryImplTest {
             List<User> userList = Stream.of(user1, user2, user3, user4, user5, user6).toList();
             companyRepository.save(company);
             userRepository.saveAll(userList);
-            for (User user : userRepository.findAll()) {
-                System.out.println(user.getId() + user.getUsername());
-            }
             //when
             List<User> result = userRepository.findAllByUsernameContainingAndCompanies(searchName, company.getCompanyName());
             //then
