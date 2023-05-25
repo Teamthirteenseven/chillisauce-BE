@@ -5,6 +5,7 @@ import com.example.chillisauce.reservations.service.ReservationService;
 import com.example.chillisauce.security.UserDetailsImpl;
 import com.example.chillisauce.spaces.dto.request.MrRequestDto;
 import com.example.chillisauce.spaces.dto.response.MrResponseDto;
+import com.example.chillisauce.spaces.dto.response.SpaceListResponseDto;
 import com.example.chillisauce.spaces.entity.Mr;
 import com.example.chillisauce.spaces.entity.Space;
 import com.example.chillisauce.spaces.exception.SpaceErrorCode;
@@ -20,10 +21,16 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.actuate.management.ThreadDumpEndpoint;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.chillisauce.fixture.FixtureFactory.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,7 +53,6 @@ public class MrServiceTest {
     private ReservationService reservationService;
 
 
-
     @Nested
     @DisplayName("Mr 성공 케이스")
     class SuccessCase {
@@ -55,22 +61,41 @@ public class MrServiceTest {
         UserDetailsImpl details = details_권한_ADMIN_유저_네임_NULL(companies);
         Reservation reservation = Reservation_생성_빈값();
         Mr mr = MeetingRoom_생성_아이디_지정(1L);
+
         @Test
         void 미팅룸_생성() {
             //given
-            MrRequestDto requestDto = new MrRequestDto("MrTest", "200","300");
-            when(spaceService.findCompanyNameAndSpaceId(companies.getCompanyName(),space.getId())).thenReturn(space);
+            MrRequestDto requestDto = new MrRequestDto("MrTest", "200", "300");
+            when(spaceService.findCompanyNameAndSpaceId(companies.getCompanyName(), space.getId())).thenReturn(space);
             when(mrRepository.save(any(Mr.class))).thenReturn(mr);
 
             //when
-            MrResponseDto mrResponseDto = mrService.createMr(companies.getCompanyName(),space.getId(),requestDto,details);
+            MrResponseDto mrResponseDto = mrService.createMr(companies.getCompanyName(), space.getId(), requestDto, details);
 
             //then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getMrName());
-            assertEquals("200",mrResponseDto.getX());
-            assertEquals("300",mrResponseDto.getY());
+            assertEquals("MrTest", mrResponseDto.getMrName());
+            assertEquals("200", mrResponseDto.getX());
+            assertEquals("300", mrResponseDto.getY());
 
+        }
+
+        @Test
+        void 미팅룸_전체_조회() {
+            //give
+            Mr mr = Mr_생성_예약_추가(reservation);
+            List<Mr> mrList = Collections.singletonList(mr);
+            List<MrResponseDto> responseDto = mrList.stream().map(MrResponseDto::new).toList();
+            when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
+            when(mrRepository.findAllByCompaniesId(companies.getId())).thenReturn(mrList);
+            //when
+            List<MrResponseDto> result = mrService.mrlist(companies.getCompanyName(), details);
+            //then
+            assertNotNull(result);
+            assertEquals(responseDto.size(), result.size());
+            assertThat(result).allSatisfy(responseSpace -> {
+                assertThat(responseSpace.getMrName()).isEqualTo("testMr");
+            });
         }
 
         @Test
@@ -78,17 +103,17 @@ public class MrServiceTest {
             //given
             Mr mr = Mr_생성_예약_추가(reservation);
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
-            when(mrRepository.findByIdAndSpaceCompanies(mr.getId(),companies)).thenReturn(Optional.of(mr));
-            MrRequestDto requestDto = new MrRequestDto("MrTest", "200","300");
+            when(mrRepository.findByIdAndSpaceCompanies(mr.getId(), companies)).thenReturn(Optional.of(mr));
+            MrRequestDto requestDto = new MrRequestDto("MrTest", "200", "300");
 
             //when
-            MrResponseDto mrResponseDto = mrService.updateMr(companies.getCompanyName(),mr.getId(),requestDto,details);
+            MrResponseDto mrResponseDto = mrService.updateMr(companies.getCompanyName(), mr.getId(), requestDto, details);
 
             //Then
             assertNotNull(mrResponseDto);
-            assertEquals("MrTest",mrResponseDto.getMrName());
-            assertEquals("200",mrResponseDto.getX());
-            assertEquals("300",mrResponseDto.getY());
+            assertEquals("MrTest", mrResponseDto.getMrName());
+            assertEquals("200", mrResponseDto.getX());
+            assertEquals("300", mrResponseDto.getY());
         }
 
         @Test
@@ -96,17 +121,17 @@ public class MrServiceTest {
             //given
             Mr mr = Mr_생성_예약_추가(reservation);
             when(companyRepository.findByCompanyName(companies.getCompanyName())).thenReturn(Optional.of(companies));
-            when(mrRepository.findByIdAndSpaceCompanies(mr.getId(),companies)).thenReturn(Optional.of(mr));
+            when(mrRepository.findByIdAndSpaceCompanies(mr.getId(), companies)).thenReturn(Optional.of(mr));
             doNothing().when(mrRepository).deleteById(mr.getId());
             //when
             when(reservationService.deleteMeetingRoomInReservations(mr.getId(), null)).thenReturn(String.valueOf(reservation));
-            MrResponseDto mrResponseDto = mrService.deleteMr(companies.getCompanyName(),mr.getId(),details);
+            MrResponseDto mrResponseDto = mrService.deleteMr(companies.getCompanyName(), mr.getId(), details);
 
             //Then
             assertNotNull(mrResponseDto);
-            assertEquals("testMr",mrResponseDto.getMrName());
-            assertEquals("111",mrResponseDto.getX());
-            assertEquals("222",mrResponseDto.getY());
+            assertEquals("testMr", mrResponseDto.getMrName());
+            assertEquals("111", mrResponseDto.getX());
+            assertEquals("222", mrResponseDto.getY());
         }
     }
 
@@ -128,7 +153,7 @@ public class MrServiceTest {
         void Mr_생성_권한_예외_테스트() {
             // when & then
             NotPermissionExceptionCase.NOT_HAVE_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION, () -> {
-                mrService.createMr(companies.getCompanyName(),space.getId() , requestDto, details);
+                mrService.createMr(companies.getCompanyName(), space.getId(), requestDto, details);
             });
         }
 
@@ -148,6 +173,7 @@ public class MrServiceTest {
             });
         }
     }
+
     @Nested
     @DisplayName("Mr 메서드 예외 케이스")
     class MethodExceptionCase {
@@ -179,6 +205,28 @@ public class MrServiceTest {
                 mrService.findCompanyNameAndMrId(companies.getCompanyName(), mr.getId());
             });
             assertEquals(SpaceErrorCode.MR_NOT_FOUND, exception.getErrorCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("해당 회사 권한 없음 예외 케이스")
+    class CompanyNotPermissionExceptionCase {
+        // given
+        Companies companies = Company_생성();
+        UserDetailsImpl details = details_권한_USER_유저_네임_NULL(companies);
+        Companies differentCompanyName = Different_Company_생성();
+
+        public static void COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode expectedErrorCode, Executable executable) {
+            SpaceException exception = assertThrows(SpaceException.class, executable);
+            assertEquals(expectedErrorCode, exception.getErrorCode());
+        }
+
+        @Test
+        void 전체_회의실_조회_해당_회사_권한_없음() {
+            // when & then
+            CompanyNotPermissionExceptionCase.COMPANIES_NOT_PERMISSION_EXCEPTION(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES, () -> {
+                mrService.mrlist(differentCompanyName.getCompanyName(), details);
+            });
         }
     }
 }

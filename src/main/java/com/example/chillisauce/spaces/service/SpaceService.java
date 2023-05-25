@@ -85,16 +85,11 @@ public class SpaceService {
     @Transactional
     @Cacheable(cacheNames = "SpaceResponseDtoList", key = "#companyName")
     public List<SpaceListResponseDto> allSpacelist(String companyName, UserDetailsImpl details) {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
         if (!details.getUser().getCompanies().getCompanyName().equals(companyName)) {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION_COMPANIES);
         }
-        List<SpaceListResponseDto> spaceResponseDto = spaceRepository.getSpaceAllList(companyName);
-        stopWatch.stop();
-        log.info(stopWatch.prettyPrint());
 
-        return spaceResponseDto;
+        return spaceRepository.getSpaceAllList(companyName);
     }
 
 
