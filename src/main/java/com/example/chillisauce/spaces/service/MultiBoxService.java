@@ -34,9 +34,9 @@ public class MultiBoxService {
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
 
-        MultiBox multiBox = new MultiBox(multiBoxRequestDto);
+        MultiBox multiBox = new MultiBox(multiBoxRequestDto, space);
         multiBoxRepository.save(multiBox);
-        space.addLocation(multiBox);
+
         return new MultiBoxResponseDto(multiBox);
     }
     /**

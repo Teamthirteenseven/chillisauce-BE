@@ -39,9 +39,8 @@ public class MrService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName,spaceId);
-        Mr mr = new Mr(mrRequestDto);
+        Mr mr = new Mr(mrRequestDto, space);
         mrRepository.save(mr);
-        space.addLocation(mr);
         return new MrResponseDto(mr);
     }
 

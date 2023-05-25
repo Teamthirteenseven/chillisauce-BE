@@ -37,11 +37,9 @@ public class BoxService {
             throw new SpaceException(SpaceErrorCode.NOT_HAVE_PERMISSION);
         }
         Space space = spaceService.findCompanyNameAndSpaceId(companyName, spaceId);
-        Box box = new Box(boxRequestDto);
-
+        Box box = new Box(boxRequestDto, space);
 
         boxRepository.save(box);
-        space.addLocation(box);//box.setSpace(space); 기존 set addBox 메서드로 교체
 
         return new BoxResponseDto(box);
     }
@@ -79,12 +77,9 @@ public class BoxService {
         Companies company = companyRepository.findByCompanyName(companyName).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.COMPANIES_NOT_FOUND)
         );
+
         return boxRepository.findByIdAndSpaceCompanies(boxId, company).orElseThrow(
                 () -> new SpaceException(SpaceErrorCode.BOX_NOT_FOUND)
         );
     }
 }
-
-
-
-

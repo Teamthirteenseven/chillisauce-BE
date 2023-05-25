@@ -22,8 +22,8 @@ public class Mr extends Location{
     List<Reservation> reservations = new ArrayList<>();
 
 
-    public Mr(MrRequestDto mrRequestDto) {
-        super(mrRequestDto.getMrName(), mrRequestDto.getX(), mrRequestDto.getY());
+    public Mr(MrRequestDto mrRequestDto, Space space) {
+        super(mrRequestDto.getMrName(), mrRequestDto.getX(), mrRequestDto.getY(), space);
     }
 
 

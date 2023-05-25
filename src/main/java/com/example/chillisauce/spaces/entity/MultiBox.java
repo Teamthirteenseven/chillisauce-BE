@@ -15,8 +15,8 @@ public class MultiBox extends Location {
     private Long id;
 
 
-    public MultiBox(MultiBoxRequestDto multiBoxRequestDto) {
-        super(multiBoxRequestDto.getMultiBoxName(), multiBoxRequestDto.getX(), multiBoxRequestDto.getY());
+    public MultiBox(MultiBoxRequestDto multiBoxRequestDto, Space space) {
+        super(multiBoxRequestDto.getMultiBoxName(), multiBoxRequestDto.getX(), multiBoxRequestDto.getY(), space);
     }
 
 

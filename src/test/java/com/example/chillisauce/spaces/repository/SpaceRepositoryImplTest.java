@@ -155,7 +155,7 @@ public class SpaceRepositoryImplTest {
     }
 
     @Nested
-    @DisplayName("메서드 성공 케이스")
+    @DisplayName("createSpaceResponseDto 메서드 성공 케이스")
     class methodSuccessCases {
         private Floor floor;
         private Space space;
@@ -170,35 +170,31 @@ public class SpaceRepositoryImplTest {
             userLocation = new UserLocation();
         }
 
-        @DisplayName("")
         @Test
-        void d() {
+        void Space_Response_Dto_생성한다() {
             //given
+            Box box = Box_생성();
+            box.setUserLocations(List.of(userLocation));
 
-            Box boxLocation = Box_생성();
-            boxLocation.setUserLocations(List.of(userLocation));
+            Mr meetingRoom = MeetingRoom_생성_예약_내역(Reservation_생성_빈값());
 
-            Mr mrLocation = new Mr();
-
-
-            MultiBox multiBoxLocation = MultiBox_생성();
-            multiBoxLocation.setUserLocations(List.of(userLocation));
-
+            MultiBox multiBox = MultiBox_생성();
+            multiBox.setUserLocations(List.of(userLocation));
 
             space.setFloor(floor);
-            space.addLocation(boxLocation);
-            space.addLocation(mrLocation);
-            space.addLocation(multiBoxLocation);
+            space.getLocations().add(box);
+            space.getLocations().add(meetingRoom);
+            space.getLocations().add(multiBox);
 
             //when
             SpaceResponseDto result = spaceRepositoryImpl.createSpaceResponseDto(space);
-            System.out.println(result.getSpaceName());
+
             //then
             assertThat(result).isNotNull();
             assertThat(result.getFloorName()).isEqualTo("testFloor");
-            assertThat(result.getBoxList().size()).isEqualTo(2);
-            assertThat(result.getMrList().size()).isEqualTo(2);
-            assertThat(result.getMultiBoxList().size()).isEqualTo(2);
+            assertThat(result.getBoxList().size()).isEqualTo(1);
+            assertThat(result.getMrList().size()).isEqualTo(1);
+            assertThat(result.getMultiBoxList().size()).isEqualTo(1);
         }
     }
 }

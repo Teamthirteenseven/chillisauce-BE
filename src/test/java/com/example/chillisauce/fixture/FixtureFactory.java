@@ -96,6 +96,14 @@ public class FixtureFactory {
                 .build();
     }
 
+    public static Mr MeetingRoom_생성_예약_내역(Reservation reservation) {
+        return Mr.builder()
+                .locationName("testMeetingRoom")
+                .x("150").y("200")
+                .reservation(List.of(reservation))
+                .build();
+    }
+
     public static Reservation Reservation_생성(User user, Mr mr, LocalDateTime start, LocalDateTime end) {
         return Reservation.builder()
                 .user(user)

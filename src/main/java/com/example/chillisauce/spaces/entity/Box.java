@@ -16,12 +16,9 @@ public class Box extends Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
-    public Box(BoxRequestDto boxRequestDto) {
-        super(boxRequestDto.getBoxName(), boxRequestDto.getX(), boxRequestDto.getY());
+    public Box(BoxRequestDto boxRequestDto, Space space) {
+        super(boxRequestDto.getBoxName(), boxRequestDto.getX(), boxRequestDto.getY(), space);
     }
-
 
     public Box(String locationName, String x, String y) {
         super(locationName, x, y);

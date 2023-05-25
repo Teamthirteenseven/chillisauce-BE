@@ -38,6 +38,11 @@ operation::patch-reservation[]
 operation::delete-reservation[]
 
 
+[[DELETE-Reservation-MeetingRoom]]
+=== 예약 내 회의실 정보 삭제
+operation::delete-reservation-meetingroom[]
+
+
 [[Schedule-API]]
 == 스케줄 API
 
