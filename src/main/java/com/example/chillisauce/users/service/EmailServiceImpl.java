@@ -24,30 +24,32 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     public static final String certification = createKey();
 
+    /* 1분당 2회 이메일 인증 요청 제한 */
+    RequestLimitRule limit = RequestLimitRule.of(Duration.ofMinutes(1), 2);
+    RequestRateLimiter rateLimiter = new InMemorySlidingWindowRequestRateLimiter(limit);
+
     private MimeMessage createMessage(String to, String certificationKey) throws Exception {
-        log.info("보내는대상={}", to);
-        log.info("인증번호={}", certificationKey);
 
         MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
         message.setSubject("Flexidesk 인증코드 발송");//제목
 
-        String msgg = "";
-        msgg += "<div style='margin:20px;'>";
-        msgg += "<h1> 안녕하세요 Flexidesk 입니다. </h1>";
-        msgg += "<br>";
-        msgg += "<p>아래 코드를 복사해 입력해주세요<p>";
-        msgg += "<br>";
-        msgg += "<p>감사합니다.<p>";
-        msgg += "<br>";
-        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg += "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
-        msgg += "<div style='font-size:130%'>";
-        msgg += "CODE : <strong>";
-        msgg += certificationKey + "</strong><div><br/> ";
-        msgg += "</div>";
-        message.setText(msgg, "utf-8", "html");//내용
+        StringBuffer msgg = new StringBuffer();
+        msgg.append("<div style='margin:20px;'>");
+        msgg.append("<h1> 안녕하세요 Flexidesk 입니다. </h1>");
+        msgg.append("<br>");
+        msgg.append("<p>아래 코드를 입력해주세요<p>");
+        msgg.append("<br>");
+        msgg.append("<p>감사합니다.<p>");
+        msgg.append("<br>");
+        msgg.append("<div align='center' style='border:1px solid black; font-family:verdana';>");
+        msgg.append("<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>");
+        msgg.append("<div style='font-size:130%'>");
+        msgg.append("CODE : <strong>");
+        msgg.append(certificationKey).append("</strong><div><br/> ");
+        msgg.append("</div>");
+        message.setText(String.valueOf(msgg), "utf-8", "html");//내용
         message.setFrom(new InternetAddress("limsanggyu91@gmail.com", "Flexidesk"));//보내는 사람
 
         return message;
@@ -94,8 +96,6 @@ public class EmailServiceImpl implements EmailService {
         return "certification : " + certificationKey;
     }
 
-    /* 1분당 2회 이메일 인증 요청 제한 */
-    RequestLimitRule limit = RequestLimitRule.of(Duration.ofMinutes(1), 2);
-    RequestRateLimiter rateLimiter = new InMemorySlidingWindowRequestRateLimiter(limit);
+
 
 }
