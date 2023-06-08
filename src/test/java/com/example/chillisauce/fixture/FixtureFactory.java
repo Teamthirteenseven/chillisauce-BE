@@ -1,12 +1,12 @@
 package com.example.chillisauce.fixture;
 
-import com.example.chillisauce.reservations.entity.Reservation;
-import com.example.chillisauce.reservations.entity.ReservationUser;
-import com.example.chillisauce.security.UserDetailsImpl;
-import com.example.chillisauce.spaces.entity.*;
-import com.example.chillisauce.users.entity.Companies;
-import com.example.chillisauce.users.entity.User;
-import com.example.chillisauce.users.entity.UserRoleEnum;
+import com.example.chillisauce.domain.reservations.entity.Reservation;
+import com.example.chillisauce.domain.reservations.entity.ReservationUser;
+import com.example.chillisauce.domain.spaces.entity.*;
+import com.example.chillisauce.global.security.UserDetailsImpl;
+import com.example.chillisauce.domain.users.entity.Companies;
+import com.example.chillisauce.domain.users.entity.User;
+import com.example.chillisauce.domain.users.entity.UserRoleEnum;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
