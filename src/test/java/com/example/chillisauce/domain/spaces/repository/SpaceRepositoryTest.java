@@ -1,0 +1,95 @@
+package com.example.chillisauce.domain.spaces.repository;
+
+import com.example.chillisauce.global.config.TestConfig;
+import com.example.chillisauce.domain.spaces.entity.Space;
+import com.example.chillisauce.domain.spaces.repository.SpaceRepository;
+import com.example.chillisauce.domain.users.entity.Companies;
+import com.example.chillisauce.domain.users.repository.CompanyRepository;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.validation.ConstraintViolationException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+@Nested
+@DisplayName("space Test")
+@ExtendWith(SpringExtension.class)
+@DataJpaTest
+@Import(TestConfig.class)
+class SpaceRepositoryTest {
+    @Autowired
+    private SpaceRepository spaceRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Nested
+    @DisplayName("성공 케이스")
+    class SuccessCases {
+
+        @DisplayName("Space 저장")
+        @Test
+        void addSpace() {
+            //given
+            Companies companies = Companies.builder()
+                    .certification("abcd")
+                    .companyName("테스트")
+                    .build();
+            Space space = Space.builder()
+                    .spaceName("테스트")
+                    .companies(companies)
+                    .floor(null)
+                    .build();
+
+            //when
+            Companies saveCompanies = companyRepository.save(companies);
+            Space saveSpace = spaceRepository.save(space);
+
+            //then
+            Assertions.assertThat(saveCompanies.getCertification()).isEqualTo(companies.getCertification());
+            Assertions.assertThat(saveCompanies.getCompanyName()).isEqualTo(companies.getCompanyName());
+            Assertions.assertThat(saveSpace.getSpaceName()).isEqualTo(space.getSpaceName());
+
+        }
+    }
+
+    @Nested
+    @DisplayName("실패 케이스")
+    class FailCases {
+        @Nested
+        @DisplayName("Null")
+        class NullSpace {
+            @DisplayName("Space정보가 Null인 경우")
+            @Test
+            void fail2() {
+                // given
+                final Space space = Space.builder()
+                        .spaceName(null)
+                        .build();
+                //when
+                assertThrows(ConstraintViolationException.class,
+                        () -> spaceRepository.save(space));
+            }
+
+            //
+            @DisplayName("space정보가 빈 문자열인 경우")
+            @Test
+            void fail3() {
+                // given
+                final Space space = Space.builder()
+                        .spaceName("")
+                        .build();
+                //when
+                assertThrows(ConstraintViolationException.class,
+                        () -> spaceRepository.save(space));
+
+            }
+        }
+    }
+}
